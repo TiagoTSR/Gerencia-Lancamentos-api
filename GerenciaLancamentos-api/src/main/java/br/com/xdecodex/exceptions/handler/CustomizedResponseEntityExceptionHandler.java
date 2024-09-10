@@ -1,8 +1,9 @@
 package br.com.xdecodex.exceptions.handler;
 
 import java.util.Date;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -25,12 +26,14 @@ import br.com.xdecodex.exceptions.ExceptionResponse;
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomizedResponseEntityExceptionHandler.class);
+
     @Autowired
     private MessageSource messageSource;
 
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+        logger.error("HTTP Message Not Readable: {}", ex.getMessage(), ex);
         ExceptionResponse exceptionResponse = createExceptionResponse(
                 "mensagem.invalida",
                 ex.getCause() != null ? ex.getCause().toString() : ex.toString());
@@ -39,7 +42,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+        logger.error("Method Argument Not Valid: {}", ex.getMessage(), ex);
         ExceptionResponse exceptionResponse = createErrorList(ex.getBindingResult());
         return handleExceptionInternal(ex, exceptionResponse, headers, HttpStatus.BAD_REQUEST, request);
     }
@@ -47,6 +50,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,
             WebRequest request) {
+        logger.error("Empty Result Data Access Exception: {}", ex.getMessage(), ex);
         ExceptionResponse exceptionResponse = createExceptionResponse(
                 "recurso.nao-encontrado",
                 ex.toString());
@@ -56,10 +60,30 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
             WebRequest request) {
+        logger.error("Data Integrity Violation Exception: {}", ex.getMessage(), ex);
         ExceptionResponse exceptionResponse = createExceptionResponse(
                 "recurso.operacao-nao-permitida",
                 ExceptionUtils.getRootCauseMessage(ex));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex,
+            WebRequest request) {
+        logger.error("Illegal Argument Exception: {}", ex.getMessage(), ex);
+        ExceptionResponse exceptionResponse = createExceptionResponse(
+                "argumento.invalido",
+                ex.toString());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
+        logger.error("Generic Exception: {}", ex.getMessage(), ex);
+        ExceptionResponse exceptionResponse = createExceptionResponse(
+                "erro.interno",
+                ex.toString());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ExceptionResponse createExceptionResponse(String userMessageKey, String developerMessage) {
