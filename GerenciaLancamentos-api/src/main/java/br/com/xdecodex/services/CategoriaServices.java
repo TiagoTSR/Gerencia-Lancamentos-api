@@ -10,7 +10,7 @@ import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.repositories.CategoriaRepository;
 
 @Service
-public class CategoriaServicos {
+public class CategoriaServices {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
