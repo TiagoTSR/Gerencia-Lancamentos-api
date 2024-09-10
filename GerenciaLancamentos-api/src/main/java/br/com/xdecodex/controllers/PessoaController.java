@@ -3,7 +3,9 @@ package br.com.xdecodex.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,38 +16,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.services.PessoaServices;
+import br.com.xdecodex.services.PessoaService;
 
 @RestController
-@RequestMapping("/pessoa")
+@RequestMapping("/pessoas")
 public class PessoaController {
 
     @Autowired
-    private PessoaServices service;
+    private PessoaService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Pessoa> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<Pessoa>> findAll() {
+        List<Pessoa> pessoas = service.findAll();
+        return ResponseEntity.ok(pessoas);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pessoa findById(@PathVariable(value = "id") String id) throws Exception {
-        return service.findById(id);
+    public ResponseEntity<Pessoa> findById(@PathVariable("id") Long id) {
+        try {
+            Pessoa pessoa = service.findById(id);
+            return ResponseEntity.ok(pessoa);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pessoa create(@RequestBody Pessoa Pessoa) throws Exception {
-        return service.create(Pessoa);
+    public ResponseEntity<Pessoa> create(@RequestBody Pessoa pessoa) {
+        try {
+            Pessoa novaPessoa = service.create(pessoa);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pessoa update(@RequestBody Pessoa Pessoa) throws Exception {
-        return service.update(Pessoa);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Pessoa> update(@PathVariable("id") Long id, @RequestBody Pessoa pessoa) {
+        try {
+            Pessoa pessoaAtualizada = service.update(id, pessoa);
+            return ResponseEntity.ok(pessoaAtualizada);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable(value = "id") String id) {
-        service.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        boolean deleted = service.delete(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
 }

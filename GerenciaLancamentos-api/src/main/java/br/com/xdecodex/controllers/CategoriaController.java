@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.services.CategoriaServices;
+import br.com.xdecodex.services.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
 
     @Autowired
-    private CategoriaServices service;
+    private CategoriaService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Categoria> findAll() {
