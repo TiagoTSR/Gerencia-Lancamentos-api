@@ -6,16 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import br.com.xdecodex.model.Lancamento;
+import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.services.LancamentoService;
 import jakarta.validation.Valid;
 
@@ -27,26 +20,40 @@ public class LancamentoController {
     private LancamentoService lancamentoService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Lancamento> findAll() {
-        return lancamentoService.findAll();
+    public ResponseEntity<List<LancamentoVO>> findAll() {
+        List<LancamentoVO> lancamentos = lancamentoService.findAll();
+        return ResponseEntity.ok(lancamentos);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Lancamento> findById(@PathVariable("id") Long id) {
-        Lancamento lancamento = lancamentoService.findById(id);
-        return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
+    public ResponseEntity<LancamentoVO> findById(@PathVariable("id") Long id) {
+        try {
+            LancamentoVO lancamento = lancamentoService.findById(id);
+            return ResponseEntity.ok(lancamento);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Lancamento> create(@Valid @RequestBody Lancamento lancamento) {
-        Lancamento lancamentoSalvo = lancamentoService.save(lancamento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
+    public ResponseEntity<LancamentoVO> create(@Valid @RequestBody LancamentoVO lancamento) {
+        try {
+            LancamentoVO novoLancamento = lancamentoService.save(lancamento);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novoLancamento);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Lancamento> update(@Valid @RequestBody Lancamento lancamento) {
-        Lancamento lancamentoAtualizado = lancamentoService.update(lancamento);
-        return ResponseEntity.ok(lancamentoAtualizado);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LancamentoVO> update(@PathVariable("id") Long id, @Valid @RequestBody LancamentoVO lancamento) {
+        try {
+            lancamento.setCodigo(id);
+            LancamentoVO lancamentoAtualizado = lancamentoService.update(lancamento);
+            return ResponseEntity.ok(lancamentoAtualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping(value = "/{id}")
