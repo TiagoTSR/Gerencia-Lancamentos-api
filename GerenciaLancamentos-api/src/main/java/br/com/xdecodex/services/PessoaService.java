@@ -1,51 +1,67 @@
 package br.com.xdecodex.services;
 
 import java.util.List;
-import org.springframework.beans.BeanUtils;
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import br.com.xdecodex.model.Endereco;
+import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.PessoaRepository;
+import br.com.xdecodex.exceptions.ResourceNotFoundException;
+import br.com.xdecodex.mapper.DozerMapper;
 
 @Service
 public class PessoaService {
 
+    private Logger logger = Logger.getLogger(PessoaService.class.getName());
+
     @Autowired
-    private PessoaRepository pessoaRepository;
+    private PessoaRepository repository;
 
-    public List<Pessoa> findAll() {
-        return pessoaRepository.findAll();
+    public List<PessoaVO> findAll() {
+        logger.info("Finding all people!");
+        return DozerMapper.parseListObjects(repository.findAll(), PessoaVO.class);
     }
 
-    public Pessoa findById(Long id) {
-        return pessoaRepository.findById(id)
-            .orElseThrow(() -> new EmptyResultDataAccessException("Pessoa não encontrada", 1));
+    public PessoaVO findById(Long id) {
+        logger.info("Finding one person!");
+        var entity = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        return DozerMapper.parseObject(entity, PessoaVO.class);
     }
 
-    public Pessoa create(Pessoa pessoa) {
-        return pessoaRepository.save(pessoa);
+    public PessoaVO create(PessoaVO pessoaVO) {
+        logger.info("Creating one person!");
+        var entity = DozerMapper.parseObject(pessoaVO, Pessoa.class);
+        var vo = DozerMapper.parseObject(repository.save(entity), PessoaVO.class);
+        return vo;
     }
 
-    public Pessoa update(Long id, Pessoa pessoa) {
-        Pessoa pessoaSalva = findById(id);
-        BeanUtils.copyProperties(pessoa, pessoaSalva, "id");
-        return pessoaRepository.save(pessoaSalva);
-    }
+    public PessoaVO update(PessoaVO pessoaVO) {
+        logger.info("Updating one person!");
+        var entity = repository.findById(pessoaVO.getCodigo())
+            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
+        entity.setNome(pessoaVO.getNome());
 
-    public void updateAtivo(Long id, Boolean ativo) {
-        Pessoa pessoaSalva = findById(id);
-        pessoaSalva.setAtivo(ativo);
-        pessoaRepository.save(pessoaSalva);
+        // Atualizando o endereço
+        Endereco endereco = pessoaVO.getEndereco();
+        if (endereco != null) {
+            entity.setEndereco(endereco);
+        }
+
+        var vo = DozerMapper.parseObject(repository.save(entity), PessoaVO.class);
+        return vo;
     }
 
     public boolean delete(Long id) {
-        if (!pessoaRepository.existsById(id)) {
-            return false;
-        }
-        pessoaRepository.deleteById(id);
+        logger.info("Deleting one person!");
+        var entity = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        repository.delete(entity);
         return true;
     }
 }

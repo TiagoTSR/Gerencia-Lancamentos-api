@@ -6,46 +6,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import br.com.xdecodex.model.Pessoa;
+import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.services.PessoaService;
 
 @RestController
-@RequestMapping("/pessoas")
+@RequestMapping("/pessoas")  
 public class PessoaController {
 
     @Autowired
     private PessoaService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Pessoa>> findAll() {
-        List<Pessoa> pessoas = service.findAll();
+    public ResponseEntity<List<PessoaVO>> findAll() {
+        List<PessoaVO> pessoas = service.findAll();
         return ResponseEntity.ok(pessoas);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pessoa> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<PessoaVO> findById(@PathVariable("id") Long id) {
         try {
-            Pessoa pessoa = service.findById(id);
+            PessoaVO pessoa = service.findById(id);
             return ResponseEntity.ok(pessoa);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pessoa> create(@RequestBody Pessoa pessoa) {
+    public ResponseEntity<PessoaVO> create(@RequestBody PessoaVO pessoa) {
         try {
-            Pessoa novaPessoa = service.create(pessoa);
+            PessoaVO novaPessoa = service.create(pessoa);
             return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -53,9 +45,10 @@ public class PessoaController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pessoa> update(@PathVariable("id") Long id, @RequestBody Pessoa pessoa) {
+    public ResponseEntity<PessoaVO> update(@PathVariable("id") Long id, @RequestBody PessoaVO pessoa) {
         try {
-            Pessoa pessoaAtualizada = service.update(id, pessoa);
+            pessoa.setCodigo(id);  
+            PessoaVO pessoaAtualizada = service.update(pessoa);
             return ResponseEntity.ok(pessoaAtualizada);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -67,5 +60,4 @@ public class PessoaController {
         boolean deleted = service.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
-
 }
