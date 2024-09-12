@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.xdecodex.model.Categoria;
+import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.services.CategoriaService;
+import br.com.xdecodex.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/categorias")
@@ -26,31 +27,44 @@ public class CategoriaController {
     private CategoriaService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Categoria> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<CategoriaVO>> findAll() {
+        List<CategoriaVO> categorias = service.findAll();
+        return ResponseEntity.ok(categorias);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Categoria> findById(@PathVariable("id") Long id) {
-        Categoria categoria = service.findById(id);
-        return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
+    public ResponseEntity<CategoriaVO> findById(@PathVariable("id") Long id) {
+        try {
+            CategoriaVO categoria = service.findById(id);
+            return ResponseEntity.ok(categoria);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Categoria> create(@RequestBody Categoria categoria) {
-        Categoria novaCategoria = service.create(categoria);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoria);
+    public ResponseEntity<CategoriaVO> create(@RequestBody CategoriaVO categoria) {
+        CategoriaVO novaCategoriaVO = service.create(categoria);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoriaVO);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Categoria> update(@RequestBody Categoria categoria) {
-        Categoria categoriaAtualizada = service.update(categoria);
-        return ResponseEntity.ok(categoriaAtualizada);
+    public ResponseEntity<CategoriaVO> update(@RequestBody CategoriaVO categoria) {
+        try {
+            CategoriaVO categoriaAtualizada = service.update(categoria);
+            return ResponseEntity.ok(categoriaAtualizada);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        boolean deleted = service.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        try {
+            boolean deleted = service.delete(id);
+            return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
