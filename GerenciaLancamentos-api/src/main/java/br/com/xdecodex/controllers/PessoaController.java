@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.xdecodex.data.vo.v1.PessoaVO;
+import br.com.xdecodex.data.vo.v2.PessoaVOV2;
 import br.com.xdecodex.services.PessoaService;
 
 @RestController
@@ -38,6 +39,16 @@ public class PessoaController {
     public ResponseEntity<PessoaVO> create(@RequestBody PessoaVO pessoa) {
         try {
             PessoaVO novaPessoa = service.create(pessoa);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+    
+    @PostMapping( value = "/v2",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PessoaVOV2> createV2(@RequestBody PessoaVOV2 pessoa) {
+        try {
+            PessoaVOV2 novaPessoa = service.createV2(pessoa);
             return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
