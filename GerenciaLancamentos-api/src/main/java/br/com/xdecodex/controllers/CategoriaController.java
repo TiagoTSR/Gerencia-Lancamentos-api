@@ -26,13 +26,19 @@ public class CategoriaController {
     @Autowired
     private CategoriaService service;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<List<CategoriaVO>> findAll() {
         List<CategoriaVO> categorias = service.findAll();
         return ResponseEntity.ok(categorias);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<CategoriaVO> findById(@PathVariable("id") Long id) {
         try {
             CategoriaVO categoria = service.findById(id);
@@ -42,13 +48,19 @@ public class CategoriaController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<CategoriaVO> create(@RequestBody CategoriaVO categoria) {
         CategoriaVO novaCategoriaVO = service.create(categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoriaVO);
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<CategoriaVO> update(@RequestBody CategoriaVO categoria) {
         try {
             CategoriaVO categoriaAtualizada = service.update(categoria);

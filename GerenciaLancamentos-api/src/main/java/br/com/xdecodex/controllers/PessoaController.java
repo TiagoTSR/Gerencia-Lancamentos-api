@@ -19,13 +19,19 @@ public class PessoaController {
     @Autowired
     private PessoaService service;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<List<PessoaVO>> findAll() {
         List<PessoaVO> pessoas = service.findAll();
         return ResponseEntity.ok(pessoas);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<PessoaVO> findById(@PathVariable("id") Long id) {
         try {
             PessoaVO pessoa = service.findById(id);
@@ -35,7 +41,10 @@ public class PessoaController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<PessoaVO> create(@RequestBody PessoaVO pessoa) {
         try {
             PessoaVO novaPessoa = service.create(pessoa);
@@ -45,7 +54,10 @@ public class PessoaController {
         }
     }
     
-    @PostMapping( value = "/v2",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping( value = "/v2",consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<PessoaVOV2> createV2(@RequestBody PessoaVOV2 pessoa) {
         try {
             PessoaVOV2 novaPessoa = service.createV2(pessoa);
@@ -55,7 +67,10 @@ public class PessoaController {
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<PessoaVO> update(@PathVariable("id") Long id, @RequestBody PessoaVO pessoa) {
         try {
             pessoa.setCodigo(id);  

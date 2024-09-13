@@ -19,13 +19,19 @@ public class LancamentoController {
     @Autowired
     private LancamentoService lancamentoService;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<List<LancamentoVO>> findAll() {
         List<LancamentoVO> lancamentos = lancamentoService.findAll();
         return ResponseEntity.ok(lancamentos);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML 
+			})
     public ResponseEntity<LancamentoVO> findById(@PathVariable("id") Long id) {
         try {
             LancamentoVO lancamento = lancamentoService.findById(id);
@@ -35,7 +41,10 @@ public class LancamentoController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<LancamentoVO> create(@Valid @RequestBody LancamentoVO lancamento) {
         try {
             LancamentoVO novoLancamento = lancamentoService.save(lancamento);
@@ -45,7 +54,10 @@ public class LancamentoController {
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  },
+	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML  })
     public ResponseEntity<LancamentoVO> update(@PathVariable("id") Long id, @Valid @RequestBody LancamentoVO lancamento) {
         try {
             lancamento.setCodigo(id);
