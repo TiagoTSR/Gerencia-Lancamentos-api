@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.data.vo.v2.PessoaVOV2;
 import br.com.xdecodex.services.PessoaService;
+import br.com.xdecodex.util.MediaType;
 
 @RestController
 @RequestMapping("/pessoas")  

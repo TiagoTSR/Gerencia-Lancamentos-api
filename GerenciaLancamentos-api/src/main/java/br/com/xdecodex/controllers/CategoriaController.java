@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.services.CategoriaService;
+import br.com.xdecodex.util.MediaType;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 
 @RestController
