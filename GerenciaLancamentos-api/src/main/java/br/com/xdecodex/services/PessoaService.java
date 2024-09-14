@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 
 import br.com.xdecodex.model.Endereco;
 import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.data.vo.v2.PessoaVOV2;
+import br.com.xdecodex.controllers.PessoaController;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.PessoaRepository;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
@@ -32,11 +35,15 @@ public class PessoaService {
     }
 
     public PessoaVO findById(Long id) {
-        logger.info("Finding one person!");
-        var entity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        return DozerMapper.parseObject(entity, PessoaVO.class);
-    }
+		
+		logger.info("Finding one person!");
+		
+		var entity = repository.findById(id)
+			.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+		var vo = DozerMapper.parseObject(entity, PessoaVO.class);
+		vo.add(linkTo(methodOn(PessoaController.class).findById(id)).withSelfRel());
+		return vo;
+}
 
     public PessoaVO create(PessoaVO pessoa) {
         logger.info("Creating one person!");
@@ -70,9 +77,9 @@ public class PessoaService {
     }
 
     public boolean delete(Long id) {
-        logger.info("Deleting one person!");
+        logger.info("Deletando uma pessoa!");
         var entity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Nenhum registro encontrado para este ID!"));
         repository.delete(entity);
         return true;
     }

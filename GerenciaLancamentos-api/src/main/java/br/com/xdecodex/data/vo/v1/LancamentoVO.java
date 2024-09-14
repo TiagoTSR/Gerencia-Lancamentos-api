@@ -1,7 +1,10 @@
 package br.com.xdecodex.data.vo.v1;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import org.springframework.hateoas.RepresentationModel;
 
 import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.model.Pessoa;
@@ -9,8 +12,10 @@ import br.com.xdecodex.model.TipoLancamento;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
-public class LancamentoVO {
+public class LancamentoVO extends RepresentationModel<LancamentoVO> implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Long codigo;
 	private String descricao;
 	private LocalDate dataVencimento;

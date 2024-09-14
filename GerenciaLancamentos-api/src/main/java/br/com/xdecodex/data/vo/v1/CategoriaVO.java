@@ -1,9 +1,14 @@
 package br.com.xdecodex.data.vo.v1;
 
-public class CategoriaVO {
+import java.io.Serializable;
 
+import org.springframework.hateoas.RepresentationModel;
 
-    private Long codigo;
+public class CategoriaVO extends RepresentationModel<CategoriaVO> implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
+	private Long codigo;
     private String nome;
 
     public Long getCodigo() {
