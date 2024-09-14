@@ -1,11 +1,15 @@
 package br.com.xdecodex.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.xdecodex.controllers.CategoriaController;
 import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
@@ -18,46 +22,53 @@ public class CategoriaService {
     private Logger logger = Logger.getLogger(CategoriaService.class.getName());
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
-
+    private CategoriaRepository categoraiaRepository;
+    
     public List<CategoriaVO> findAll() {
-        logger.info("Finding all Categorias");
-        List<Categoria> categorias = categoriaRepository.findAll();
-        return DozerMapper.parseListObjects(categorias, CategoriaVO.class);
-    }
+
+		logger.info("Encontrando todos os Lancamentos!");
+
+		List<CategoriaVO> categorias = DozerMapper.parseListObjects(categoraiaRepository.findAll(),CategoriaVO.class);
+		categorias
+			.stream()
+			.forEach(c -> c.add(linkTo(methodOn(CategoriaController.class).findById(c.getCodigo())).withSelfRel()));
+		return categorias;
+	}
+    
 
     public CategoriaVO findById(Long id) {
         logger.info("Finding Categoria by ID");
-        Categoria categoria = categoriaRepository.findById(id)
+        Categoria categoria = categoraiaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for ID: " + id));
-        return DozerMapper.parseObject(categoria, CategoriaVO.class);
+        CategoriaVO vo = DozerMapper.parseObject(categoria, CategoriaVO.class);
+        return vo;
     }
 
     public CategoriaVO create(CategoriaVO categoriaVO) {
         logger.info("Creating a new Categoria");
-        var categoria = DozerMapper.parseObject(categoriaVO, Categoria.class);
-        var savedCategoria = categoriaRepository.save(categoria);
+        Categoria categoria = DozerMapper.parseObject(categoriaVO, Categoria.class);
+        Categoria savedCategoria = categoraiaRepository.save(categoria);
         return DozerMapper.parseObject(savedCategoria, CategoriaVO.class);
     }
 
     public CategoriaVO update(CategoriaVO categoriaVO) {
         logger.info("Updating Categoria");
-        var categoria = categoriaRepository.findById(categoriaVO.getCodigo())
+        Categoria categoria = categoraiaRepository.findById(categoriaVO.getCodigo())
             .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for update"));
 
         categoria.setNome(categoriaVO.getNome());
         // Atualize outros campos conforme necessário
 
-        var updatedCategoria = categoriaRepository.save(categoria);
+        Categoria updatedCategoria = categoraiaRepository.save(categoria);
         return DozerMapper.parseObject(updatedCategoria, CategoriaVO.class);
     }
 
     public boolean delete(Long id) {
         logger.info("Deleting Categoria");
-        if (!categoriaRepository.existsById(id)) {
+        if (!categoraiaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Categoria not found for delete");
         }
-        categoriaRepository.deleteById(id);
+        categoraiaRepository.deleteById(id);
         return true;
     }
 }

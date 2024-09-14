@@ -48,7 +48,7 @@ public class LancamentoController {
 			MediaType.APPLICATION_YML  })
     public ResponseEntity<LancamentoVO> create(@Valid @RequestBody LancamentoVO lancamento) {
         try {
-            LancamentoVO novoLancamento = lancamentoService.save(lancamento);
+            LancamentoVO novoLancamento = lancamentoService.create(lancamento);
             return ResponseEntity.status(HttpStatus.CREATED).body(novoLancamento);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

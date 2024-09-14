@@ -87,7 +87,7 @@ public class DozerLancamentoConverterTest {
         when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa));
         when(lancamentoRepository.save(any(Lancamento.class))).thenReturn(mockLancamento.mockEntity(1));
 
-        LancamentoVO result = lancamentoService.save(lancamentoVO);
+        LancamentoVO result = lancamentoService.create(lancamentoVO);
 
         assertNotNull(result);
         assertEquals("Descricao Teste1", result.getDescricao());
@@ -101,7 +101,7 @@ public class DozerLancamentoConverterTest {
         when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa));
 
         assertThrows(PessoaInexistenteOuInativaException.class, () -> {
-            lancamentoService.save(lancamentoVO);
+            lancamentoService.create(lancamentoVO);
         });
     }
 

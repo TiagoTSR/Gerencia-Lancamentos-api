@@ -24,45 +24,52 @@ public class PessoaService {
     private Logger logger = Logger.getLogger(PessoaService.class.getName());
 
     @Autowired
-    private PessoaRepository repository;
+    private PessoaRepository pessoaRepository;
     
     @Autowired
     private PessoaMapper mapper;
 
     public List<PessoaVO> findAll() {
-        logger.info("Finding all people!");
-        return DozerMapper.parseListObjects(repository.findAll(), PessoaVO.class);
-    }
+
+		logger.info("Encontrando todas as Pessoas!");
+
+		List<PessoaVO> pessoas = DozerMapper.parseListObjects(pessoaRepository.findAll(), PessoaVO.class);
+		pessoas
+			.stream()
+			.forEach(p -> p.add(linkTo(methodOn(PessoaController.class).findById(p.getCodigo())).withSelfRel()));
+		return pessoas;
+	}
 
     public PessoaVO findById(Long id) {
 		
-		logger.info("Finding one person!");
+		logger.info("Encontrando uma pessoa!");
 		
-		var entity = repository.findById(id)
-			.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-		var vo = DozerMapper.parseObject(entity, PessoaVO.class);
+		Pessoa pessoa = pessoaRepository.findById(id)
+			.orElseThrow(() -> new ResourceNotFoundException("Sem registro para esse ID!"));
+		PessoaVO vo = DozerMapper.parseObject(pessoa, PessoaVO.class);
 		vo.add(linkTo(methodOn(PessoaController.class).findById(id)).withSelfRel());
 		return vo;
 }
 
     public PessoaVO create(PessoaVO pessoa) {
-        logger.info("Creating one person!");
-        var entity = DozerMapper.parseObject(pessoa, Pessoa.class);
-        var vo = DozerMapper.parseObject(repository.save(entity), PessoaVO.class);
+        logger.info("Criando uma pessoa!");
+        Pessoa entity = DozerMapper.parseObject(pessoa, Pessoa.class);
+        PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
+        vo.add(linkTo(methodOn(PessoaController.class).findById(vo.getCodigo())).withSelfRel());
         return vo;
     }
     
     public PessoaVOV2 createV2(PessoaVOV2 pessoa) {
-        logger.info("Creating one person with V2!");
-        var entity = mapper.convertyVoToEntity(pessoa);
-        var vo = mapper.convertyEntityToVo(repository.save(entity));
+        logger.info("Creating uma pessoa com V2!");
+        Pessoa entity = mapper.convertyVoToEntity(pessoa);
+        PessoaVOV2 vo = mapper.convertyEntityToVo(pessoaRepository.save(entity));
         return vo;
     }
 
     public PessoaVO update(PessoaVO pessoa) {
-        logger.info("Updating one person!");
-        var entity = repository.findById(pessoa.getCodigo())
-            .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        logger.info("Atualizando uma pessoa!");
+        Pessoa entity = pessoaRepository.findById(pessoa.getCodigo())
+            .orElseThrow(() -> new ResourceNotFoundException("Nenhum registro para esse ID!"));
 
         entity.setNome(pessoa.getNome());
 
@@ -72,15 +79,16 @@ public class PessoaService {
             entity.setEndereco(endereco);
         }
 
-        var vo = DozerMapper.parseObject(repository.save(entity), PessoaVO.class);
+        PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
+        vo.add(linkTo(methodOn(PessoaController.class).findById(vo.getCodigo())).withSelfRel());
         return vo;
     }
 
     public boolean delete(Long id) {
         logger.info("Deletando uma pessoa!");
-        var entity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Nenhum registro encontrado para este ID!"));
-        repository.delete(entity);
+        var entity = pessoaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Pessoa não  encontrada para deletar!"));
+        pessoaRepository.delete(entity);
         return true;
     }
 }
