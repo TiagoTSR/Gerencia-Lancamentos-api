@@ -26,7 +26,7 @@ import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.LancamentoRepository;
 import br.com.xdecodex.repositories.PessoaRepository;
 import br.com.xdecodex.services.LancamentoService;
-import br.com.xdecodex.unittests.mapper.mock.MockLancamento;
+import br.com.xdecodex.unittests.mapper.mocks.MockLancamento;
 
 public class DozerLancamentoConverterTest {
 

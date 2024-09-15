@@ -14,6 +14,7 @@ import br.com.xdecodex.data.vo.v2.PessoaVOV2;
 import br.com.xdecodex.controllers.PessoaController;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.PessoaRepository;
+import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
 import br.com.xdecodex.mapper.custom.PessoaMapper;
@@ -52,6 +53,9 @@ public class PessoaService {
 }
 
     public PessoaVO create(PessoaVO pessoa) {
+    	if (pessoa == null) {
+            throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
+        }
         logger.info("Criando uma pessoa!");
         Pessoa entity = DozerMapper.parseObject(pessoa, Pessoa.class);
         PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
@@ -67,22 +71,30 @@ public class PessoaService {
     }
 
     public PessoaVO update(PessoaVO pessoa) {
+        // Verifique se o objeto é nulo e lance a exceção apropriada
+        if (pessoa == null) {
+            throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
+        }
+
         logger.info("Atualizando uma pessoa!");
+
+
         Pessoa entity = pessoaRepository.findById(pessoa.getCodigo())
             .orElseThrow(() -> new ResourceNotFoundException("Nenhum registro para esse ID!"));
 
         entity.setNome(pessoa.getNome());
 
-        // Atualizando o endereço
         Endereco endereco = pessoa.getEndereco();
         if (endereco != null) {
             entity.setEndereco(endereco);
         }
-
+        
         PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
+        
         vo.add(linkTo(methodOn(PessoaController.class).findById(vo.getCodigo())).withSelfRel());
         return vo;
     }
+
 
     public boolean delete(Long id) {
         logger.info("Deletando uma pessoa!");

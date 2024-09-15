@@ -38,6 +38,7 @@ public class CategoriaService {
 
     public CategoriaVO findById(Long id) {
         logger.info("Finding Categoria by ID");
+        
         Categoria categoria = categoraiaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for ID: " + id));
         CategoriaVO vo = DozerMapper.parseObject(categoria, CategoriaVO.class);

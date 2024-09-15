@@ -1,4 +1,4 @@
-package br.com.xdecodex.unittests.mapper.mock;
+package br.com.xdecodex.unittests.mapper.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ public class MockCategoria {
     public Categoria mockEntity(Integer number) {
         Categoria categoria = new Categoria();
         categoria.setCodigo(number.longValue());
-        categoria.setNome("Categoria Teste " + number);
+        categoria.setNome("Categoria Teste" + number);
         return categoria;
     }
 
     public CategoriaVO mockVO(Integer number) {
         CategoriaVO categoriaVO = new CategoriaVO();
         categoriaVO.setCodigo(number.longValue());
-        categoriaVO.setNome("Categoria Teste " + number);
+        categoriaVO.setNome("Categoria Teste" + number);
         return categoriaVO;
     }
 }

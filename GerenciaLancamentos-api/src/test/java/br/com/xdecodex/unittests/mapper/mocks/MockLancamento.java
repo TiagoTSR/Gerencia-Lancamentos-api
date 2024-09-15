@@ -1,4 +1,4 @@
-package br.com.xdecodex.unittests.mapper.mock;
+package br.com.xdecodex.unittests.mapper.mocks;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

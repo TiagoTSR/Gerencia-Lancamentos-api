@@ -14,7 +14,7 @@ import br.com.xdecodex.services.PessoaService;
 import br.com.xdecodex.util.MediaType;
 
 @RestController
-@RequestMapping("/pessoas")  
+@RequestMapping("/api/pessoas/v1")  
 public class PessoaController {
 
     @Autowired

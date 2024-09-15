@@ -1,10 +1,11 @@
-package br.com.xdecodex.unittests.mapper.mock;
+package br.com.xdecodex.unittests.mapper.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.model.Pessoa;
+import br.com.xdecodex.model.Endereco;
 
 public class MockPessoa {
 
@@ -36,15 +37,23 @@ public class MockPessoa {
         Pessoa pessoa = new Pessoa();
         pessoa.setCodigo(number.longValue());
         pessoa.setNome("Nome Teste" + number);
-        pessoa.setEndereco(null); // Pode ser ajustado caso deseje mockar o endereço também
+        
+        Endereco endereco = new Endereco(); // Supondo que Endereco é uma classe que você está usando
+        endereco.setLogradouro("Endereço Teste" + number);
+        pessoa.setEndereco(endereco);
+        pessoa.setAtivo(true);        
         return pessoa;
     }
+
 
     public PessoaVO mockVO(Integer number) {
         PessoaVO pessoaVO = new PessoaVO();
         pessoaVO.setCodigo(number.longValue());
         pessoaVO.setNome("Nome Teste" + number);
-        pessoaVO.setEndereco(null); // Pode ser ajustado caso deseje mockar o endereço também
+        Endereco endereco = new Endereco(); // Supondo que Endereco é uma classe que você está usando
+        endereco.setLogradouro("Endereço Teste" + number);
+        pessoaVO.setEndereco(endereco);
+        pessoaVO.setAtivo(true); 
         return pessoaVO;
     }
 }

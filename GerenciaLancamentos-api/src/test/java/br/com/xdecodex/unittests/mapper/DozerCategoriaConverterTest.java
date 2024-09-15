@@ -22,7 +22,7 @@ import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.repositories.CategoriaRepository;
 import br.com.xdecodex.services.CategoriaService;
-import br.com.xdecodex.unittests.mapper.mock.MockCategoria;
+import br.com.xdecodex.unittests.mapper.mocks.MockCategoria;
 
 public class DozerCategoriaConverterTest {
 
@@ -49,8 +49,8 @@ public class DozerCategoriaConverterTest {
 
         assertNotNull(result);
         assertEquals(14, result.size());
-        assertEquals("Categoria Teste 0", result.get(0).getNome());
-        assertEquals("Categoria Teste 7", result.get(7).getNome());
+        assertEquals("Categoria Teste0", result.get(0).getNome());
+        assertEquals("Categoria Teste7", result.get(7).getNome());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DozerCategoriaConverterTest {
         CategoriaVO result = categoriaService.findById(1L);
 
         assertNotNull(result);
-        assertEquals("Categoria Teste 1", result.getNome());
+        assertEquals("Categoria Teste1", result.getNome());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class DozerCategoriaConverterTest {
         CategoriaVO result = categoriaService.create(categoriaVO);
 
         assertNotNull(result);
-        assertEquals("Categoria Teste 1", result.getNome());
+        assertEquals("Categoria Teste1", result.getNome());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class DozerCategoriaConverterTest {
         CategoriaVO result = categoriaService.update(categoriaVO);
 
         assertNotNull(result);
-        assertEquals("Categoria Teste 1", result.getNome());
+        assertEquals("Categoria Teste1", result.getNome());
     }
 
     @Test

@@ -23,7 +23,7 @@ import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.PessoaRepository;
 import br.com.xdecodex.services.PessoaService;
-import br.com.xdecodex.unittests.mapper.mock.MockPessoa;
+import br.com.xdecodex.unittests.mapper.mocks.MockPessoa;
 
 
 public class DozerPessoaConverterTest {
