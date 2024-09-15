@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -133,4 +133,43 @@ class CategoriaServiceTest {
 
         assertEquals("Categoria not found for delete", exception.getMessage());
     }
+    
+    @Test
+    void testFindAll() {
+        List<Categoria> list = mockCategoria.mockEntityList();
+        System.out.println("Tamanho da lista de mock: " + list.size());
+       
+        when(categoriaRepository.findAll()).thenReturn(list);
+
+        var categories = service.findAll();
+        System.out.println("Tamanho da lista retornada pelo serviço: " + categories.size());
+
+        assertNotNull(categories);
+        assertEquals(14, categories.size()); 
+
+        var categoriaOne = categories.get(0);
+        assertNotNull(categoriaOne);
+        assertNotNull(categoriaOne.getCodigo());
+        assertNotNull(categoriaOne.getNome());
+        System.out.println("CategoriaOne: " + categoriaOne);
+
+        assertEquals("Categoria Teste0", categoriaOne.getNome()); 
+
+        var categoriaFour = categories.get(3);
+        assertNotNull(categoriaFour);
+        assertNotNull(categoriaFour.getCodigo());
+        assertNotNull(categoriaFour.getNome());
+        System.out.println("CategoriaFour: " + categoriaFour);
+
+        assertEquals("Categoria Teste3", categoriaFour.getNome()); 
+
+        var categoriaSeven = categories.get(6);
+        assertNotNull(categoriaSeven);
+        assertNotNull(categoriaSeven.getCodigo());
+        assertNotNull(categoriaSeven.getNome());
+        System.out.println("CategoriaSeven: " + categoriaSeven);
+
+        assertEquals("Categoria Teste6", categoriaSeven.getNome()); 
+    }
+
 }
