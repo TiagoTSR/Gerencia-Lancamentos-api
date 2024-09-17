@@ -52,7 +52,8 @@ public class PessoaController {
         List<PessoaVO> pessoas = service.findAll();
         return ResponseEntity.ok(pessoas);
     }
-
+    
+    @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML 
