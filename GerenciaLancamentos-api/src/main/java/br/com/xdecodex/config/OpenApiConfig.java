@@ -14,7 +14,7 @@ public class OpenApiConfig {
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 			.info(new Info()
-				.title("RESTful API with Java 21 and Spring Boot 4")
+				.title("Gerencia API with Java 21 and Spring Boot 4")
 				.version("v1")
 				.description("Some description about your API")
 				.termsOfService("https://pub.xdecodex.com.br/meus-cursos")
