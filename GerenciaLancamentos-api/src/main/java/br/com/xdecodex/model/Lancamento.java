@@ -3,6 +3,9 @@ package br.com.xdecodex.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +17,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+
+import br.com.xdecodex.serialization.converter.LocalDateSerializer;
+import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 
 @Entity
 @Table(name = "lancamento")
@@ -27,9 +33,13 @@ public class Lancamento {
 	private String descricao;
 
 	@NotNull
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@Column(name = "data_vencimento")
 	private LocalDate dataVencimento;
 
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@Column(name = "data_pagamento")
 	private LocalDate dataPagamento;
 

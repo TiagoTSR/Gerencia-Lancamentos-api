@@ -6,9 +6,14 @@ import java.time.LocalDate;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.model.TipoLancamento;
+import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
+import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -18,7 +23,13 @@ public class LancamentoVO extends RepresentationModel<LancamentoVO> implements S
 	
 	private Long codigo;
 	private String descricao;
+	
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate dataVencimento;
+	
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate dataPagamento;
 
 	private BigDecimal valor;

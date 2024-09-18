@@ -10,17 +10,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import br.com.xdecodex.serialization.converter.YamlJackson2HttpMessageConverter;
 
-
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer{
 
 	private static final MediaType MEDIA_TYPE_APPLICATION_YML = MediaType.valueOf("application/x-yaml");
 	
+	
 	@Override
 	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.add(new YamlJackson2HttpMessageConverter());
 	}
+	
+	
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
