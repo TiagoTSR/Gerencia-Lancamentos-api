@@ -3,11 +3,13 @@ package br.com.xdecodex.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import br.com.xdecodex.controllers.LancamentoController;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
@@ -15,12 +17,22 @@ import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
 import br.com.xdecodex.model.Lancamento;
+import br.com.xdecodex.model.Lancamento_;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.repositories.LancamentoRepository;
 import br.com.xdecodex.repositories.PessoaRepository;
+import br.com.xdecodex.repositories.filter.LancamentoFilter;
+import br.com.xdecodex.repositories.lancamento.LancamentoRepositoryQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Service
-public class LancamentoService {
+public class LancamentoService implements LancamentoRepositoryQuery {
 
     private Logger logger = Logger.getLogger(LancamentoService.class.getName());
 
@@ -29,6 +41,9 @@ public class LancamentoService {
 
     @Autowired
     private PessoaRepository pessoaRepository;
+    
+    @PersistenceContext
+	private EntityManager manager;
 
     
     public List<LancamentoVO> findAll() {
@@ -110,4 +125,44 @@ public class LancamentoService {
         lancamentoRepository.delete(entity);
         return true;
     }
+
+    // LancamentoImpl do filter
+    @Override
+    public List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Lancamento> criteria = builder.createQuery(Lancamento.class);
+        Root<Lancamento> root = criteria.from(Lancamento.class);
+
+        Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
+        criteria.where(predicates);
+
+        TypedQuery<Lancamento> query = manager.createQuery(criteria);
+        List<Lancamento> lancamentos = query.getResultList();
+
+        // Convertendo Lancamentos para LancamentoVO
+        return DozerMapper.parseListObjects(lancamentos, LancamentoVO.class);
+    }
+
+	private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder,
+			Root<Lancamento> root) {
+		List<Predicate> predicates = new ArrayList<>();
+		
+		if(!ObjectUtils.isEmpty(lancamentoFilter.getDescricao())) {
+		    predicates.add(builder.like(
+		            builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
+		}
+		
+		if (lancamentoFilter.getDataVencimentoDe() != null) {
+			predicates.add(
+					builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
+		}
+		
+		if (lancamentoFilter.getDataVencimentoAte() != null) {
+			predicates.add(
+					builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
+		}
+		
+		return predicates.toArray(new Predicate[predicates.size()]);
+	}
+
 }

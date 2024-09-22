@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
+import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,9 +19,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-
-import br.com.xdecodex.serialization.converter.LocalDateSerializer;
-import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 
 @Entity
 @Table(name = "lancamento")

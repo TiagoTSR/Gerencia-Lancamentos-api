@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
+import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.services.LancamentoService;
 import br.com.xdecodex.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,8 +54,8 @@ public class LancamentoController {
 		@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 	  }
 	)
-    public ResponseEntity<List<LancamentoVO>> findAll() {
-        List<LancamentoVO> lancamentos = lancamentoService.findAll();
+    public ResponseEntity<List<LancamentoVO>> findAll(LancamentoFilter lancamentoFilter) {
+        List<LancamentoVO> lancamentos = lancamentoService.filtrar(lancamentoFilter);
         return ResponseEntity.ok(lancamentos);
     }
 
