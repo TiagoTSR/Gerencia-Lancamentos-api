@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -38,34 +44,45 @@ public class LancamentoService implements LancamentoRepositoryQuery {
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
-
+    
     @Autowired
     private PessoaRepository pessoaRepository;
-    
+
     @PersistenceContext
-	private EntityManager manager;
-
+    private EntityManager manager;
     
-    public List<LancamentoVO> findAll() {
-        logger.info("Encontrando todos os Lancamentos!");
+    @Autowired
+	PagedResourcesAssembler<LancamentoVO> assembler;
+    
 
-        List<LancamentoVO> lancamentos = DozerMapper.parseListObjects(lancamentoRepository.findAll(), LancamentoVO.class);
-        
-        lancamentos
-            .stream()
-            .forEach(l -> l.add(linkTo(methodOn(LancamentoController.class).findById(l.getCodigo())).withSelfRel()));
-        
-        return lancamentos;
+    public PagedModel<EntityModel<LancamentoVO>> findAll(Pageable pageable) {
+
+        logger.info("Encontrando todos os lancamentos!");
+
+        // Buscar a página de lançamentos
+        Page<Lancamento> lancamentoPage = lancamentoRepository.findAll(pageable);
+
+        // Mapear os lançamentos para LancamentoVO
+        Page<LancamentoVO> lancamentoVosPage = lancamentoPage.map(lancamento -> DozerMapper.parseObject(lancamento, LancamentoVO.class));
+
+        // Adicionar o link de self-rel para cada LancamentoVO
+        lancamentoVosPage.forEach(lancamentoVO -> lancamentoVO.add(
+                linkTo(methodOn(LancamentoController.class).findById(lancamentoVO.getCodigo())).withSelfRel()));
+
+        // Criar o link para a paginação
+        Link link = linkTo(methodOn(LancamentoController.class)
+                .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+        return assembler.toModel(lancamentoVosPage, link);
     }
-
 
     public LancamentoVO findById(Long id) {
         logger.info("Encontrando Lancamento pelo ID");
         Lancamento lancamento = lancamentoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lancamento not encontrado pelo ID: " + id));
         LancamentoVO vo = DozerMapper.parseObject(lancamento, LancamentoVO.class);
-		vo.add(linkTo(methodOn(LancamentoController.class).findById(id)).withSelfRel());
-		return vo;
+        vo.add(linkTo(methodOn(LancamentoController.class).findById(id)).withSelfRel());
+        return vo;
     }
 
     public LancamentoVO create(LancamentoVO lancamentoVO) {
@@ -81,52 +98,39 @@ public class LancamentoService implements LancamentoRepositoryQuery {
 
         // Conversão do VO para a entidade Lancamento
         Lancamento entity = DozerMapper.parseObject(lancamentoVO, Lancamento.class);
-        
-        // Salvamento da entidade e conversão de volta para o VO
         Lancamento savedEntity = lancamentoRepository.save(entity);
         LancamentoVO vo = DozerMapper.parseObject(savedEntity, LancamentoVO.class);
-        
-        // Adição de link HATEOAS
         vo.add(linkTo(methodOn(LancamentoController.class).findById(vo.getCodigo())).withSelfRel());
-        
+
         return vo;
     }
-
 
     public LancamentoVO update(LancamentoVO lancamentoVO) {
         logger.info("Atualizando Lancamento");
 
-        // Busca o Lancamento pelo código no VO
         Lancamento lancamento = lancamentoRepository.findById(lancamentoVO.getCodigo())
-            .orElseThrow(() -> new ResourceNotFoundException("Lancamento not found for update"));
+            .orElseThrow(() -> new ResourceNotFoundException("Lancamento não encontrado para atualização"));
 
         // Atualiza os campos do Lancamento
         lancamento.setDescricao(lancamentoVO.getDescricao());
         // Outros campos a serem atualizados...
 
-        // Salva o Lancamento atualizado no repositório
         Lancamento updatedLancamento = lancamentoRepository.save(lancamento);
-
-        // Converte a entidade atualizada para o VO
         LancamentoVO vo = DozerMapper.parseObject(updatedLancamento, LancamentoVO.class);
-        
-        // Adiciona o link HATEOAS
         vo.add(linkTo(methodOn(LancamentoController.class).findById(vo.getCodigo())).withSelfRel());
 
         return vo;
     }
 
-
     public boolean delete(Long id) {
         logger.info("Deletando Lancamento");
-        var entity = lancamentoRepository.findById(id)
+        Lancamento entity = lancamentoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lancamento não encontrado para deletar"));
 
         lancamentoRepository.delete(entity);
         return true;
     }
 
-    // LancamentoImpl do filter
     @Override
     public List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
@@ -139,30 +143,27 @@ public class LancamentoService implements LancamentoRepositoryQuery {
         TypedQuery<Lancamento> query = manager.createQuery(criteria);
         List<Lancamento> lancamentos = query.getResultList();
 
-        // Convertendo Lancamentos para LancamentoVO
         return DozerMapper.parseListObjects(lancamentos, LancamentoVO.class);
     }
 
-	private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder,
-			Root<Lancamento> root) {
-		List<Predicate> predicates = new ArrayList<>();
-		
-		if(!ObjectUtils.isEmpty(lancamentoFilter.getDescricao())) {
-		    predicates.add(builder.like(
-		            builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
-		}
-		
-		if (lancamentoFilter.getDataVencimentoDe() != null) {
-			predicates.add(
-					builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
-		}
-		
-		if (lancamentoFilter.getDataVencimentoAte() != null) {
-			predicates.add(
-					builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
-		}
-		
-		return predicates.toArray(new Predicate[predicates.size()]);
-	}
+    private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder, Root<Lancamento> root) {
+        List<Predicate> predicates = new ArrayList<>();
 
+        if (!ObjectUtils.isEmpty(lancamentoFilter.getDescricao())) {
+            predicates.add(builder.like(
+                builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
+        }
+
+        if (lancamentoFilter.getDataVencimentoDe() != null) {
+            predicates.add(
+                builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
+        }
+
+        if (lancamentoFilter.getDataVencimentoAte() != null) {
+            predicates.add(
+                builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
+        }
+
+        return predicates.toArray(new Predicate[0]);
+    }
 }
