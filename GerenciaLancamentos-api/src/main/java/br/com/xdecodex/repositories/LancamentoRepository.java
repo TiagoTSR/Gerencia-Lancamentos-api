@@ -10,7 +10,7 @@ import br.com.xdecodex.model.Lancamento;
 
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 	
-	@Query("SELECT p FROM Person p WHERE p.descricao LIKE LOWER(CONCAT ('%',:descricao,'%'))")
-	Page<Lancamento> findPersonsByName(@Param("descricao") String firstName, Pageable pageable);
+	@Query("SELECT l FROM Lancamento l WHERE l.descricao LIKE LOWER(CONCAT ('%',:descricao,'%'))")
+	Page<Lancamento> findLancamentosByDescricao(@Param("descricao") String descricao, Pageable pageable);
 
 }

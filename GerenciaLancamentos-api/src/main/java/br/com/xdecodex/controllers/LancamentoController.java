@@ -67,7 +67,7 @@ public class LancamentoController {
 
     public ResponseEntity<PagedModel<EntityModel<LancamentoVO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
-			@RequestParam(value = "size", defaultValue = "12") Integer size,
+			@RequestParam(value = "size", defaultValue = "10") Integer size,
 			@RequestParam(value = "direction", defaultValue = "asc") String direction
 			) {
 		
