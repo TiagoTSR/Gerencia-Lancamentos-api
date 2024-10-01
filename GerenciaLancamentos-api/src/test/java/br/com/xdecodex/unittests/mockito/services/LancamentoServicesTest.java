@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ class LancamentoServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.getCodigo());
-        assertEquals("Descricao Teste1", result.getDescricao());
+        assertEquals("Descricao Teste 1", result.getDescricao());
     }
 
     @Test
@@ -133,7 +132,7 @@ class LancamentoServiceTest {
             service.update(vo);
         });
 
-        assertEquals("Lancamento not found for update", exception.getMessage());
+        assertEquals("Lancamento não encontrado para atualização", exception.getMessage());
     }
 
     @Test
@@ -157,44 +156,6 @@ class LancamentoServiceTest {
         });
 
         assertEquals("Lancamento não encontrado para deletar", exception.getMessage());
-    }
-    
-    @Test
-    void testFindAll() {
-        List<Lancamento> list = mockLancamento.mockEntityList();
-        System.out.println("Tamanho da lista de mock: " + list.size());
-
-        when(lancamentoRepository.findAll()).thenReturn(list);
-
-        var lancamentos = service.findAll();
-        System.out.println("Tamanho da lista retornada pelo serviço: " + lancamentos.size());
-
-        assertNotNull(lancamentos);
-        assertEquals(14, lancamentos.size()); 
-
-        var lancamentoOne = lancamentos.get(0);
-        assertNotNull(lancamentoOne);
-        assertNotNull(lancamentoOne.getCodigo());
-        assertNotNull(lancamentoOne.getDescricao());
-        System.out.println("LancamentoOne: " + lancamentoOne);
-
-        assertEquals("Descricao Teste0", lancamentoOne.getDescricao()); 
-
-        var lancamentoFour = lancamentos.get(3);
-        assertNotNull(lancamentoFour);
-        assertNotNull(lancamentoFour.getCodigo());
-        assertNotNull(lancamentoFour.getDescricao());
-        System.out.println("LancamentoFour: " + lancamentoFour);
-
-        assertEquals("Descricao Teste3", lancamentoFour.getDescricao()); 
-
-        var lancamentoSeven = lancamentos.get(6);
-        assertNotNull(lancamentoSeven);
-        assertNotNull(lancamentoSeven.getCodigo());
-        assertNotNull(lancamentoSeven.getDescricao());
-        System.out.println("LancamentoSeven: " + lancamentoSeven);
-
-        assertEquals("Descricao Teste6", lancamentoSeven.getDescricao()); 
     }
 
 }

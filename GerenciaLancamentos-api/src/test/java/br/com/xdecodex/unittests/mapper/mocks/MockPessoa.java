@@ -16,7 +16,7 @@ public class MockPessoa {
     public PessoaVO mockVO() {
         return mockVO(0);
     }
- 
+
     public List<Pessoa> mockEntityList() {
         List<Pessoa> pessoas = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -32,28 +32,42 @@ public class MockPessoa {
         }
         return pessoas;
     }
-    
+
     public Pessoa mockEntity(Integer number) {
         Pessoa pessoa = new Pessoa();
         pessoa.setCodigo(number.longValue());
-        pessoa.setNome("Nome Teste" + number);
-        
-        Endereco endereco = new Endereco(); // Supondo que Endereco é uma classe que você está usando
-        endereco.setLogradouro("Endereço Teste" + number);
+        pessoa.setNome("Nome Teste " + number);
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Endereço Teste " + number);
+        endereco.setNumero("Número Teste " + number);
+        endereco.setComplemento("Complemento Teste " + number);
+        endereco.setBairro("Bairro Teste " + number);
+        endereco.setCep("CEP Teste " + number);
+        endereco.setCidade("Cidade Teste " + number);
+        endereco.setEstado("Estado Teste " + number);
+
         pessoa.setEndereco(endereco);
-        pessoa.setAtivo(true);        
+        pessoa.setAtivo(true);
         return pessoa;
     }
-
 
     public PessoaVO mockVO(Integer number) {
         PessoaVO pessoaVO = new PessoaVO();
         pessoaVO.setCodigo(number.longValue());
-        pessoaVO.setNome("Nome Teste" + number);
-        Endereco endereco = new Endereco(); // Supondo que Endereco é uma classe que você está usando
-        endereco.setLogradouro("Endereço Teste" + number);
+        pessoaVO.setNome("Nome Teste " + number);
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Endereço Teste " + number);
+        endereco.setNumero("Número Teste " + number);
+        endereco.setComplemento("Complemento Teste " + number);
+        endereco.setBairro("Bairro Teste " + number);
+        endereco.setCep("CEP Teste " + number);
+        endereco.setCidade("Cidade Teste " + number);
+        endereco.setEstado("Estado Teste " + number);
+
         pessoaVO.setEndereco(endereco);
-        pessoaVO.setAtivo(true); 
+        pessoaVO.setAtivo(true);
         return pessoaVO;
     }
 }

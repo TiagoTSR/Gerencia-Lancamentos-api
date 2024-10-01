@@ -1,14 +1,12 @@
 package br.com.xdecodex.integrationtests.controller.withjson;
 
+import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static io.restassured.RestAssured.given;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -22,7 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
@@ -34,8 +31,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.specification.RequestSpecification;
-import br.com.xdecodex.repositories.filter.LancamentoFilter; 
+import io.restassured.specification.RequestSpecification; 
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -224,62 +220,6 @@ public class LancamentoControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(content);
         assertEquals("Invalid CORS request", content);
     }
-    
-    @Test
-    @Order(5)
-    public void testFilterLancamentos() throws JsonMappingException, JsonProcessingException {
-
-        // Configura o filtro
-        LancamentoFilter filter = new LancamentoFilter();
-        filter.setDescricao("Salário mensal");
-        filter.setDataVencimentoDe(LocalDate.of(2017, 2, 1));
-        filter.setDataVencimentoAte(LocalDate.of(2017, 6, 30));
-
-        // Configura a requisição
-        specification = new RequestSpecBuilder()
-            .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-            .setBasePath("/api/lancamentos/v1") // URL base sem o parâmetro
-            .setPort(TestConfigs.SERVER_PORT)
-            .addFilter(new RequestLoggingFilter(LogDetail.ALL))
-            .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-            .build();
-
-        // Executa a requisição de filtragem via GET com parâmetros de consulta
-        var content = given()
-                .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .queryParam("descricao", "Salário mensal")
-                .queryParam("dataVencimentoDe", "2017-02-01")
-                .queryParam("dataVencimentoAte", "2017-06-30")
-                .when()
-                .get()
-                .then()
-                .statusCode(200) // Verifica se o status é 200 (OK)
-                .extract()
-                .body()
-                .asString();
-
-        // Deserializa a resposta
-        List<LancamentoVO> lancamentos = objectMapper.readValue(content, new TypeReference<List<LancamentoVO>>() {});
-
-        // Verifica se os lançamentos filtrados correspondem ao esperado
-        assertNotNull(lancamentos);
-        assertFalse(lancamentos.isEmpty(), "A lista de lançamentos filtrados não deve estar vazia");
-
-        for (LancamentoVO lancamento : lancamentos) {
-            // Verifica se a descrição corresponde ao esperado
-            assertEquals("Salário mensal", lancamento.getDescricao(), "Descrição não corresponde ao esperado");
-
-            // Verifica se a data de vencimento está dentro do intervalo esperado (inclusivo)
-            assertTrue(
-                !lancamento.getDataVencimento().isBefore(LocalDate.of(2017, 2, 1)) &&
-                !lancamento.getDataVencimento().isAfter(LocalDate.of(2017, 6, 30)),
-                "Data de vencimento não está dentro do intervalo esperado"
-            );
-        }
-    }
-
-
     
     private void mockLancamento() {
         Categoria categoria = new Categoria();

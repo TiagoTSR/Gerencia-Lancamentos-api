@@ -1,153 +1,117 @@
 package br.com.xdecodex.unittests.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
-import br.com.xdecodex.exceptions.ResourceNotFoundException;
+import br.com.xdecodex.mapper.DozerMapper;
 import br.com.xdecodex.model.Lancamento;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.repositories.LancamentoRepository;
-import br.com.xdecodex.repositories.PessoaRepository;
-import br.com.xdecodex.services.LancamentoService;
 import br.com.xdecodex.unittests.mapper.mocks.MockLancamento;
 
 public class DozerLancamentoConverterTest {
 
-    @InjectMocks
-    private LancamentoService lancamentoService;
-
-    @Mock
-    private LancamentoRepository lancamentoRepository;
-
-    @Mock
-    private PessoaRepository pessoaRepository;
-
-    private MockLancamento mockLancamento;
+    MockLancamento inputObject;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockLancamento = new MockLancamento();
+    public void setUp() {
+        inputObject = new MockLancamento();
     }
 
     @Test
-    void testFindAll() {
-        List<Lancamento> lancamentos = mockLancamento.mockEntityList();
-        when(lancamentoRepository.findAll()).thenReturn(lancamentos);
-
-        List<LancamentoVO> result = lancamentoService.findAll();
-
-        assertNotNull(result);
-        assertEquals(14, result.size());
-        assertEquals("Descricao Teste0", result.get(0).getDescricao());
-        assertEquals("Descricao Teste7", result.get(7).getDescricao());
+    public void parseEntityToVOTest() {
+        LancamentoVO output = DozerMapper.parseObject(inputObject.mockEntity(), LancamentoVO.class);
+        assertEquals(Long.valueOf(0L), output.getCodigo());
+        assertEquals("Descricao Teste 0", output.getDescricao());
+        assertEquals(LocalDate.now().plusDays(0), output.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(0), output.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(0), output.getValor());
+        assertEquals("Categoria Teste 0", output.getCategoria().getNome());
+        assertEquals("Nome Teste 0", output.getPessoa().getNome());
     }
 
     @Test
-    void testFindByIdSuccess() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.of(lancamento));
-
-        LancamentoVO result = lancamentoService.findById(1L);
-
-        assertNotNull(result);
-        assertEquals("Descricao Teste1", result.getDescricao());
+    public void parseEntityListToVOListTest() {
+        List<LancamentoVO> outputList = DozerMapper.parseListObjects(inputObject.mockEntityList(), LancamentoVO.class);
+        LancamentoVO outputZero = outputList.get(0);
+        
+        assertEquals(Long.valueOf(0L), outputZero.getCodigo());
+        assertEquals("Descricao Teste 0", outputZero.getDescricao());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(0), outputZero.getValor());
+        assertEquals("Categoria Teste 0", outputZero.getCategoria().getNome());
+        assertEquals("Nome Teste 0", outputZero.getPessoa().getNome());
+        
+        LancamentoVO outputSeven = outputList.get(7);
+        
+        assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
+        assertEquals("Descricao Teste 7", outputSeven.getDescricao());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(7), outputSeven.getValor());
+        assertEquals("Categoria Teste 7", outputSeven.getCategoria().getNome());
+        assertEquals("Nome Teste 7", outputSeven.getPessoa().getNome());
+        
+        LancamentoVO outputTwelve = outputList.get(12);
+        
+        assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
+        assertEquals("Descricao Teste 12", outputTwelve.getDescricao());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValor());
+        assertEquals("Categoria Teste 12", outputTwelve.getCategoria().getNome());
+        assertEquals("Nome Teste 12", outputTwelve.getPessoa().getNome());
     }
 
     @Test
-    void testFindByIdNotFound() {
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            lancamentoService.findById(1L);
-        });
+    public void parseVOToEntityTest() {
+        Lancamento output = DozerMapper.parseObject(inputObject.mockVO(), Lancamento.class);
+        assertEquals(Long.valueOf(0L), output.getCodigo());
+        assertEquals("Descricao Teste 0", output.getDescricao());
+        assertEquals(LocalDate.now().plusDays(0), output.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(0), output.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(0), output.getValor());
+        assertEquals("Categoria Teste 0", output.getCategoria().getNome());
+        assertEquals("Nome Teste 0", output.getPessoa().getNome());
     }
 
     @Test
-    void testSaveSuccess() {
-        LancamentoVO lancamentoVO = mockLancamento.mockVO(1);
-        Pessoa pessoa = mockLancamento.mockPessoa(1);
-        when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa));
-        when(lancamentoRepository.save(any(Lancamento.class))).thenReturn(mockLancamento.mockEntity(1));
-
-        LancamentoVO result = lancamentoService.create(lancamentoVO);
-
-        assertNotNull(result);
-        assertEquals("Descricao Teste1", result.getDescricao());
-    }
-
-    @Test
-    void testSavePessoaInativa() {
-        LancamentoVO lancamentoVO = mockLancamento.mockVO(1);
-        Pessoa pessoa = mockLancamento.mockPessoa(1);
-        pessoa.setAtivo(false); // Pessoa está inativa
-        when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa));
-
-        assertThrows(PessoaInexistenteOuInativaException.class, () -> {
-            lancamentoService.create(lancamentoVO);
-        });
-    }
-
-    @Test
-    void testUpdate() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
-        LancamentoVO lancamentoVO = mockLancamento.mockVO(1);
-
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.of(lancamento));
-        when(lancamentoRepository.save(any(Lancamento.class))).thenReturn(lancamento);
-
-        LancamentoVO result = lancamentoService.update(lancamentoVO);
-
-        assertNotNull(result);
-        assertEquals("Descricao Teste1", result.getDescricao());
-    }
-
-    @Test
-    void testUpdateNotFound() {
-        LancamentoVO lancamentoVO = mockLancamento.mockVO(1);
-
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            lancamentoService.update(lancamentoVO);
-        });
-    }
-
-    @Test
-    void testDelete() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
-
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.of(lancamento));
-
-        boolean result = lancamentoService.delete(1L);
-
-        assertTrue(result);
-        verify(lancamentoRepository, times(1)).delete(lancamento);
-    }
-
-    @Test
-    void testDeleteNotFound() {
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            lancamentoService.delete(1L);
-        });
+    public void parserVOListToEntityListTest() {
+        List<Lancamento> outputList = DozerMapper.parseListObjects(inputObject.mockVOList(), Lancamento.class);
+        Lancamento outputZero = outputList.get(0);
+        
+        assertEquals(Long.valueOf(0L), outputZero.getCodigo());
+        assertEquals("Descricao Teste 0", outputZero.getDescricao());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(0), outputZero.getValor());
+        assertEquals("Categoria Teste 0", outputZero.getCategoria().getNome());
+        assertEquals("Nome Teste 0", outputZero.getPessoa().getNome());
+        
+        Lancamento outputSeven = outputList.get(7);
+        
+        assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
+        assertEquals("Descricao Teste 7", outputSeven.getDescricao());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(7), outputSeven.getValor());
+        assertEquals("Categoria Teste 7", outputSeven.getCategoria().getNome());
+        assertEquals("Nome Teste 7", outputSeven.getPessoa().getNome());
+        
+        Lancamento outputTwelve = outputList.get(12);
+        
+        assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
+        assertEquals("Descricao Teste 12", outputTwelve.getDescricao());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataVencimento());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataPagamento());
+        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValor());
+        assertEquals("Categoria Teste 12", outputTwelve.getCategoria().getNome());
+        assertEquals("Nome Teste 12", outputTwelve.getPessoa().getNome());
     }
 }

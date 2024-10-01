@@ -20,7 +20,7 @@ public class MockLancamento {
     public LancamentoVO mockVO() {
         return mockVO(0);
     }
- 
+
     public List<Lancamento> mockEntityList() {
         List<Lancamento> lancamentos = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -40,42 +40,43 @@ public class MockLancamento {
     public Lancamento mockEntity(Integer number) {
         Lancamento lancamento = new Lancamento();
         lancamento.setCodigo(number.longValue());
-        lancamento.setDescricao("Descricao Teste" + number);
-        lancamento.setDataVencimento(LocalDate.now().plusDays(number)); // Exemplo de data
-        lancamento.setDataPagamento(LocalDate.now().plusDays(number)); // Exemplo de data
-        lancamento.setValor(BigDecimal.valueOf(number)); // Exemplo de valor
-        lancamento.setObservacao("Observacao Teste" + number);
-        lancamento.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]); // Exemplo de tipo
-        lancamento.setCategoria(mockCategoria(number)); // Método para criar Categoria
-        lancamento.setPessoa(mockPessoa(number)); // Assumindo que a pessoa é necessária
+        lancamento.setDescricao("Descricao Teste " + number);
+        lancamento.setDataVencimento(LocalDate.now().plusDays(number));
+        lancamento.setDataPagamento(LocalDate.now().plusDays(number));
+        lancamento.setValor(BigDecimal.valueOf(number));
+        lancamento.setObservacao("Observacao Teste " + number);
+        lancamento.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]);
+        lancamento.setCategoria(mockCategoria(number));
+        lancamento.setPessoa(mockPessoa(number));
         return lancamento;
     }
 
     public LancamentoVO mockVO(Integer number) {
         LancamentoVO lancamentoVO = new LancamentoVO();
         lancamentoVO.setCodigo(number.longValue());
-        lancamentoVO.setDescricao("Descricao Teste" + number);
-        lancamentoVO.setDataVencimento(LocalDate.now().plusDays(number)); // Exemplo de data
-        lancamentoVO.setDataPagamento(LocalDate.now().plusDays(number)); // Exemplo de data
-        lancamentoVO.setValor(BigDecimal.valueOf(number)); // Exemplo de valor
-        lancamentoVO.setObservacao("Observacao Teste" + number);
-        lancamentoVO.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]); // Exemplo de tipo
-        lancamentoVO.setCategoria(mockCategoria(number)); // Método para criar Categoria
-        lancamentoVO.setPessoa(mockPessoa(number)); // Passa um Pessoa, não um PessoaVO
+        lancamentoVO.setDescricao("Descricao Teste " + number);
+        lancamentoVO.setDataVencimento(LocalDate.now().plusDays(number));
+        lancamentoVO.setDataPagamento(LocalDate.now().plusDays(number));
+        lancamentoVO.setValor(BigDecimal.valueOf(number));
+        lancamentoVO.setObservacao("Observacao Teste " + number);
+        lancamentoVO.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]);
+        lancamentoVO.setCategoria(mockCategoria(number));
+        lancamentoVO.setPessoa(mockPessoa(number));
         return lancamentoVO;
     }
 
     public Pessoa mockPessoa(Integer number) {
         Pessoa pessoa = new Pessoa();
         pessoa.setCodigo(number.longValue());
-        pessoa.setNome("Nome Teste" + number);
-        pessoa.setAtivo(true); // Definido como ativo por padrão
+        pessoa.setNome("Nome Teste " + number);
+        pessoa.setAtivo(true);
         return pessoa;
     }
 
     private Categoria mockCategoria(Integer number) {
         Categoria categoria = new Categoria();
-        // Configure a categoria conforme necessário
+        categoria.setCodigo(number.longValue());
+        categoria.setNome("Categoria Teste " + number);
         return categoria;
     }
 }

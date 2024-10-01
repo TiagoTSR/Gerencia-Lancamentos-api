@@ -54,8 +54,8 @@ class PessoaServicesTest {
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste1", result.getNome());
+		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
+		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getAtivo());
 	}
 
@@ -78,8 +78,8 @@ class PessoaServicesTest {
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste1", result.getNome());
+		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
+		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getAtivo());
 	}
 
@@ -115,8 +115,8 @@ class PessoaServicesTest {
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste1", result.getNome());
+		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
+		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getAtivo());
 	}
 
@@ -167,8 +167,8 @@ class PessoaServicesTest {
 	    System.out.println("PessoaOne links: " + PessoaOne.getLinks());
 
 	    assertTrue(PessoaOne.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste1", PessoaOne.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste1", PessoaOne.getNome());
+	    assertEquals("Endereço Teste 1", PessoaOne.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 1", PessoaOne.getNome());
 	    assertEquals(true, PessoaOne.getAtivo());
 
 	    // Verificar a quarta pessoa (índice 4)
@@ -179,8 +179,8 @@ class PessoaServicesTest {
 	    System.out.println("PessoaFour links: " + PessoaFour.getLinks());
 
 	    assertTrue(PessoaFour.toString().contains("links: [</api/pessoas/v1/4>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste4", PessoaFour.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste4", PessoaFour.getNome());
+	    assertEquals("Endereço Teste 4", PessoaFour.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 4", PessoaFour.getNome());
 	    assertEquals(true, PessoaFour.getAtivo());
 
 	    // Verificar a sétima pessoa (índice 7)
@@ -191,8 +191,8 @@ class PessoaServicesTest {
 	    System.out.println("PessoaSeven links: " + PessoaSeven.getLinks());
 
 	    assertTrue(PessoaSeven.toString().contains("links: [</api/pessoas/v1/7>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste7", PessoaSeven.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste7", PessoaSeven.getNome());
+	    assertEquals("Endereço Teste 7", PessoaSeven.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 7", PessoaSeven.getNome());
 	    assertEquals(true, PessoaSeven.getAtivo());
 	}
 
