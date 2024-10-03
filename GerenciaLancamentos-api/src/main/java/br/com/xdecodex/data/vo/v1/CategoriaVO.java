@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class CategoriaVO extends RepresentationModel<CategoriaVO> implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -1,7 +1,9 @@
 package br.com.xdecodex.data.vo.v1;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,8 +11,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.com.xdecodex.model.Endereco;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Transient;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class PessoaVO extends RepresentationModel<PessoaVO> implements Serializable {
+	
+	@JsonIgnore
+    private List<Link> links;
 	
 	private static final long serialVersionUID = 1L;
 	

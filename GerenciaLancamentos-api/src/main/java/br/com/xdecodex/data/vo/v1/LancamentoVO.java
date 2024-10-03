@@ -3,9 +3,12 @@ package br.com.xdecodex.data.vo.v1;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -16,8 +19,13 @@ import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class LancamentoVO extends RepresentationModel<LancamentoVO> implements Serializable {
+	
+	@JsonIgnore
+    private List<Link> links;
 
 	private static final long serialVersionUID = 1L;
 	
