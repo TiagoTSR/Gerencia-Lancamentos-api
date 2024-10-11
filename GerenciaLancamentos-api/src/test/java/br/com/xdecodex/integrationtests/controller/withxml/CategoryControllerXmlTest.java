@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import br.com.xdecodex.configs.TestConfigs;
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -27,29 +27,29 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
+public class CategoryControllerXmlTest extends AbstractIntegrationTest {
 	
 	private static RequestSpecification specification;
 	private static XmlMapper objectMapper;
 
-	private static CategoriaVO categoria;
+	private static CategoryVO category;
 	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new XmlMapper();
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		
-		categoria = new CategoriaVO();
+		category = new CategoryVO();
 	}
 	
 	@Test
 	@Order(1)
 	public void testCreate() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -58,7 +58,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.body(categoria)
+				.body(category)
 				.when()
 				.post()
 				.then()
@@ -67,24 +67,24 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 				.body()
 				.asString();
 		
-		CategoriaVO persistedCategoria = objectMapper.readValue(content, CategoriaVO.class);
-		categoria = persistedCategoria;
+		CategoryVO persistedCategory = objectMapper.readValue(content, CategoryVO.class);
+		category = persistedCategory;
 		
-		assertNotNull(persistedCategoria, "Categoria persistida não deve ser nula");
-		assertNotNull(persistedCategoria.getCodigo(), "O código da categoria não pode ser nulo");
-		assertNotNull(persistedCategoria.getNome(), "O nome da categoria não pode ser nulo");
-		assertTrue(persistedCategoria.getCodigo() > 0, "O código da categoria deve ser maior que zero");
-		assertEquals("Alimentação", persistedCategoria.getNome(), "O nome da categoria não corresponde ao esperado");
+		assertNotNull(persistedCategory, "Category persisted must not be null");
+		assertNotNull(persistedCategory.getId(), "The category code cannot be null");
+		assertNotNull(persistedCategory.getName(), "The category name cannot be null");
+		assertTrue(persistedCategory.getId() > 0, "The category code must be greater than zero");
+		assertEquals("Alimentação", persistedCategory.getName(), "The category name does not match what was expected");
 	}
 
 	@Test
 	@Order(2)
 	public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -93,7 +93,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.body(categoria)
+				.body(category)
 				.when()
 				.post()
 				.then()
@@ -102,18 +102,18 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 				.body()
 				.asString();
 		
-		assertNotNull(content, "O conteúdo da resposta não pode ser nulo");
-		assertEquals("Invalid CORS request", content, "A mensagem de erro não corresponde ao esperado");
+		assertNotNull(content, "Response content cannot be null");
+		assertEquals("Invalid CORS request", content, "The error message does not match what was expected");
 	}
 
 	@Test
 	@Order(3)
 	public void testFindById() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -122,33 +122,33 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.pathParam("codigo", categoria.getCodigo())
+				.pathParam("id", category.getId())
 				.when()
-				.get("/{codigo}")
+				.get("/{id}")
 				.then()
 				.statusCode(200)
 				.extract()
 				.body()
 				.asString();
 		
-		CategoriaVO persistedCategoria = objectMapper.readValue(content, CategoriaVO.class);
-		categoria = persistedCategoria;
+		CategoryVO persistedCategory = objectMapper.readValue(content, CategoryVO.class);
+		category = persistedCategory;
 		
-		assertNotNull(persistedCategoria, "Categoria retornada não deve ser nula");
-		assertNotNull(persistedCategoria.getCodigo(), "O código da categoria não pode ser nulo");
-		assertNotNull(persistedCategoria.getNome(), "O nome da categoria não pode ser nulo");
-		assertTrue(persistedCategoria.getCodigo() > 0, "O código da categoria deve ser maior que zero");
-		assertEquals("Alimentação", persistedCategoria.getNome(), "O nome da categoria não corresponde ao esperado");
+		assertNotNull(persistedCategory, "Category returned must not be null");
+		assertNotNull(persistedCategory.getId(), "The category code cannot be null");
+		assertNotNull(persistedCategory.getName(), "The category name cannot be null");
+		assertTrue(persistedCategory.getId() > 0, "The category code must be greater than zero");
+		assertEquals("Alimentação", persistedCategory.getName(), "The category name does not match what was expected");
 	}
 	
 	@Test
 	@Order(4)
 	public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -157,17 +157,17 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.pathParam("codigo", categoria.getCodigo())
+				.pathParam("id", category.getId())
 				.when()
-				.get("/{codigo}")
+				.get("/{id}")
 				.then()
 				.statusCode(403)
 				.extract()
 				.body()
 				.asString();
 
-		assertNotNull(content, "O conteúdo da resposta não pode ser nulo");
-		assertEquals("Invalid CORS request", content, "A mensagem de erro não corresponde ao esperado");
+		assertNotNull(content, "Response content cannot be null");
+		assertEquals("Invalid CORS request", content, "The error message does not match what was expected");
 	}
 	
 	private RequestSpecification given() {
@@ -175,7 +175,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		return io.restassured.RestAssured.given();
 	}
 
-	private void mockCategoria() {
-		categoria.setNome("Alimentação");
+	private void mockCategory() {
+		category.setName("Alimentação");
 	}
 }

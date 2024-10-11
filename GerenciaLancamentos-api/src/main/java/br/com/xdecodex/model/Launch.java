@@ -21,123 +21,123 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "lancamento")
-public class Lancamento {
+@Table(name = "launch")
+public class Launch {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigo;
+	private Long id;
 	
 	@NotNull
-	private String descricao;
+	private String description;
 
 	@NotNull
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
-	@Column(name = "data_vencimento")
-	private LocalDate dataVencimento;
+	@Column(name = "expiration_date")
+	private LocalDate expirationDate;
 
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
-	@Column(name = "data_pagamento")
-	private LocalDate dataPagamento;
+	@Column(name = "payment_date")
+	private LocalDate paymentDate;
 
 	@NotNull
-	private BigDecimal valor;
+	private BigDecimal value;
 
-	private String observacao;
+	private String observation;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private TipoLancamento tipo;
+	private TypeLaunch type;
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "codigo_categoria")
-	private Categoria categoria;
+	@JoinColumn(name = "id_category")
+	private Category category;
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "codigo_pessoa")
-	private Pessoa pessoa;
+	@JoinColumn(name = "id_person")
+	private Person person;
 
-	public Long getCodigo() {
-		return codigo;
+	public Long getId() {
+		return id;
 	}
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public LocalDate getDataVencimento() {
-		return dataVencimento;
+	public LocalDate getExpirationDate() {
+		return expirationDate;
 	}
 
-	public void setDataVencimento(LocalDate dataVencimento) {
-		this.dataVencimento = dataVencimento;
+	public void setExpirationDate(LocalDate expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
-	public LocalDate getDataPagamento() {
-		return dataPagamento;
+	public LocalDate getPaymentDate() {
+		return paymentDate;
 	}
 
-	public void setDataPagamento(LocalDate dataPagamento) {
-		this.dataPagamento = dataPagamento;
+	public void setPaymentDate(LocalDate paymentDate) {
+		this.paymentDate = paymentDate;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getValue() {
+		return value;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setValue(BigDecimal value) {
+		this.value = value;
 	}
 
-	public String getObservacao() {
-		return observacao;
+	public String getObservation() {
+		return observation;
 	}
 
-	public void setObservacao(String observacao) {
-		this.observacao = observacao;
+	public void setObservation(String observation) {
+		this.observation = observation;
 	}
 
-	public TipoLancamento getTipo() {
-		return tipo;
+	public TypeLaunch getType() {
+		return type;
 	}
 
-	public void setTipo(TipoLancamento tipo) {
-		this.tipo = tipo;
+	public void setType(TypeLaunch type) {
+		this.type = type;
 	}
 
-	public Categoria getCategoria() {
-		return categoria;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -149,11 +149,11 @@ public class Lancamento {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Lancamento other = (Lancamento) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
+		Launch other = (Launch) obj;
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!codigo.equals(other.codigo))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

@@ -17,18 +17,18 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import br.com.xdecodex.controllers.LancamentoController;
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
+import br.com.xdecodex.controllers.LaunchController;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.exceptions.PersonInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
-import br.com.xdecodex.model.Lancamento;
-import br.com.xdecodex.model.Lancamento_;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.repositories.LancamentoRepository;
-import br.com.xdecodex.repositories.PessoaRepository;
-import br.com.xdecodex.repositories.filter.LancamentoFilter;
-import br.com.xdecodex.repositories.lancamento.LancamentoRepositoryQuery;
+import br.com.xdecodex.model.Launch;
+import br.com.xdecodex.model.Launch_;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.repositories.LaunchRepository;
+import br.com.xdecodex.repositories.PersonRepository;
+import br.com.xdecodex.repositories.filter.LaunchFilter;
+import br.com.xdecodex.repositories.launch.LaunchRepositoryQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -38,130 +38,130 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 @Service
-public class LancamentoService implements LancamentoRepositoryQuery {
+public class LaunchService implements LaunchRepositoryQuery {
 
-    private Logger logger = Logger.getLogger(LancamentoService.class.getName());
+    private Logger logger = Logger.getLogger(LaunchService.class.getName());
 
     @Autowired
-    private LancamentoRepository lancamentoRepository;
+    private LaunchRepository launchRepository;
     
     @Autowired
-    private PessoaRepository pessoaRepository;
+    private PersonRepository personRepository;
 
     @PersistenceContext
     private EntityManager manager;
     
     @Autowired
-	PagedResourcesAssembler<LancamentoVO> assembler;
+	PagedResourcesAssembler<LaunchVO> assembler;
     
 
-    public PagedModel<EntityModel<LancamentoVO>> findAll(Pageable pageable) {
+    public PagedModel<EntityModel<LaunchVO>> findAll(Pageable pageable) {
 
-        logger.info("Encontrando todos os lancamentos!");
+        logger.info("Finding all launches!");
 
         // Buscar a página de lançamentos
-        Page<Lancamento> lancamentoPage = lancamentoRepository.findAll(pageable);
+        Page<Launch> launchPage = launchRepository.findAll(pageable);
 
-        // Mapear os lançamentos para LancamentoVO
-        Page<LancamentoVO> lancamentoVosPage = lancamentoPage.map(lancamento -> DozerMapper.parseObject(lancamento, LancamentoVO.class));
+        // Mapear os lançamentos para LaunchVO
+        Page<LaunchVO> launchVosPage = launchPage.map(launch -> DozerMapper.parseObject(launch, LaunchVO.class));
 
-        // Adicionar o link de self-rel para cada LancamentoVO
-        lancamentoVosPage.forEach(lancamentoVO -> lancamentoVO.add(
-                linkTo(methodOn(LancamentoController.class).findById(lancamentoVO.getCodigo())).withSelfRel()));
+        // Adicionar o link de self-rel para cada LaunchVO
+        launchVosPage.forEach(launchVO -> launchVO.add(
+                linkTo(methodOn(LaunchController.class).findById(launchVO.getId())).withSelfRel()));
 
         // Criar o link para a paginação
-        Link link = linkTo(methodOn(LancamentoController.class)
+        Link link = linkTo(methodOn(LaunchController.class)
                 .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
-        return assembler.toModel(lancamentoVosPage, link);
+        return assembler.toModel(launchVosPage, link);
     }
 
-    public LancamentoVO findById(Long id) {
-        logger.info("Encontrando Lancamento pelo ID");
-        Lancamento lancamento = lancamentoRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Lancamento not encontrado pelo ID: " + id));
-        LancamentoVO vo = DozerMapper.parseObject(lancamento, LancamentoVO.class);
-        vo.add(linkTo(methodOn(LancamentoController.class).findById(id)).withSelfRel());
+    public LaunchVO findById(Long id) {
+        logger.info("Finding Launch by ID");
+        Launch launch = launchRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Launch not found by ID: " + id));
+        LaunchVO vo = DozerMapper.parseObject(launch, LaunchVO.class);
+        vo.add(linkTo(methodOn(LaunchController.class).findById(id)).withSelfRel());
         return vo;
     }
 
-    public LancamentoVO create(LancamentoVO lancamentoVO) {
-        logger.info("Salvando um novo Lancamento");
+    public LaunchVO create(LaunchVO launchVO) {
+        logger.info("Saving a new Launch");
 
-        // Busca a pessoa pelo código no VO e verifica se está inativa
-        Pessoa pessoa = pessoaRepository.findById(lancamentoVO.getPessoa().getCodigo())
-            .orElseThrow(() -> new PessoaInexistenteOuInativaException());
+        // Busca a person pelo código no VO e verifica se está inativa
+        Person person = personRepository.findById(launchVO.getPerson().getId())
+            .orElseThrow(() -> new PersonInexistenteOuInativaException());
 
-        if (pessoa.isInativo()) {
-            throw new PessoaInexistenteOuInativaException();
+        if (person.isInactive()) {
+            throw new PersonInexistenteOuInativaException();
         }
 
-        // Conversão do VO para a entidade Lancamento
-        Lancamento entity = DozerMapper.parseObject(lancamentoVO, Lancamento.class);
-        Lancamento savedEntity = lancamentoRepository.save(entity);
-        LancamentoVO vo = DozerMapper.parseObject(savedEntity, LancamentoVO.class);
-        vo.add(linkTo(methodOn(LancamentoController.class).findById(vo.getCodigo())).withSelfRel());
+        // Conversão do VO para a entidade Launch
+        Launch entity = DozerMapper.parseObject(launchVO, Launch.class);
+        Launch savedEntity = launchRepository.save(entity);
+        LaunchVO vo = DozerMapper.parseObject(savedEntity, LaunchVO.class);
+        vo.add(linkTo(methodOn(LaunchController.class).findById(vo.getId())).withSelfRel());
 
         return vo;
     }
 
-    public LancamentoVO update(LancamentoVO lancamentoVO) {
-        logger.info("Atualizando Lancamento");
+    public LaunchVO update(LaunchVO launchVO) {
+        logger.info("Updating Launch");
 
-        Lancamento lancamento = lancamentoRepository.findById(lancamentoVO.getCodigo())
-            .orElseThrow(() -> new ResourceNotFoundException("Lancamento não encontrado para atualização"));
+        Launch launch = launchRepository.findById(launchVO.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Launch not found for update"));
 
-        // Atualiza os campos do Lancamento
-        lancamento.setDescricao(lancamentoVO.getDescricao());
+        // Atualiza os campos do Launch
+        launch.setDescription(launchVO.getDescription());
         // Outros campos a serem atualizados...
 
-        Lancamento updatedLancamento = lancamentoRepository.save(lancamento);
-        LancamentoVO vo = DozerMapper.parseObject(updatedLancamento, LancamentoVO.class);
-        vo.add(linkTo(methodOn(LancamentoController.class).findById(vo.getCodigo())).withSelfRel());
+        Launch updatedLaunch = launchRepository.save(launch);
+        LaunchVO vo = DozerMapper.parseObject(updatedLaunch, LaunchVO.class);
+        vo.add(linkTo(methodOn(LaunchController.class).findById(vo.getId())).withSelfRel());
 
         return vo;
     }
 
     public boolean delete(Long id) {
-        logger.info("Deletando Lancamento");
-        Lancamento entity = lancamentoRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Lancamento não encontrado para deletar"));
+        logger.info("Deleting Launch");
+        Launch entity = launchRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Launch not found to delete"));
 
-        lancamentoRepository.delete(entity);
+        launchRepository.delete(entity);
         return true;
     }
 
     @Override
-    public List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter) {
+    public List<LaunchVO> filtrar(LaunchFilter launchFilter) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<Lancamento> criteria = builder.createQuery(Lancamento.class);
-        Root<Lancamento> root = criteria.from(Lancamento.class);
+        CriteriaQuery<Launch> criteria = builder.createQuery(Launch.class);
+        Root<Launch> root = criteria.from(Launch.class);
 
-        Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
+        Predicate[] predicates = criarRestricoes(launchFilter, builder, root);
         criteria.where(predicates);
 
-        TypedQuery<Lancamento> query = manager.createQuery(criteria);
-        List<Lancamento> lancamentos = query.getResultList();
+        TypedQuery<Launch> query = manager.createQuery(criteria);
+        List<Launch> launchs = query.getResultList();
 
-        return DozerMapper.parseListObjects(lancamentos, LancamentoVO.class);
+        return DozerMapper.parseListObjects(launchs, LaunchVO.class);
     }
 
-    private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder, Root<Lancamento> root) {
+    private Predicate[] criarRestricoes(LaunchFilter launchFilter, CriteriaBuilder builder, Root<Launch> root) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (!ObjectUtils.isEmpty(lancamentoFilter.getDescricao())) {
+        if (!ObjectUtils.isEmpty(launchFilter.getDescription())) {
             predicates.add(builder.like(
-                builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
+                builder.lower(root.get(Launch_.description)), "%" + launchFilter.getDescription().toLowerCase() + "%"));
         }
 
-        if (lancamentoFilter.getDataVencimentoDe() != null) {
+        if (launchFilter.getExpirationDateFrom() != null) {
             predicates.add(
-                builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
+                builder.greaterThanOrEqualTo(root.get(Launch_.expirationDate), launchFilter.getExpirationDateFrom()));
         }
 
-        if (lancamentoFilter.getDataVencimentoAte() != null) {
+        if (launchFilter.getExpiryDateBy() != null) {
             predicates.add(
-                builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
+                builder.lessThanOrEqualTo(root.get(Launch_.expirationDate), launchFilter.getExpiryDateBy()));
         }
 
         return predicates.toArray(new Predicate[0]);

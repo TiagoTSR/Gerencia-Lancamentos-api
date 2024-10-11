@@ -7,69 +7,69 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
 import br.com.xdecodex.mapper.DozerMapper;
-import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.unittests.mapper.mocks.MockCategoria;
+import br.com.xdecodex.model.Category;
+import br.com.xdecodex.unittests.mapper.mocks.MockCategory;
 
-public class DozerCategoriaConverterTest {
+public class DozerCategoryConverterTest {
 
-	 MockCategoria inputObject;
+	 MockCategory inputObject;
 
 	 @BeforeEach
 	 public void setUp() {
-	    inputObject = new MockCategoria();
+	    inputObject = new MockCategory();
 	 }
 
 	 @Test
 	 public void parseEntityToVOTest() {
-	    CategoriaVO output = DozerMapper.parseObject(inputObject.mockEntity(), CategoriaVO.class);
-	    assertEquals(Long.valueOf(0L), output.getCodigo());
-	    assertEquals("Categoria Teste0", output.getNome());
+	    CategoryVO output = DozerMapper.parseObject(inputObject.mockEntity(), CategoryVO.class);
+	    assertEquals(Long.valueOf(0L), output.getId());
+	    assertEquals("Category Teste0", output.getName());
 	 }
 
 	 @Test
 	 public void parseEntityListToVOListTest() {
-	    List<CategoriaVO> outputList = DozerMapper.parseListObjects(inputObject.mockEntityList(), CategoriaVO.class);
-	    CategoriaVO outputZero = outputList.get(0);
+	    List<CategoryVO> outputList = DozerMapper.parseListObjects(inputObject.mockEntityList(), CategoryVO.class);
+	    CategoryVO outputZero = outputList.get(0);
 	        
-	    assertEquals(Long.valueOf(0L), outputZero.getCodigo());
-	    assertEquals("Categoria Teste0", outputZero.getNome());
+	    assertEquals(Long.valueOf(0L), outputZero.getId());
+	    assertEquals("Category Teste0", outputZero.getName());
 	        
-	    CategoriaVO outputSeven = outputList.get(7);
+	    CategoryVO outputSeven = outputList.get(7);
 	        
-	    assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
-	    assertEquals("Categoria Teste7", outputSeven.getNome());
+	    assertEquals(Long.valueOf(7L), outputSeven.getId());
+	    assertEquals("Category Teste7", outputSeven.getName());
 	        
-	    CategoriaVO outputTwelve = outputList.get(12);
+	    CategoryVO outputTwelve = outputList.get(12);
 	        
-	    assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
-	    assertEquals("Categoria Teste12", outputTwelve.getNome());
+	    assertEquals(Long.valueOf(12L), outputTwelve.getId());
+	    assertEquals("Category Teste12", outputTwelve.getName());
 	 }
 
 	 @Test
 	 public void parseVOToEntityTest() {
-	    Categoria output = DozerMapper.parseObject(inputObject.mockVO(), Categoria.class);
-	    assertEquals(Long.valueOf(0L), output.getCodigo());
-	    assertEquals("Categoria Teste0", output.getNome());
+	    Category output = DozerMapper.parseObject(inputObject.mockVO(), Category.class);
+	    assertEquals(Long.valueOf(0L), output.getId());
+	    assertEquals("Category Teste0", output.getName());
 	 }
 	 
 	 @Test
 	 public void parserVOListToEntityListTest() {
-	    List<Categoria> outputList = DozerMapper.parseListObjects(inputObject.mockVOList(), Categoria.class);
-	    Categoria outputZero = outputList.get(0);
+	    List<Category> outputList = DozerMapper.parseListObjects(inputObject.mockVOList(), Category.class);
+	    Category outputZero = outputList.get(0);
 	        
-	    assertEquals(Long.valueOf(0L), outputZero.getCodigo());
-	    assertEquals("Categoria Teste0", outputZero.getNome());
+	    assertEquals(Long.valueOf(0L), outputZero.getId());
+	    assertEquals("Category Teste0", outputZero.getName());
 	        
-	    Categoria outputSeven = outputList.get(7);
+	    Category outputSeven = outputList.get(7);
 	        
-	    assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
-	    assertEquals("Categoria Teste7", outputSeven.getNome());
+	    assertEquals(Long.valueOf(7L), outputSeven.getId());
+	    assertEquals("Category Teste7", outputSeven.getName());
 	        
-	    Categoria outputTwelve = outputList.get(12);
+	    Category outputTwelve = outputList.get(12);
 	        
-	    assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
-	    assertEquals("Categoria Teste12", outputTwelve.getNome());
+	    assertEquals(Long.valueOf(12L), outputTwelve.getId());
+	    assertEquals("Category Teste12", outputTwelve.getName());
 	}
 }

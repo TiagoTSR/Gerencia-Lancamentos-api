@@ -15,89 +15,89 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
-import br.com.xdecodex.controllers.CategoriaController;
-import br.com.xdecodex.controllers.LancamentoController;
-import br.com.xdecodex.controllers.PessoaController;
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
+import br.com.xdecodex.controllers.CategoryController;
+import br.com.xdecodex.controllers.LaunchController;
+import br.com.xdecodex.controllers.PersonController;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
-import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.repositories.CategoriaRepository;
+import br.com.xdecodex.model.Category;
+import br.com.xdecodex.repositories.CategoryRepository;
 
 @Service
-public class CategoriaService {
+public class CategoryService {
 
-    private Logger logger = Logger.getLogger(CategoriaService.class.getName());
+    private Logger logger = Logger.getLogger(CategoryService.class.getName());
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
+    private CategoryRepository categoryRepository;
     
     @Autowired
-	PagedResourcesAssembler<CategoriaVO> assembler;
+	PagedResourcesAssembler<CategoryVO> assembler;
     
-    public List<CategoriaVO> findAll() {
+    public List<CategoryVO> findAll() {
 
-		logger.info("Encontrando todos os Lancamentos!");
+		logger.info("Encontrando todos os Launchs!");
 
-		List<CategoriaVO> categorias = DozerMapper.parseListObjects(categoriaRepository.findAll(),CategoriaVO.class);
-		categorias
+		List<CategoryVO> categorys = DozerMapper.parseListObjects(categoryRepository.findAll(),CategoryVO.class);
+		categorys
 			.stream()
-			.forEach(c -> c.add(linkTo(methodOn(CategoriaController.class).findById(c.getCodigo())).withSelfRel()));
-		return categorias;
+			.forEach(c -> c.add(linkTo(methodOn(CategoryController.class).findById(c.getId())).withSelfRel()));
+		return categorys;
 	}
     
-    public PagedModel<EntityModel<CategoriaVO>> findAll(Pageable pageable) {
+    public PagedModel<EntityModel<CategoryVO>> findAll(Pageable pageable) {
 
-        logger.info("Encontrando todos as categorias!");
+        logger.info("Encontrando todos as categorys!");
 
-        Page<Categoria> categoriaPage = categoriaRepository.findAll(pageable);
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
 
-        Page<CategoriaVO> categoriaVosPage = categoriaPage.map(categoria -> DozerMapper.parseObject(categoria, CategoriaVO.class));
+        Page<CategoryVO> categoryVosPage = categoryPage.map(category -> DozerMapper.parseObject(category, CategoryVO.class));
 
-        categoriaVosPage.forEach(categoriaVO -> categoriaVO.add(
-                linkTo(methodOn(LancamentoController.class).findById(categoriaVO.getCodigo())).withSelfRel()));
+        categoryVosPage.forEach(categoryVO -> categoryVO.add(
+                linkTo(methodOn(LaunchController.class).findById(categoryVO.getId())).withSelfRel()));
 
-        Link link = linkTo(methodOn(PessoaController.class)
+        Link link = linkTo(methodOn(PersonController.class)
                 .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
-        return assembler.toModel(categoriaVosPage, link);
+        return assembler.toModel(categoryVosPage, link);
     }
     
 
-    public CategoriaVO findById(Long id) {
-        logger.info("Finding Categoria by ID");
+    public CategoryVO findById(Long id) {
+        logger.info("Finding Category by ID");
         
-        Categoria categoria = categoriaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for ID: " + id));
-        CategoriaVO vo = DozerMapper.parseObject(categoria, CategoriaVO.class);
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Category not found for ID: " + id));
+        CategoryVO vo = DozerMapper.parseObject(category, CategoryVO.class);
         return vo;
     }
 
-    public CategoriaVO create(CategoriaVO categoriaVO) {
-        logger.info("Creating a new Categoria");
-        Categoria categoria = DozerMapper.parseObject(categoriaVO, Categoria.class);
-        Categoria savedCategoria = categoriaRepository.save(categoria);
-        return DozerMapper.parseObject(savedCategoria, CategoriaVO.class);
+    public CategoryVO create(CategoryVO categoryVO) {
+        logger.info("Creating a new Category");
+        Category category = DozerMapper.parseObject(categoryVO, Category.class);
+        Category savedCategory = categoryRepository.save(category);
+        return DozerMapper.parseObject(savedCategory, CategoryVO.class);
     }
 
-    public CategoriaVO update(CategoriaVO categoriaVO) {
-        logger.info("Updating Categoria");
-        Categoria categoria = categoriaRepository.findById(categoriaVO.getCodigo())
-            .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for update"));
+    public CategoryVO update(CategoryVO categoryVO) {
+        logger.info("Updating Category");
+        Category category = categoryRepository.findById(categoryVO.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Category not found for update"));
 
-        categoria.setNome(categoriaVO.getNome());
+        category.setName(categoryVO.getName());
         // Atualize outros campos conforme necessário
 
-        Categoria updatedCategoria = categoriaRepository.save(categoria);
-        return DozerMapper.parseObject(updatedCategoria, CategoriaVO.class);
+        Category updatedCategory = categoryRepository.save(category);
+        return DozerMapper.parseObject(updatedCategory, CategoryVO.class);
     }
 
     public boolean delete(Long id) {
-        logger.info("Deleting Categoria");
-        if (!categoriaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Categoria not found for delete");
+        logger.info("Deleting Category");
+        if (!categoryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Category not found for delete");
         }
-        categoriaRepository.deleteById(id);
+        categoryRepository.deleteById(id);
         return true;
     }
 }

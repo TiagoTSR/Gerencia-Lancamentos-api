@@ -3,46 +3,46 @@ package br.com.xdecodex.unittests.mapper.mocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
-import br.com.xdecodex.model.Categoria;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
+import br.com.xdecodex.model.Category;
 
-public class MockCategoria {
+public class MockCategory {
 
-    public Categoria mockEntity() {
+    public Category mockEntity() {
         return mockEntity(0);
     }
     
-    public CategoriaVO mockVO() {
+    public CategoryVO mockVO() {
         return mockVO(0);
     }
 
-    public List<Categoria> mockEntityList() {
-        List<Categoria> categorias = new ArrayList<>();
+    public List<Category> mockEntityList() {
+        List<Category> categorias = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             categorias.add(mockEntity(i));
         }
         return categorias;
     }
 
-    public List<CategoriaVO> mockVOList() {
-        List<CategoriaVO> categorias = new ArrayList<>();
+    public List<CategoryVO> mockVOList() {
+        List<CategoryVO> categorias = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             categorias.add(mockVO(i));
         }
         return categorias;
     }
     
-    public Categoria mockEntity(Integer number) {
-        Categoria categoria = new Categoria();
-        categoria.setCodigo(number.longValue());
-        categoria.setNome("Categoria Teste" + number);
+    public Category mockEntity(Integer number) {
+        Category categoria = new Category();
+        categoria.setId(number.longValue());
+        categoria.setName("Category Teste" + number);
         return categoria;
     }
 
-    public CategoriaVO mockVO(Integer number) {
-        CategoriaVO categoriaVO = new CategoriaVO();
-        categoriaVO.setCodigo(number.longValue());
-        categoriaVO.setNome("Categoria Teste" + number);
+    public CategoryVO mockVO(Integer number) {
+        CategoryVO categoriaVO = new CategoryVO();
+        categoriaVO.setId(number.longValue());
+        categoriaVO.setName("Category Teste" + number);
         return categoriaVO;
     }
 }

@@ -5,78 +5,78 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.model.Lancamento;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.model.TipoLancamento;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.model.Launch;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.model.Category;
+import br.com.xdecodex.model.TypeLaunch;
 
-public class MockLancamento {
+public class MockLaunch {
 
-    public Lancamento mockEntity() {
+    public Launch mockEntity() {
         return mockEntity(0);
     }
     
-    public LancamentoVO mockVO() {
+    public LaunchVO mockVO() {
         return mockVO(0);
     }
 
-    public List<Lancamento> mockEntityList() {
-        List<Lancamento> lancamentos = new ArrayList<>();
+    public List<Launch> mockEntityList() {
+        List<Launch> lancamentos = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             lancamentos.add(mockEntity(i));
         }
         return lancamentos;
     }
 
-    public List<LancamentoVO> mockVOList() {
-        List<LancamentoVO> lancamentos = new ArrayList<>();
+    public List<LaunchVO> mockVOList() {
+        List<LaunchVO> lancamentos = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             lancamentos.add(mockVO(i));
         }
         return lancamentos;
     }
     
-    public Lancamento mockEntity(Integer number) {
-        Lancamento lancamento = new Lancamento();
-        lancamento.setCodigo(number.longValue());
-        lancamento.setDescricao("Descricao Teste " + number);
-        lancamento.setDataVencimento(LocalDate.now().plusDays(number));
-        lancamento.setDataPagamento(LocalDate.now().plusDays(number));
-        lancamento.setValor(BigDecimal.valueOf(number));
-        lancamento.setObservacao("Observacao Teste " + number);
-        lancamento.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]);
-        lancamento.setCategoria(mockCategoria(number));
-        lancamento.setPessoa(mockPessoa(number));
+    public Launch mockEntity(Integer number) {
+        Launch lancamento = new Launch();
+        lancamento.setId(number.longValue());
+        lancamento.setDescription("Description Teste " + number);
+        lancamento.setExpirationDate(LocalDate.now().plusDays(number));
+        lancamento.setExpirationDate(LocalDate.now().plusDays(number));
+        lancamento.setValue(BigDecimal.valueOf(number));
+        lancamento.setObservation("Observation Teste " + number);
+        lancamento.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
+        lancamento.setCategory(mockCategory(number));
+        lancamento.setPerson(mockPerson(number));
         return lancamento;
     }
 
-    public LancamentoVO mockVO(Integer number) {
-        LancamentoVO lancamentoVO = new LancamentoVO();
-        lancamentoVO.setCodigo(number.longValue());
-        lancamentoVO.setDescricao("Descricao Teste " + number);
-        lancamentoVO.setDataVencimento(LocalDate.now().plusDays(number));
-        lancamentoVO.setDataPagamento(LocalDate.now().plusDays(number));
-        lancamentoVO.setValor(BigDecimal.valueOf(number));
-        lancamentoVO.setObservacao("Observacao Teste " + number);
-        lancamentoVO.setTipo(TipoLancamento.values()[number % TipoLancamento.values().length]);
-        lancamentoVO.setCategoria(mockCategoria(number));
-        lancamentoVO.setPessoa(mockPessoa(number));
+    public LaunchVO mockVO(Integer number) {
+        LaunchVO lancamentoVO = new LaunchVO();
+        lancamentoVO.setId(number.longValue());
+        lancamentoVO.setDescription("Description Teste " + number);
+        lancamentoVO.setExpirationDate(LocalDate.now().plusDays(number));
+        lancamentoVO.setExpirationDate(LocalDate.now().plusDays(number));
+        lancamentoVO.setValue(BigDecimal.valueOf(number));
+        lancamentoVO.setObservation("Observation Teste " + number);
+        lancamentoVO.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
+        lancamentoVO.setCategory(mockCategory(number));
+        lancamentoVO.setPerson(mockPerson(number));
         return lancamentoVO;
     }
 
-    public Pessoa mockPessoa(Integer number) {
-        Pessoa pessoa = new Pessoa();
-        pessoa.setCodigo(number.longValue());
-        pessoa.setNome("Nome Teste " + number);
-        pessoa.setAtivo(true);
+    public Person mockPerson(Integer number) {
+        Person pessoa = new Person();
+        pessoa.setId(number.longValue());
+        pessoa.setName("Name Teste " + number);
+        pessoa.setEnabled(true);
         return pessoa;
     }
 
-    private Categoria mockCategoria(Integer number) {
-        Categoria categoria = new Categoria();
-        categoria.setCodigo(number.longValue());
-        categoria.setNome("Categoria Teste " + number);
-        return categoria;
+    private Category mockCategory(Integer number) {
+        Category category = new Category();
+        category.setId(number.longValue());
+        category.setName("Category Teste " + number);
+        return category;
     }
 }

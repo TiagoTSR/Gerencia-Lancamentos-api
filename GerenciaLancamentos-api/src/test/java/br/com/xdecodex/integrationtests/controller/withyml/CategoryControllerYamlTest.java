@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.xdecodex.configs.TestConfigs;
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
 import br.com.xdecodex.integrationtests.controller.withyml.mapper.YMLMapper;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.RestAssured;
@@ -30,33 +30,33 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
+public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 	
 	private static RequestSpecification specification;
 	private static YMLMapper objectMapper;
 
-	private static CategoriaVO categoria;
+	private static CategoryVO categoria;
 	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new YMLMapper();
-		categoria = new CategoriaVO();
+		categoria = new CategoryVO();
 	}
 	
 	@Test
 	@Order(1)
 	public void testCreate() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var persistedCategoria = given().spec(specification)
+		var persistedCategory = given().spec(specification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -73,25 +73,25 @@ public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
 					.statusCode(201)
 						.extract()
 						.body()
-							.as(CategoriaVO.class, objectMapper);
+							.as(CategoryVO.class, objectMapper);
 		
-		categoria = persistedCategoria;
+		categoria = persistedCategory;
 		
-		assertNotNull(persistedCategoria, "Categoria persistida não deve ser nula");
-		assertNotNull(persistedCategoria.getCodigo(), "O código da categoria não pode ser nulo");
-		assertNotNull(persistedCategoria.getNome(), "O nome da categoria não pode ser nulo");
-		assertTrue(persistedCategoria.getCodigo() > 0, "O código da categoria deve ser maior que zero");
-		assertEquals("Alimentação", persistedCategoria.getNome(), "O nome da categoria não corresponde ao esperado");
+		assertNotNull(persistedCategory, "Category persisted must not be null");
+		assertNotNull(persistedCategory.getId(), "Category code cannot be null");
+		assertNotNull(persistedCategory.getName(), "Category name cannot be null");
+		assertTrue(persistedCategory.getId() > 0, "Category code must be greater than zero");
+		assertEquals("Alimentação", persistedCategory.getName(), "The category name does not match what was expected");
 	}
 
 	@Test
 	@Order(2)
 	public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
     	    .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -118,17 +118,17 @@ public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
 	@Test
 	@Order(3)
 	public void testFindById() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var persistedCategoria = given().spec(specification)
+		var persistedCategory = given().spec(specification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -138,32 +138,32 @@ public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.pathParam("codigo", categoria.getCodigo())
+					.pathParam("id", categoria.getId())
 					.when()
-					.get("{codigo}")
+					.get("{id}")
 				.then()
 					.statusCode(200)
 						.extract()
 						.body()
-						.as(CategoriaVO.class, objectMapper);
+						.as(CategoryVO.class, objectMapper);
 		
-		categoria = persistedCategoria;
+		categoria = persistedCategory;
 		
-		assertNotNull(persistedCategoria, "Categoria retornada não deve ser nula");
-		assertNotNull(persistedCategoria.getCodigo(), "O código da categoria não pode ser nulo");
-		assertNotNull(persistedCategoria.getNome(), "O nome da categoria não pode ser nulo");
-		assertTrue(persistedCategoria.getCodigo() > 0, "O código da categoria deve ser maior que zero");
-		assertEquals("Alimentação", persistedCategoria.getNome(), "O nome da categoria não corresponde ao esperado");
+		assertNotNull(persistedCategory, "Category retornada não deve ser nula");
+		assertNotNull(persistedCategory.getId(), "O código da categoria não pode ser nulo");
+		assertNotNull(persistedCategory.getName(), "O nome da categoria não pode ser nulo");
+		assertTrue(persistedCategory.getId() > 0, "O código da categoria deve ser maior que zero");
+		assertEquals("Alimentação", persistedCategory.getName(), "O nome da categoria não corresponde ao esperado");
 	}
 	
 	@Test
 	@Order(4)
 	public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-		mockCategoria();
+		mockCategory();
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categorias/v1")
+			.setBasePath("/api/categories/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -173,9 +173,9 @@ public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .accept(TestConfigs.CONTENT_TYPE_YML)
-                .pathParam("codigo", categoria.getCodigo())
+                .pathParam("id", categoria.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(403)
                 .extract()
@@ -191,7 +191,7 @@ public class CategoriaControllerYamlTest extends AbstractIntegrationTest {
 		return io.restassured.RestAssured.given();
 	}
 
-	private void mockCategoria() {
-		categoria.setNome("Alimentação");
+	private void mockCategory() {
+		categoria.setName("Alimentação");
 	}
 }

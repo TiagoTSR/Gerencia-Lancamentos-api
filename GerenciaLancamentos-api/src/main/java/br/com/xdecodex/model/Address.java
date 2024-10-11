@@ -3,46 +3,46 @@ package br.com.xdecodex.model;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class Endereco {
+public class Address {
     
-	private String logradouro;
-	private String numero;
-	private String complemento;
-	private String bairro;
+	private String publicPlace;
+	private String number;
+	private String complement;
+	private String neighborhood;
 	private String cep;
-	private String cidade;
-	private String estado;
+	private String city;
+	private String state;
 	
-	public String getLogradouro() {
-		return logradouro;
+	public String getPublicPlace() {
+		return publicPlace;
 	}
 
-	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
+	public void setPublicPlace(String publicPlace) {
+		this.publicPlace = publicPlace;
 	}
 
-	public String getNumero() {
-		return numero;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
-	public String getComplemento() {
-		return complemento;
+	public String getComplement() {
+		return complement;
 	}
 
-	public void setComplemento(String complemento) {
-		this.complemento = complemento;
+	public void setComplement(String complement) {
+		this.complement = complement;
 	}
 
-	public String getBairro() {
-		return bairro;
+	public String getNeighborhood() {
+		return neighborhood;
 	}
 
-	public void setBairro(String bairro) {
-		this.bairro = bairro;
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
 	}
 
 	public String getCep() {
@@ -53,19 +53,19 @@ public class Endereco {
 		this.cep = cep;
 	}
 
-	public String getCidade() {
-		return cidade;
+	public String getCity() {
+		return city;
 	}
 
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
+	public void setCity(String city) {
+		this.city = city;
 	}
 
-	public String getEstado() {
-		return estado;
+	public String getState() {
+		return state;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setState(String state) {
+		this.state = state;
 	}
 }

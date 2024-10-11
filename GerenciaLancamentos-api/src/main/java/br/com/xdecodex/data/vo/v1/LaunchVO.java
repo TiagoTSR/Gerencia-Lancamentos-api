@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.model.TipoLancamento;
+import br.com.xdecodex.model.Category;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.model.TypeLaunch;
 import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.EnumType;
@@ -22,112 +22,112 @@ import jakarta.persistence.Enumerated;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class LancamentoVO extends RepresentationModel<LancamentoVO> implements Serializable {
+public class LaunchVO extends RepresentationModel<LaunchVO> implements Serializable {
 	
 	@JsonIgnore
     private List<Link> links;
 
 	private static final long serialVersionUID = 1L;
 	
-	private Long codigo;
-	private String descricao;
+	private Long id;
+	private String description;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate dataVencimento;
+	private LocalDate expirationDate;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate dataPagamento;
+	private LocalDate paymentDate;
 
-	private BigDecimal valor;
+	private BigDecimal value;
 
-	private String observacao;
+	private String observation;
 
 	@Enumerated(EnumType.STRING)
-	private TipoLancamento tipo;
+	private TypeLaunch type;
 
-	private Categoria categoria;
+	private Category category;
 
-	private Pessoa pessoa;
+	private Person person;
 
-	public Long getCodigo() {
-		return codigo;
+	public Long getId() {
+		return id;
 	}
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public LocalDate getDataVencimento() {
-		return dataVencimento;
+	public LocalDate getExpirationDate() {
+		return expirationDate;
 	}
 
-	public void setDataVencimento(LocalDate dataVencimento) {
-		this.dataVencimento = dataVencimento;
+	public void setExpirationDate(LocalDate expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
-	public LocalDate getDataPagamento() {
-		return dataPagamento;
+	public LocalDate getPaymentDate() {
+		return paymentDate;
 	}
 
-	public void setDataPagamento(LocalDate dataPagamento) {
-		this.dataPagamento = dataPagamento;
+	public void setPaymentDate(LocalDate paymentDate) {
+		this.paymentDate = paymentDate;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getValue() {
+		return value;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setValue(BigDecimal value) {
+		this.value = value;
 	}
 
-	public String getObservacao() {
-		return observacao;
+	public String getObservation() {
+		return observation;
 	}
 
-	public void setObservacao(String observacao) {
-		this.observacao = observacao;
+	public void setObservation(String observation) {
+		this.observation = observation;
 	}
 
-	public TipoLancamento getTipo() {
-		return tipo;
+	public TypeLaunch getType() {
+		return type;
 	}
 
-	public void setTipo(TipoLancamento tipo) {
-		this.tipo = tipo;
+	public void setType(TypeLaunch type) {
+		this.type = type;
 	}
 
-	public Categoria getCategoria() {
-		return categoria;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -139,11 +139,11 @@ public class LancamentoVO extends RepresentationModel<LancamentoVO> implements S
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LancamentoVO other = (LancamentoVO) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
+		LaunchVO other = (LaunchVO) obj;
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!codigo.equals(other.codigo))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

@@ -5,34 +5,34 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.com.xdecodex.model.Endereco;
+import br.com.xdecodex.model.Address;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Transient;
 
-public class PessoaVOV2 {
+public class PersonVOV2 {
 
-	private Long codigo;
-	private String nome;
+	private Long id;
+	private String name;
 	private Date birthDay;
 
 	@Embedded
-	private Endereco endereco;
-	private Boolean ativo;
+	private Address address;
+	private Boolean enabled;
 
-	public Long getCodigo() {
-		return codigo;
+	public Long getId() {
+		return id;
 	}
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getBirthDay() {
@@ -43,31 +43,31 @@ public class PessoaVOV2 {
 		this.birthDay = birthDay;
 	}
 
-	public Endereco getEndereco() {
-		return endereco;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
-	public Boolean getAtivo() {
-		return ativo;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setAtivo(Boolean ativo) {
-		this.ativo = ativo;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	@JsonIgnore
 	@Transient
-	public boolean isInativo() {
-		return !this.ativo;
+	public boolean isInenabled() {
+		return !this.enabled;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(ativo, birthDay, codigo, endereco, nome);
+		return Objects.hash(enabled, birthDay, id, address, name);
 	}
 
 	@Override
@@ -78,10 +78,10 @@ public class PessoaVOV2 {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PessoaVOV2 other = (PessoaVOV2) obj;
-		return Objects.equals(ativo, other.ativo) && Objects.equals(birthDay, other.birthDay)
-				&& Objects.equals(codigo, other.codigo) && Objects.equals(endereco, other.endereco)
-				&& Objects.equals(nome, other.nome);
+		PersonVOV2 other = (PersonVOV2) obj;
+		return Objects.equals(enabled, other.enabled) && Objects.equals(birthDay, other.birthDay)
+				&& Objects.equals(id, other.id) && Objects.equals(address, other.address)
+				&& Objects.equals(name, other.name);
 	}
 	
 }

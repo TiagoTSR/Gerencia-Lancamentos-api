@@ -1,10 +1,10 @@
-package br.com.xdecodex.repositories.lancamento;
+package br.com.xdecodex.repositories.launch;
 
 import java.util.List;
 
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.repositories.filter.LancamentoFilter;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.repositories.filter.LaunchFilter;
 
-public interface LancamentoRepositoryQuery {
-    List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter);
+public interface LaunchRepositoryQuery {
+    List<LaunchVO> filtrar(LaunchFilter launchFilter);
 }

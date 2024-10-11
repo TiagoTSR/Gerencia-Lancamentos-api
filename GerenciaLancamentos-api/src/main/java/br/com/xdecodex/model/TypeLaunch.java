@@ -1,8 +1,8 @@
 package br.com.xdecodex.model;
 
-public enum TipoLancamento {
+public enum TypeLaunch {
 
-	RECEITA,
-	DESPESA
+	REVENUE,
+	EXPENSE
 	
 }

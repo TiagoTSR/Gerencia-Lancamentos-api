@@ -20,87 +20,87 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.exceptions.PersonInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
-import br.com.xdecodex.model.Lancamento;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.repositories.LancamentoRepository;
-import br.com.xdecodex.repositories.PessoaRepository;
-import br.com.xdecodex.services.LancamentoService;
-import br.com.xdecodex.unittests.mapper.mocks.MockLancamento;
+import br.com.xdecodex.model.Launch;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.repositories.LaunchRepository;
+import br.com.xdecodex.repositories.PersonRepository;
+import br.com.xdecodex.services.LaunchService;
+import br.com.xdecodex.unittests.mapper.mocks.MockLaunch;
 
 @ExtendWith(MockitoExtension.class)
-class LancamentoServiceTest {
+class LaunchServiceTest {
 
     @InjectMocks
-    private LancamentoService service;
+    private LaunchService service;
 
     @Mock
-    private LancamentoRepository lancamentoRepository;
+    private LaunchRepository launchRepository;
 
     @Mock
-    private PessoaRepository pessoaRepository;
+    private PersonRepository personRepository;
 
-    private MockLancamento mockLancamento;
+    private MockLaunch mockLaunch;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockLancamento = new MockLancamento();
+        mockLaunch = new MockLaunch();
     }
 
     @Test
     void testFindById() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
-        lancamento.setCodigo(1L);
+        Launch launch = mockLaunch.mockEntity(1);
+        launch.setId(1L);
 
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.of(lancamento));
+        when(launchRepository.findById(1L)).thenReturn(Optional.of(launch));
 
-        LancamentoVO result = service.findById(1L);
+        LaunchVO result = service.findById(1L);
 
         assertNotNull(result);
-        assertEquals(1L, result.getCodigo());
-        assertEquals("Descricao Teste 1", result.getDescricao());
+        assertEquals(1L, result.getId());
+        assertEquals("Description Teste 1", result.getDescription());
     }
 
     @Test
     void testFindByIdNotFound() {
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(launchRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.findById(1L);
         });
 
-        assertEquals("Lancamento not encontrado pelo ID: 1", exception.getMessage());
+        assertEquals("Launch not encontrado pelo ID: 1", exception.getMessage());
     }
 
     @Test
     void testCreate() {
-        LancamentoVO vo = mockLancamento.mockVO(1);
-        Pessoa pessoa = mock(Pessoa.class);
-        Lancamento lancamento = mockLancamento.mockEntity(1);
+        LaunchVO vo = mockLaunch.mockVO(1);
+        Person person = mock(Person.class);
+        Launch launch = mockLaunch.mockEntity(1);
 
-        when(pessoaRepository.findById(vo.getPessoa().getCodigo())).thenReturn(Optional.of(pessoa));
-        when(lancamentoRepository.save(any(Lancamento.class))).thenReturn(lancamento);
-        when(pessoa.isInativo()).thenReturn(false);
+        when(personRepository.findById(vo.getPerson().getId())).thenReturn(Optional.of(person));
+        when(launchRepository.save(any(Launch.class))).thenReturn(launch);
+        when(person.isInactive()).thenReturn(false);
 
-        LancamentoVO result = service.create(vo);
+        LaunchVO result = service.create(vo);
 
         assertNotNull(result);
-        assertEquals(vo.getCodigo(), result.getCodigo());
-        assertEquals(vo.getDescricao(), result.getDescricao());
+        assertEquals(vo.getId(), result.getId());
+        assertEquals(vo.getDescription(), result.getDescription());
     }
 
     @Test
-    void testCreateWithInactivePessoa() {
-        LancamentoVO vo = mockLancamento.mockVO(1);
-        Pessoa pessoa = mock(Pessoa.class);
+    void testCreateWithInactivePerson() {
+        LaunchVO vo = mockLaunch.mockVO(1);
+        Person person = mock(Person.class);
 
-        when(pessoaRepository.findById(vo.getPessoa().getCodigo())).thenReturn(Optional.of(pessoa));
-        when(pessoa.isInativo()).thenReturn(true);
+        when(personRepository.findById(vo.getPerson().getId())).thenReturn(Optional.of(person));
+        when(person.isInactive()).thenReturn(true);
 
-        Exception exception = assertThrows(PessoaInexistenteOuInativaException.class, () -> {
+        Exception exception = assertThrows(PersonInexistenteOuInativaException.class, () -> {
             service.create(vo);
         });
 
@@ -109,53 +109,53 @@ class LancamentoServiceTest {
 
     @Test
     void testUpdate() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
-        LancamentoVO vo = mockLancamento.mockVO(1);
+        Launch launch = mockLaunch.mockEntity(1);
+        LaunchVO vo = mockLaunch.mockVO(1);
 
-        when(lancamentoRepository.findById(vo.getCodigo())).thenReturn(Optional.of(lancamento));
-        when(lancamentoRepository.save(any(Lancamento.class))).thenReturn(lancamento);
+        when(launchRepository.findById(vo.getId())).thenReturn(Optional.of(launch));
+        when(launchRepository.save(any(Launch.class))).thenReturn(launch);
 
-        LancamentoVO result = service.update(vo);
+        LaunchVO result = service.update(vo);
 
         assertNotNull(result);
-        assertEquals(vo.getCodigo(), result.getCodigo());
-        assertEquals(vo.getDescricao(), result.getDescricao());
+        assertEquals(vo.getId(), result.getId());
+        assertEquals(vo.getDescription(), result.getDescription());
     }
 
     @Test
     void testUpdateNotFound() {
-        LancamentoVO vo = mockLancamento.mockVO(1);
+        LaunchVO vo = mockLaunch.mockVO(1);
 
-        when(lancamentoRepository.findById(vo.getCodigo())).thenReturn(Optional.empty());
+        when(launchRepository.findById(vo.getId())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.update(vo);
         });
 
-        assertEquals("Lancamento não encontrado para atualização", exception.getMessage());
+        assertEquals("Launch não encontrado para atualização", exception.getMessage());
     }
 
     @Test
     void testDelete() {
-        Lancamento lancamento = mockLancamento.mockEntity(1);
+        Launch launch = mockLaunch.mockEntity(1);
 
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.of(lancamento));
+        when(launchRepository.findById(1L)).thenReturn(Optional.of(launch));
 
         boolean result = service.delete(1L);
 
         assertTrue(result);
-        verify(lancamentoRepository, times(1)).delete(lancamento);
+        verify(launchRepository, times(1)).delete(launch);
     }
 
     @Test
     void testDeleteNotFound() {
-        when(lancamentoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(launchRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(1L);
         });
 
-        assertEquals("Lancamento não encontrado para deletar", exception.getMessage());
+        assertEquals("Launch não encontrado para deletar", exception.getMessage());
     }
 
 }

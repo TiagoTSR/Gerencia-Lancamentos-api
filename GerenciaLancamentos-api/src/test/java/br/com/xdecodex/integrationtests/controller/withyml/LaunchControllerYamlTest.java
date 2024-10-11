@@ -19,12 +19,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.xdecodex.configs.TestConfigs;
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
 import br.com.xdecodex.integrationtests.controller.withyml.mapper.YMLMapper;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
-import br.com.xdecodex.model.Categoria;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.model.TipoLancamento;
+import br.com.xdecodex.model.Category;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.model.TypeLaunch;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -38,33 +38,33 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
+public class LaunchControllerYamlTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
     private static YMLMapper objectMapper;
 
-    private static LancamentoVO lancamento;
+    private static LaunchVO launch;
     
     @BeforeAll
     public static void setup() {
         objectMapper = new YMLMapper();
-        lancamento = new LancamentoVO();
+        launch = new LaunchVO();
     }
     
     @Test
     @Order(1)
     public void testCreate() throws Exception {
-        mockLancamento();
+        mockLaunch();
 
         specification = new RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-            .setBasePath("/api/lancamentos/v1")
+            .setBasePath("/api/launchs/v1")
             .setPort(TestConfigs.SERVER_PORT)
             .addFilter(new RequestLoggingFilter(LogDetail.ALL))
             .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
             .build();
 
-        var persistedLancamento = given().spec(specification)
+        var persistedLaunch = given().spec(specification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -74,41 +74,41 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.body(lancamento, objectMapper)
+					.body(launch, objectMapper)
 					.when()
 					.post()
 				.then()
 					.statusCode(201)
 						.extract()
 						.body()
-							.as(LancamentoVO.class, objectMapper);
+							.as(LaunchVO.class, objectMapper);
 
        
-        lancamento = persistedLancamento;
+        launch = persistedLaunch;
 
         // Verificações
-        assertNotNull(persistedLancamento);
-        assertNotNull(persistedLancamento.getCodigo());
-        assertTrue(persistedLancamento.getCodigo() > 0);
-        assertEquals("Bahamas", persistedLancamento.getDescricao());
-        assertEquals(LocalDate.of(2017, 2, 10), persistedLancamento.getDataVencimento());
-        assertEquals(LocalDate.of(2017, 2, 10), persistedLancamento.getDataPagamento());
-        assertEquals(new BigDecimal("100.32"), persistedLancamento.getValor());
-        assertEquals("", persistedLancamento.getObservacao());
-        assertEquals(TipoLancamento.DESPESA, persistedLancamento.getTipo());
-        assertEquals(2L, persistedLancamento.getCategoria().getCodigo());
-        assertEquals(2L, persistedLancamento.getPessoa().getCodigo());
+        assertNotNull(persistedLaunch);
+        assertNotNull(persistedLaunch.getId());
+        assertTrue(persistedLaunch.getId() > 0);
+        assertEquals("Bahamas", persistedLaunch.getDescription());
+        assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getExpirationDate());
+        assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getPaymentDate());
+        assertEquals(new BigDecimal("100.32"), persistedLaunch.getValue());
+        assertEquals("", persistedLaunch.getObservation());
+        assertEquals(TypeLaunch.EXPENSE, persistedLaunch.getType());
+        assertEquals(2L, persistedLaunch.getCategory().getId());
+        assertEquals(2L, persistedLaunch.getPerson().getId());
     }
 
 
     @Test
     @Order(2)
     public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-        mockLancamento();
+        mockLaunch();
         
         specification = new RequestSpecBuilder()
         	    .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-        	    .setBasePath("/api/lancamentos/v1")
+        	    .setBasePath("/api/launchs/v1")
         	    .setPort(TestConfigs.SERVER_PORT)
         	    .addFilter(new RequestLoggingFilter(LogDetail.ALL))
         	    .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -120,7 +120,7 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
         String content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML) // Define o tipo de conteúdo como YAML
                 .accept(TestConfigs.CONTENT_TYPE_YML) // Aceita respostas em YAML
-                .body(lancamento, objectMapper)
+                .body(launch, objectMapper)
                 .when()
                 .post()
                 .then()
@@ -136,17 +136,17 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
     @Test
     @Order(3)
     public void testFindById() throws JsonMappingException, JsonProcessingException {
-        mockLancamento();
+        mockLaunch();
         
         specification = new RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-            .setBasePath("/api/lancamentos/v1")
+            .setBasePath("/api/launchs/v1")
             .setPort(TestConfigs.SERVER_PORT)
             .addFilter(new RequestLoggingFilter(LogDetail.ALL))
             .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
             .build();
         
-        var persistedLancamento = given().spec(specification)
+        var persistedLaunch = given().spec(specification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -156,47 +156,47 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.pathParam("codigo", lancamento.getCodigo())
+					.pathParam("codigo", launch.getId())
 					.when()
 					.get("{codigo}")
 				.then()
 					.statusCode(200)
 						.extract()
 						.body()
-						.as(LancamentoVO.class, objectMapper);
+						.as(LaunchVO.class, objectMapper);
         
-        lancamento = persistedLancamento;
+        launch = persistedLaunch;
         
-        assertNotNull(persistedLancamento);
-        assertNotNull(persistedLancamento.getCodigo());
-        assertNotNull(persistedLancamento.getDescricao());
-        assertNotNull(persistedLancamento.getDataVencimento());
-        assertNotNull(persistedLancamento.getDataPagamento());
-        assertNotNull(persistedLancamento.getValor());
-        assertNotNull(persistedLancamento.getObservacao());
-        assertNotNull(persistedLancamento.getTipo());
-        assertNotNull(persistedLancamento.getCategoria());
-        assertNotNull(persistedLancamento.getPessoa());
+        assertNotNull(persistedLaunch);
+        assertNotNull(persistedLaunch.getId());
+        assertNotNull(persistedLaunch.getDescription());
+        assertNotNull(persistedLaunch.getExpirationDate());
+        assertNotNull(persistedLaunch.getPaymentDate());
+        assertNotNull(persistedLaunch.getValue());
+        assertNotNull(persistedLaunch.getObservation());
+        assertNotNull(persistedLaunch.getType());
+        assertNotNull(persistedLaunch.getCategory());
+        assertNotNull(persistedLaunch.getPerson());
         
-        assertTrue(persistedLancamento.getCodigo() > 0);
-        assertEquals("Bahamas", persistedLancamento.getDescricao());
-        assertEquals(LocalDate.of(2017, 2, 10), persistedLancamento.getDataVencimento());
-        assertEquals(LocalDate.of(2017, 2, 10), persistedLancamento.getDataPagamento());
-        assertEquals(new BigDecimal("100.32"), persistedLancamento.getValor());
-        assertEquals("", persistedLancamento.getObservacao());
-        assertEquals(TipoLancamento.DESPESA, persistedLancamento.getTipo());
-        assertEquals(2L, persistedLancamento.getCategoria().getCodigo());
-        assertEquals(2L, persistedLancamento.getPessoa().getCodigo());
+        assertTrue(persistedLaunch.getId() > 0);
+        assertEquals("Bahamas", persistedLaunch.getDescription());
+        assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getExpirationDate());
+        assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getPaymentDate());
+        assertEquals(new BigDecimal("100.32"), persistedLaunch.getValue());
+        assertEquals("", persistedLaunch.getObservation());
+        assertEquals(TypeLaunch.EXPENSE, persistedLaunch.getType());
+        assertEquals(2L, persistedLaunch.getCategory().getId());
+        assertEquals(2L, persistedLaunch.getPerson().getId());
     }
     
     @Test
     @Order(4)
     public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-        mockLancamento();
+        mockLaunch();
         
         specification = new RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-            .setBasePath("/api/lancamentos/v1")
+            .setBasePath("/api/launchs/v1")
             .setPort(TestConfigs.SERVER_PORT)
             .addFilter(new RequestLoggingFilter(LogDetail.ALL))
             .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -206,7 +206,7 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .accept(TestConfigs.CONTENT_TYPE_YML)
-                .pathParam("codigo", lancamento.getCodigo())
+                .pathParam("codigo", launch.getId())
                 .when()
                 .get("{codigo}")
                 .then()
@@ -219,22 +219,22 @@ public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Invalid CORS request", content);
     }
     
-    private void mockLancamento() {
-        Categoria categoria = new Categoria();
-        categoria.setCodigo(2L);
-        categoria.setNome("Alimentação");
+    private void mockLaunch() {
+        Category categoria = new Category();
+        categoria.setId(2L);
+        categoria.setName("Alimentação");
         
-        Pessoa pessoa = new Pessoa();
-        pessoa.setCodigo(2L);
-        pessoa.setNome("Maria Rita");
+        Person pessoa = new Person();
+        pessoa.setId(2L);
+        pessoa.setName("Maria Rita");
         
-        lancamento.setDescricao("Bahamas");
-        lancamento.setDataVencimento(LocalDate.of(2017, 2, 10));
-        lancamento.setDataPagamento(LocalDate.of(2017, 2, 10));
-        lancamento.setValor(new BigDecimal("100.32"));
-        lancamento.setObservacao("");
-        lancamento.setTipo(TipoLancamento.DESPESA);
-        lancamento.setCategoria(categoria);
-        lancamento.setPessoa(pessoa);
+        launch.setDescription("Bahamas");
+        launch.setExpirationDate(LocalDate.of(2017, 2, 10));
+        launch.setPaymentDate(LocalDate.of(2017, 2, 10));
+        launch.setValue(new BigDecimal("100.32"));
+        launch.setObservation("");
+        launch.setType(TypeLaunch.EXPENSE);
+        launch.setCategory(categoria);
+        launch.setPerson(pessoa);
     }
 }

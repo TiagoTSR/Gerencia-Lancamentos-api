@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.xdecodex.model.Pessoa;
+import br.com.xdecodex.model.Person;
 
-public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
 	
-    @Query("SELECT p FROM Pessoa p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
-    Page<Pessoa> findPessoasByNome(@Param("nome") String nome, Pageable pageable);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<Person> findPersonsByName(@Param("name") String names, Pageable pageable);
 
 }

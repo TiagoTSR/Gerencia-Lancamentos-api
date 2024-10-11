@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.xdecodex.configs.TestConfigs;
-import br.com.xdecodex.data.vo.v1.PessoaVO;
+import br.com.xdecodex.data.vo.v1.PersonVO;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
-import br.com.xdecodex.model.Endereco;
+import br.com.xdecodex.model.Address;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -28,29 +28,29 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class PessoaControllerJsonTest extends AbstractIntegrationTest {
+public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
 
-    private static PessoaVO pessoa;
+    private static PersonVO pessoa;
 
     @BeforeAll
     public static void setup() {
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        pessoa = new PessoaVO();
+        pessoa = new PersonVO();
     }
 
     @Test
     @Order(1)
     public void testCreate() throws JsonMappingException, JsonProcessingException {
-        mockPessoa();
+        mockPerson();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-                .setBasePath("/api/pessoas/v1")
+                .setBasePath("/api/persons/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -67,37 +67,37 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        PessoaVO persistedPessoa = objectMapper.readValue(content, PessoaVO.class);
-        pessoa = persistedPessoa;
+        PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
+        pessoa = persistedPerson;
 
-        assertNotNull(persistedPessoa);
+        assertNotNull(persistedPerson);
 
-        assertNotNull(persistedPessoa.getCodigo());
-        assertNotNull(persistedPessoa.getNome());
-        assertNotNull(persistedPessoa.getEndereco());
-        assertNotNull(persistedPessoa.getAtivo());
+        assertNotNull(persistedPerson.getId());
+        assertNotNull(persistedPerson.getName());
+        assertNotNull(persistedPerson.getAddress());
+        assertNotNull(persistedPerson.getEnabled());
 
-        assertTrue(persistedPessoa.getCodigo() > 0);
+        assertTrue(persistedPerson.getId() > 0);
 
-        assertEquals("Henrique Medeiros", persistedPessoa.getNome());
-		assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
-	    assertEquals("1120", persistedPessoa.getEndereco().getNumero());
-	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
-	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
-	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
-	    assertNotNull(persistedPessoa.getAtivo());
+        assertEquals("Henrique Medeiros", persistedPerson.getName());
+		assertEquals("Rua do Sapo", persistedPerson.getAddress().getPublicPlace());
+	    assertEquals("1120", persistedPerson.getAddress().getNumber());
+	    assertEquals("Apto 201", persistedPerson.getAddress().getComplement());
+	    assertEquals("Centro", persistedPerson.getAddress().getNeighborhood());
+	    assertEquals("12.400-12", persistedPerson.getAddress().getCep());
+	    assertEquals("Rio de Janeiro", persistedPerson.getAddress().getCity());
+	    assertEquals("RJ", persistedPerson.getAddress().getState());
+	    assertNotNull(persistedPerson.getEnabled());
     }
 
     @Test
     @Order(2)
     public void testCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-        mockPessoa();
+        mockPerson();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-                .setBasePath("/api/pessoas/v1")
+                .setBasePath("/api/persons/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -121,11 +121,11 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
     @Test
     @Order(3)
     public void testFindById() throws JsonMappingException, JsonProcessingException {
-        mockPessoa();
+        mockPerson();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-                .setBasePath("/api/pessoas/v1")
+                .setBasePath("/api/persons/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -133,46 +133,46 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("codigo", pessoa.getCodigo())
+                .pathParam("id", pessoa.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
                 .asString();
 
-        PessoaVO persistedPessoa = objectMapper.readValue(content, PessoaVO.class);
-        pessoa = persistedPessoa;
+        PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
+        pessoa = persistedPerson;
 
-        assertNotNull(persistedPessoa);
+        assertNotNull(persistedPerson);
 
-        assertNotNull(persistedPessoa.getCodigo());
-        assertNotNull(persistedPessoa.getNome());
-        assertNotNull(persistedPessoa.getEndereco().getLogradouro());
-        assertNotNull(persistedPessoa.getAtivo());
+        assertNotNull(persistedPerson.getId());
+        assertNotNull(persistedPerson.getName());
+        assertNotNull(persistedPerson.getAddress().getPublicPlace());
+        assertNotNull(persistedPerson.getEnabled());
 
-        assertTrue(persistedPessoa.getCodigo() > 0);
+        assertTrue(persistedPerson.getId() > 0);
 
-        assertEquals("Henrique Medeiros", persistedPessoa.getNome());
-		assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
-	    assertEquals("1120", persistedPessoa.getEndereco().getNumero());
-	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
-	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
-	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
-	    assertNotNull(persistedPessoa.getAtivo());
+        assertEquals("Henrique Medeiros", persistedPerson.getName());
+		assertEquals("Rua do Sapo", persistedPerson.getAddress().getPublicPlace());
+	    assertEquals("1120", persistedPerson.getAddress().getNumber());
+	    assertEquals("Apto 201", persistedPerson.getAddress().getComplement());
+	    assertEquals("Centro", persistedPerson.getAddress().getNeighborhood());
+	    assertEquals("12.400-12", persistedPerson.getAddress().getCep());
+	    assertEquals("Rio de Janeiro", persistedPerson.getAddress().getCity());
+	    assertEquals("RJ", persistedPerson.getAddress().getState());
+	    assertNotNull(persistedPerson.getEnabled());
     }
 
     @Test
     @Order(4)
     public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-        mockPessoa();
+        mockPerson();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-                .setBasePath("/api/pessoas/v1")
+                .setBasePath("/api/persons/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -180,9 +180,9 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("codigo", pessoa.getCodigo())
+                .pathParam("id", pessoa.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(403)
                 .extract()
@@ -197,19 +197,19 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
         return io.restassured.RestAssured.given();
     }
 
-    private void mockPessoa() {
-    	pessoa.setNome("Henrique Medeiros");
-	    pessoa.setAtivo(true);
+    private void mockPerson() {
+    	pessoa.setName("Henrique Medeiros");
+	    pessoa.setEnabled(true);
 
-	    Endereco endereco = new Endereco();
-	    endereco.setLogradouro("Rua do Sapo");
-	    endereco.setNumero("1120");
-	    endereco.setComplemento("Apto 201");
-	    endereco.setBairro("Centro");
-	    endereco.setCep("12.400-12");
-	    endereco.setCidade("Rio de Janeiro");
-	    endereco.setEstado("RJ");
+	    Address address = new Address();
+	    address.setPublicPlace("Rua do Sapo");
+	    address.setNumber("1120");
+	    address.setComplement("Apto 201");
+	    address.setNeighborhood("Centro");
+	    address.setCep("12.400-12");
+	    address.setCity("Rio de Janeiro");
+	    address.setState("RJ");
 
-	    pessoa.setEndereco(endereco);
+	    pessoa.setAddress(address);
     }
 }

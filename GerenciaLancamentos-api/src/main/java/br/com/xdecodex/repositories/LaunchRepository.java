@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.xdecodex.model.Lancamento;
+import br.com.xdecodex.model.Launch;
 
-public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
+public interface LaunchRepository extends JpaRepository<Launch, Long> {
 	
-	@Query("SELECT l FROM Lancamento l WHERE l.descricao LIKE LOWER(CONCAT ('%',:descricao,'%'))")
-	Page<Lancamento> findLancamentosByDescricao(@Param("descricao") String descricao, Pageable pageable);
+	@Query("SELECT l FROM Launch l WHERE l.description LIKE LOWER(CONCAT ('%',:description,'%'))")
+	Page<Launch> findLaunchsByDescription(@Param("description") String description, Pageable pageable);
 
 }

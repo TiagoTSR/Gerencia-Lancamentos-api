@@ -4,29 +4,29 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
-import br.com.xdecodex.data.vo.v2.PessoaVOV2;
-import br.com.xdecodex.model.Pessoa;
+import br.com.xdecodex.data.vo.v2.PersonVOV2;
+import br.com.xdecodex.model.Person;
 
 @Service
-public class PessoaMapper {
+public class PersonMapper {
 	
-	public PessoaVOV2 convertyEntityToVo(Pessoa pessoa) {
-		PessoaVOV2 vo = new PessoaVOV2();
-		vo.setCodigo(pessoa.getCodigo());
-		vo.setNome(pessoa.getNome());
+	public PersonVOV2 convertyEntityToVo(Person person) {
+		PersonVOV2 vo = new PersonVOV2();
+		vo.setId(person.getId());
+		vo.setName(person.getName());
 		vo.setBirthDay(new Date());
-		vo.setEndereco(pessoa.getEndereco());
-		vo.setAtivo(pessoa.getAtivo());
+		vo.setAddress(person.getAddress());
+		vo.setEnabled(person.getEnabled());
 		return vo;
 	}
 	
-	public Pessoa convertyVoToEntity(PessoaVOV2 pessoa) {
-		Pessoa entity = new Pessoa();
-		entity.setCodigo(pessoa.getCodigo());
-		entity.setNome(pessoa.getNome());
+	public Person convertyVoToEntity(PersonVOV2 person) {
+		Person entity = new Person();
+		entity.setId(person.getId());
+		entity.setName(person.getName());
 		/*entity.setBirthDay(new Date());*/
-		entity.setEndereco(pessoa.getEndereco());
-		entity.setAtivo(pessoa.getAtivo());
+		entity.setAddress(person.getAddress());
+		entity.setEnabled(person.getEnabled());
 		return entity;
 	}
 	

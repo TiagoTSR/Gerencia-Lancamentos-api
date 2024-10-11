@@ -4,38 +4,38 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class LancamentoFilter {
+public class LaunchFilter {
 
-	private String descricao;
+	private String description;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dataVencimentoDe;
+	private LocalDate expirationDateFrom;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dataVencimentoAte;
+	private LocalDate expiryDateBy;
 
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public LocalDate getDataVencimentoDe() {
-		return dataVencimentoDe;
+	public LocalDate getExpirationDateFrom() {
+		return expirationDateFrom;
 	}
 
-	public void setDataVencimentoDe(LocalDate dataVencimentoDe) {
-		this.dataVencimentoDe = dataVencimentoDe;
+	public void setExpirationDateFrom(LocalDate expirationDateFrom) {
+		this.expirationDateFrom = expirationDateFrom;
 	}
 
-	public LocalDate getDataVencimentoAte() {
-		return dataVencimentoAte;
+	public LocalDate getExpiryDateBy() {
+		return expiryDateBy;
 	}
 
-	public void setDataVencimentoAte(LocalDate dataVencimentoAte) {
-		this.dataVencimentoAte = dataVencimentoAte;
+	public void setExpiryDateBy(LocalDate expiryDateBy) {
+		this.expiryDateBy = expiryDateBy;
 	}
 
 }

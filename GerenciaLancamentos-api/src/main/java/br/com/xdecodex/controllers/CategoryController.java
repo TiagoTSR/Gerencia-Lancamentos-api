@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.xdecodex.data.vo.v1.CategoriaVO;
+import br.com.xdecodex.data.vo.v1.CategoryVO;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
-import br.com.xdecodex.services.CategoriaService;
+import br.com.xdecodex.services.CategoryService;
 import br.com.xdecodex.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,25 +31,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/categorias/v1")
-@Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias")
-public class CategoriaController {
+@RequestMapping("/api/categories/v1")
+@Tag(name = "Category", description = "Endpoints para gerenciamento de categories")
+public class CategoryController {
 
     @Autowired
-    private CategoriaService categoriaService;
+    private CategoryService categoryService;
 
     @GetMapping(produces = { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML 
 			})
-    @Operation(summary = "Encontra todas as categorias", description = "Encontra todas as categorias",
-		tags = {"Categoria"},
+    @Operation(summary = "Find all categories", description = "Find all categories",
+		tags = {"Category"},
 		responses = {
 			@ApiResponse(description = "Success", responseCode = "200",
 				content = {
 				@Content(
 					mediaType = "application/json",
-					array = @ArraySchema(schema = @Schema(implementation = CategoriaVO.class))
+					array = @ArraySchema(schema = @Schema(implementation = CategoryVO.class))
 				)
 			}),
 		@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -58,7 +58,7 @@ public class CategoriaController {
 		@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 	  }
 	)
-    public ResponseEntity<PagedModel<EntityModel<CategoriaVO>>> findAll(
+    public ResponseEntity<PagedModel<EntityModel<CategoryVO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "size", defaultValue = "5") Integer size,
 			@RequestParam(value = "direction", defaultValue = "asc") String direction
@@ -68,18 +68,18 @@ public class CategoriaController {
 				? Direction.DESC : Direction.ASC;
 			
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "codigo"));
-		return ResponseEntity.ok(categoriaService.findAll(pageable));
+		return ResponseEntity.ok(categoryService.findAll(pageable));
 	}
 
     @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML 
 			})
-    @Operation(summary = "Encontra uma categoria", description = "Encontra uma categoria",
-	tags = {"Categoria"},
+    @Operation(summary = "Find a category", description = "Find a category",
+	tags = {"Category"},
 	responses = {
 		@ApiResponse(description = "Success", responseCode = "200",
-			content = @Content(schema = @Schema(implementation = CategoriaVO.class))
+			content = @Content(schema = @Schema(implementation = CategoryVO.class))
 		),
 		@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
 		@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -88,10 +88,10 @@ public class CategoriaController {
 		@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 	    }
     )
-    public ResponseEntity<CategoriaVO> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<CategoryVO> findById(@PathVariable("id") Long id) {
         try {
-            CategoriaVO categoria = categoriaService.findById(id);
-            return ResponseEntity.ok(categoria);
+            CategoryVO category = categoryService.findById(id);
+            return ResponseEntity.ok(category);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -101,33 +101,33 @@ public class CategoriaController {
 			MediaType.APPLICATION_YML  },
 	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML  })
-    @Operation(summary = "Adiciona uma categoria",
-	description = "Adiciona uma categoria passando uma representação JSON, XML ou YML da categoria!",
-	tags = {"Categoria"},
+    @Operation(summary = "Add a category",
+	description = "Add a category by passing a JSON, XML or YML representation of the category!",
+	tags = {"Category"},
 	responses = {
 		@ApiResponse(description = "Success", responseCode = "200",
-			content = @Content(schema = @Schema(implementation = CategoriaVO.class))
+			content = @Content(schema = @Schema(implementation = CategoryVO.class))
 		),
 		@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
 		@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
 		@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 	    }
     )
-    public ResponseEntity<CategoriaVO> create(@RequestBody CategoriaVO categoria) {
-        CategoriaVO novaCategoriaVO = categoriaService.create(categoria);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoriaVO);
+    public ResponseEntity<CategoryVO> create(@RequestBody CategoryVO category) {
+        CategoryVO novaCategoryVO = categoryService.create(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoryVO);
     }
 
     @PutMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML  },
 	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML  })
-    @Operation(summary = "Atualiza uma categoria",
-	description = "Atualiza uma categoria passando uma representação JSON, XML ou YML da categoria!",
-	tags = {"Categoria"},
+    @Operation(summary = "Update a category",
+	description = "Update a category by passing a JSON, XML or YML representation of the category!",
+	tags = {"Category"},
 	responses = {
 		@ApiResponse(description = "Updated", responseCode = "200",
-			content = @Content(schema = @Schema(implementation = CategoriaVO.class))
+			content = @Content(schema = @Schema(implementation = CategoryVO.class))
 		),
 		@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
 		@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
@@ -135,19 +135,19 @@ public class CategoriaController {
 		@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 	   }
     )
-    public ResponseEntity<CategoriaVO> update(@RequestBody CategoriaVO categoria) {
+    public ResponseEntity<CategoryVO> update(@RequestBody CategoryVO category) {
         try {
-            CategoriaVO categoriaAtualizada = categoriaService.update(categoria);
-            return ResponseEntity.ok(categoriaAtualizada);
+            CategoryVO categoryAtualizada = categoryService.update(category);
+            return ResponseEntity.ok(categoryAtualizada);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping(value = "/{id}")
-    @Operation(summary = "Exclui uma categoria",
-	description = "Exclui uma categoria passando uma representação JSON, XML ou YML da categoria!",
-	tags = {"Categoria"},
+    @Operation(summary = "Deletes a category",
+	description = "Deletes a category by passing a JSON, XML or YML representation of the category!",
+	tags = {"Category"},
 	responses = {
 		@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
 		@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -158,7 +158,7 @@ public class CategoriaController {
     )
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         try {
-            boolean deleted = categoriaService.delete(id);
+            boolean deleted = categoryService.delete(id);
             return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -7,34 +7,34 @@ import org.springframework.hateoas.RepresentationModel;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class CategoriaVO extends RepresentationModel<CategoriaVO> implements Serializable {
+public class CategoryVO extends RepresentationModel<CategoryVO> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Long codigo;
-    private String nome;
+	private Long id;
+    private String name;
 
-    public Long getCodigo() {
-        return codigo;
+    public Long getId() {
+        return id;
     }
 
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -46,11 +46,11 @@ public class CategoriaVO extends RepresentationModel<CategoriaVO> implements Ser
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CategoriaVO other = (CategoriaVO) obj;
-        if (codigo == null) {
-            if (other.codigo != null)
+        CategoryVO other = (CategoryVO) obj;
+        if (id == null) {
+            if (other.id != null)
                 return false;
-        } else if (!codigo.equals(other.codigo))
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }

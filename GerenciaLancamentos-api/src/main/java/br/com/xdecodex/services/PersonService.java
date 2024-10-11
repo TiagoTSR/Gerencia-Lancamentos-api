@@ -15,120 +15,120 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
-import br.com.xdecodex.controllers.LancamentoController;
-import br.com.xdecodex.controllers.PessoaController;
-import br.com.xdecodex.data.vo.v1.PessoaVO;
-import br.com.xdecodex.data.vo.v2.PessoaVOV2;
+import br.com.xdecodex.controllers.LaunchController;
+import br.com.xdecodex.controllers.PersonController;
+import br.com.xdecodex.data.vo.v1.PersonVO;
+import br.com.xdecodex.data.vo.v2.PersonVOV2;
 import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
-import br.com.xdecodex.mapper.custom.PessoaMapper;
-import br.com.xdecodex.model.Endereco;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.repositories.PessoaRepository;
+import br.com.xdecodex.mapper.custom.PersonMapper;
+import br.com.xdecodex.model.Address;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.repositories.PersonRepository;
 
 @Service
-public class PessoaService {
+public class PersonService {
 
-    private Logger logger = Logger.getLogger(PessoaService.class.getName());
+    private Logger logger = Logger.getLogger(PersonService.class.getName());
 
     @Autowired
-    private PessoaRepository pessoaRepository;
+    private PersonRepository personRepository;
     
     @Autowired
-    private PessoaMapper mapper;
+    private PersonMapper mapper;
     
     @Autowired
-	PagedResourcesAssembler<PessoaVO> assembler;
+	PagedResourcesAssembler<PersonVO> assembler;
 
-    public List<PessoaVO> findAll() {
+    public List<PersonVO> findAll() {
 
-		logger.info("Encontrando todas as Pessoas!");
+		logger.info("Encontrando todas as Persons!");
 
-		List<PessoaVO> pessoas = DozerMapper.parseListObjects(pessoaRepository.findAll(), PessoaVO.class);
-		pessoas
+		List<PersonVO> persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
+		persons
 			.stream()
-			.forEach(p -> p.add(linkTo(methodOn(PessoaController.class).findById(p.getCodigo())).withSelfRel()));
-		return pessoas;
+			.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getId())).withSelfRel()));
+		return persons;
 	}
     
-    public PagedModel<EntityModel<PessoaVO>> findAll(Pageable pageable) {
+    public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) {
 
-        logger.info("Encontrando todos as pessoas!");
+        logger.info("Encontrando todos as persons!");
 
-        Page<Pessoa> pessoaPage = pessoaRepository.findAll(pageable);
+        Page<Person> personPage = personRepository.findAll(pageable);
 
-        Page<PessoaVO> pessoaVosPage = pessoaPage.map(pessoa -> DozerMapper.parseObject(pessoa, PessoaVO.class));
+        Page<PersonVO> personVosPage = personPage.map(person -> DozerMapper.parseObject(person, PersonVO.class));
 
-        pessoaVosPage.forEach(pessoaVO -> pessoaVO.add(
-                linkTo(methodOn(LancamentoController.class).findById(pessoaVO.getCodigo())).withSelfRel()));
+        personVosPage.forEach(personVO -> personVO.add(
+                linkTo(methodOn(LaunchController.class).findById(personVO.getId())).withSelfRel()));
 
-        Link link = linkTo(methodOn(PessoaController.class)
+        Link link = linkTo(methodOn(PersonController.class)
                 .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
-        return assembler.toModel(pessoaVosPage, link);
+        return assembler.toModel(personVosPage, link);
     }
 
-    public PessoaVO findById(Long id) {
+    public PersonVO findById(Long id) {
 		
-		logger.info("Encontrando uma pessoa!");
+		logger.info("Encontrando uma person!");
 		
-		Pessoa pessoa = pessoaRepository.findById(id)
+		Person person = personRepository.findById(id)
 			.orElseThrow(() -> new ResourceNotFoundException("Sem registro para esse ID!"));
-		PessoaVO vo = DozerMapper.parseObject(pessoa, PessoaVO.class);
-		vo.add(linkTo(methodOn(PessoaController.class).findById(id)).withSelfRel());
+		PersonVO vo = DozerMapper.parseObject(person, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
 		return vo;
 }
 
-    public PessoaVO create(PessoaVO pessoa) {
-    	if (pessoa == null) {
+    public PersonVO create(PersonVO person) {
+    	if (person == null) {
             throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
         }
-        logger.info("Criando uma pessoa!");
-        Pessoa entity = DozerMapper.parseObject(pessoa, Pessoa.class);
-        PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
-        vo.add(linkTo(methodOn(PessoaController.class).findById(vo.getCodigo())).withSelfRel());
+        logger.info("Criando uma person!");
+        Person entity = DozerMapper.parseObject(person, Person.class);
+        PersonVO vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getId())).withSelfRel());
         return vo;
     }
     
-    public PessoaVOV2 createV2(PessoaVOV2 pessoa) {
-        logger.info("Creating uma pessoa com V2!");
-        Pessoa entity = mapper.convertyVoToEntity(pessoa);
-        PessoaVOV2 vo = mapper.convertyEntityToVo(pessoaRepository.save(entity));
+    public PersonVOV2 createV2(PersonVOV2 person) {
+        logger.info("Creating uma person com V2!");
+        Person entity = mapper.convertyVoToEntity(person);
+        PersonVOV2 vo = mapper.convertyEntityToVo(personRepository.save(entity));
         return vo;
     }
 
-    public PessoaVO update(PessoaVO pessoa) {
+    public PersonVO update(PersonVO person) {
         // Verifique se o objeto é nulo e lance a exceção apropriada
-        if (pessoa == null) {
+        if (person == null) {
             throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
         }
 
-        logger.info("Atualizando uma pessoa!");
+        logger.info("Atualizando uma person!");
 
 
-        Pessoa entity = pessoaRepository.findById(pessoa.getCodigo())
+        Person entity = personRepository.findById(person.getId())
             .orElseThrow(() -> new ResourceNotFoundException("Nenhum registro para esse ID!"));
 
-        entity.setNome(pessoa.getNome());
+        entity.setName(person.getName());
 
-        Endereco endereco = pessoa.getEndereco();
+        Address endereco = person.getAddress();
         if (endereco != null) {
-            entity.setEndereco(endereco);
+            entity.setAddress(endereco);
         }
         
-        PessoaVO vo = DozerMapper.parseObject(pessoaRepository.save(entity), PessoaVO.class);
+        PersonVO vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
         
-        vo.add(linkTo(methodOn(PessoaController.class).findById(vo.getCodigo())).withSelfRel());
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getId())).withSelfRel());
         return vo;
     }
 
 
     public boolean delete(Long id) {
-        logger.info("Deletando uma pessoa!");
-        var entity = pessoaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Pessoa não  encontrada para deletar!"));
-        pessoaRepository.delete(entity);
+        logger.info("Deletando uma person!");
+        var entity = personRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Person não  encontrada para deletar!"));
+        personRepository.delete(entity);
         return true;
     }
 }

@@ -8,69 +8,69 @@ import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.com.xdecodex.model.Endereco;
+import br.com.xdecodex.model.Address;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class PessoaVO extends RepresentationModel<PessoaVO> implements Serializable {
+public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 	
 	@JsonIgnore
     private List<Link> links;
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Long codigo;
-	private String nome;
+	private Long id;
+	private String name;
 
 	@Embedded
-	private Endereco endereco;
-	private Boolean ativo;
+	private Address address;
+	private Boolean enabled;
 
-	public Long getCodigo() {
-		return codigo;
+	public Long getId() {
+		return id;
 	}
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Endereco getEndereco() {
-		return endereco;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
-	public Boolean getAtivo() {
-		return ativo;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setAtivo(Boolean ativo) {
-		this.ativo = ativo;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	@JsonIgnore
 	@Transient
-	public boolean isInativo() {
-		return !this.ativo;
+	public boolean isInenabled() {
+		return !this.enabled;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -82,11 +82,11 @@ public class PessoaVO extends RepresentationModel<PessoaVO> implements Serializa
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PessoaVO other = (PessoaVO) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
+		PersonVO other = (PersonVO) obj;
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!codigo.equals(other.codigo))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

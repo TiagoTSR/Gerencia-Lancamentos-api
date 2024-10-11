@@ -1,5 +1,5 @@
-package br.com.xdecodex.repositories.lancamento;
+package br.com.xdecodex.repositories.launch;
 
-public class LancamentoRepositoryImpl {
+public class LaunchRepositoryImpl {
 
 }

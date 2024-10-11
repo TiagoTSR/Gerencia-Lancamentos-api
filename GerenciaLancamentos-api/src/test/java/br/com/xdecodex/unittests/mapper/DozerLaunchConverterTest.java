@@ -9,109 +9,109 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.com.xdecodex.data.vo.v1.LancamentoVO;
+import br.com.xdecodex.data.vo.v1.LaunchVO;
 import br.com.xdecodex.mapper.DozerMapper;
-import br.com.xdecodex.model.Lancamento;
-import br.com.xdecodex.unittests.mapper.mocks.MockLancamento;
+import br.com.xdecodex.model.Launch;
+import br.com.xdecodex.unittests.mapper.mocks.MockLaunch;
 
-public class DozerLancamentoConverterTest {
+public class DozerLaunchConverterTest {
 
-    MockLancamento inputObject;
+    MockLaunch inputObject;
 
     @BeforeEach
     public void setUp() {
-        inputObject = new MockLancamento();
+        inputObject = new MockLaunch();
     }
 
     @Test
     public void parseEntityToVOTest() {
-        LancamentoVO output = DozerMapper.parseObject(inputObject.mockEntity(), LancamentoVO.class);
-        assertEquals(Long.valueOf(0L), output.getCodigo());
-        assertEquals("Descricao Teste 0", output.getDescricao());
-        assertEquals(LocalDate.now().plusDays(0), output.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(0), output.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(0), output.getValor());
-        assertEquals("Categoria Teste 0", output.getCategoria().getNome());
-        assertEquals("Nome Teste 0", output.getPessoa().getNome());
+        LaunchVO output = DozerMapper.parseObject(inputObject.mockEntity(), LaunchVO.class);
+        assertEquals(Long.valueOf(0L), output.getId());
+        assertEquals("Description Teste 0", output.getDescription());
+        assertEquals(LocalDate.now().plusDays(0), output.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(0), output.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(0), output.getValue());
+        assertEquals("Category Teste 0", output.getCategory().getName());
+        assertEquals("Name Teste 0", output.getPerson().getName());
     }
 
     @Test
     public void parseEntityListToVOListTest() {
-        List<LancamentoVO> outputList = DozerMapper.parseListObjects(inputObject.mockEntityList(), LancamentoVO.class);
-        LancamentoVO outputZero = outputList.get(0);
+        List<LaunchVO> outputList = DozerMapper.parseListObjects(inputObject.mockEntityList(), LaunchVO.class);
+        LaunchVO outputZero = outputList.get(0);
         
-        assertEquals(Long.valueOf(0L), outputZero.getCodigo());
-        assertEquals("Descricao Teste 0", outputZero.getDescricao());
-        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(0), outputZero.getValor());
-        assertEquals("Categoria Teste 0", outputZero.getCategoria().getNome());
-        assertEquals("Nome Teste 0", outputZero.getPessoa().getNome());
+        assertEquals(Long.valueOf(0L), outputZero.getId());
+        assertEquals("Description Teste 0", outputZero.getDescription());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(0), outputZero.getValue());
+        assertEquals("Category Teste 0", outputZero.getCategory().getName());
+        assertEquals("Name Teste 0", outputZero.getPerson().getName());
         
-        LancamentoVO outputSeven = outputList.get(7);
+        LaunchVO outputSeven = outputList.get(7);
         
-        assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
-        assertEquals("Descricao Teste 7", outputSeven.getDescricao());
-        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(7), outputSeven.getValor());
-        assertEquals("Categoria Teste 7", outputSeven.getCategoria().getNome());
-        assertEquals("Nome Teste 7", outputSeven.getPessoa().getNome());
+        assertEquals(Long.valueOf(7L), outputSeven.getId());
+        assertEquals("Description Teste 7", outputSeven.getDescription());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(7), outputSeven.getValue());
+        assertEquals("Category Teste 7", outputSeven.getCategory().getName());
+        assertEquals("Name Teste 7", outputSeven.getPerson().getName());
         
-        LancamentoVO outputTwelve = outputList.get(12);
+        LaunchVO outputTwelve = outputList.get(12);
         
-        assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
-        assertEquals("Descricao Teste 12", outputTwelve.getDescricao());
-        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValor());
-        assertEquals("Categoria Teste 12", outputTwelve.getCategoria().getNome());
-        assertEquals("Nome Teste 12", outputTwelve.getPessoa().getNome());
+        assertEquals(Long.valueOf(12L), outputTwelve.getId());
+        assertEquals("Description Teste 12", outputTwelve.getDescription());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValue());
+        assertEquals("Category Teste 12", outputTwelve.getCategory().getName());
+        assertEquals("Name Teste 12", outputTwelve.getPerson().getName());
     }
 
     @Test
     public void parseVOToEntityTest() {
-        Lancamento output = DozerMapper.parseObject(inputObject.mockVO(), Lancamento.class);
-        assertEquals(Long.valueOf(0L), output.getCodigo());
-        assertEquals("Descricao Teste 0", output.getDescricao());
-        assertEquals(LocalDate.now().plusDays(0), output.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(0), output.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(0), output.getValor());
-        assertEquals("Categoria Teste 0", output.getCategoria().getNome());
-        assertEquals("Nome Teste 0", output.getPessoa().getNome());
+        Launch output = DozerMapper.parseObject(inputObject.mockVO(), Launch.class);
+        assertEquals(Long.valueOf(0L), output.getId());
+        assertEquals("Description Teste 0", output.getDescription());
+        assertEquals(LocalDate.now().plusDays(0), output.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(0), output.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(0), output.getValue());
+        assertEquals("Category Teste 0", output.getCategory().getName());
+        assertEquals("Name Teste 0", output.getPerson().getName());
     }
 
     @Test
     public void parserVOListToEntityListTest() {
-        List<Lancamento> outputList = DozerMapper.parseListObjects(inputObject.mockVOList(), Lancamento.class);
-        Lancamento outputZero = outputList.get(0);
+        List<Launch> outputList = DozerMapper.parseListObjects(inputObject.mockVOList(), Launch.class);
+        Launch outputZero = outputList.get(0);
         
-        assertEquals(Long.valueOf(0L), outputZero.getCodigo());
-        assertEquals("Descricao Teste 0", outputZero.getDescricao());
-        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(0), outputZero.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(0), outputZero.getValor());
-        assertEquals("Categoria Teste 0", outputZero.getCategoria().getNome());
-        assertEquals("Nome Teste 0", outputZero.getPessoa().getNome());
+        assertEquals(Long.valueOf(0L), outputZero.getId());
+        assertEquals("Description Teste 0", outputZero.getDescription());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(0), outputZero.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(0), outputZero.getValue());
+        assertEquals("Category Teste 0", outputZero.getCategory().getName());
+        assertEquals("Name Teste 0", outputZero.getPerson().getName());
         
-        Lancamento outputSeven = outputList.get(7);
+        Launch outputSeven = outputList.get(7);
         
-        assertEquals(Long.valueOf(7L), outputSeven.getCodigo());
-        assertEquals("Descricao Teste 7", outputSeven.getDescricao());
-        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(7), outputSeven.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(7), outputSeven.getValor());
-        assertEquals("Categoria Teste 7", outputSeven.getCategoria().getNome());
-        assertEquals("Nome Teste 7", outputSeven.getPessoa().getNome());
+        assertEquals(Long.valueOf(7L), outputSeven.getId());
+        assertEquals("Description Teste 7", outputSeven.getDescription());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(7), outputSeven.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(7), outputSeven.getValue());
+        assertEquals("Category Teste 7", outputSeven.getCategory().getName());
+        assertEquals("Name Teste 7", outputSeven.getPerson().getName());
         
-        Lancamento outputTwelve = outputList.get(12);
+        Launch outputTwelve = outputList.get(12);
         
-        assertEquals(Long.valueOf(12L), outputTwelve.getCodigo());
-        assertEquals("Descricao Teste 12", outputTwelve.getDescricao());
-        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataVencimento());
-        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getDataPagamento());
-        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValor());
-        assertEquals("Categoria Teste 12", outputTwelve.getCategoria().getNome());
-        assertEquals("Nome Teste 12", outputTwelve.getPessoa().getNome());
+        assertEquals(Long.valueOf(12L), outputTwelve.getId());
+        assertEquals("Description Teste 12", outputTwelve.getDescription());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getExpirationDate());
+        assertEquals(LocalDate.now().plusDays(12), outputTwelve.getPaymentDate());
+        assertEquals(BigDecimal.valueOf(12), outputTwelve.getValue());
+        assertEquals("Category Teste 12", outputTwelve.getCategory().getName());
+        assertEquals("Name Teste 12", outputTwelve.getPerson().getName());
     }
 }

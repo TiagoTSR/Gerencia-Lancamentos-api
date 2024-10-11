@@ -16,75 +16,75 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.xdecodex.data.vo.v1.PessoaVO;
+import br.com.xdecodex.data.vo.v1.PersonVO;
 import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
-import br.com.xdecodex.model.Pessoa;
-import br.com.xdecodex.repositories.PessoaRepository;
-import br.com.xdecodex.services.PessoaService;
-import br.com.xdecodex.unittests.mapper.mocks.MockPessoa;
+import br.com.xdecodex.model.Person;
+import br.com.xdecodex.repositories.PersonRepository;
+import br.com.xdecodex.services.PersonService;
+import br.com.xdecodex.unittests.mapper.mocks.MockPerson;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-class PessoaServicesTest {
+class PersonServicesTest {
 
-	MockPessoa input;
+	MockPerson input;
 
 	@InjectMocks
-	private PessoaService service;
+	private PersonService service;
 
 	@Mock
-	PessoaRepository repository;
+	PersonRepository repository;
 
 	@BeforeEach
 	void setUpMocks() throws Exception {
-		input = new MockPessoa();
+		input = new MockPerson();
 		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
 	void testFindById() {
-		Pessoa entity = input.mockEntity(1);
-		entity.setCodigo(1L);
+		Person entity = input.mockEntity(1);
+		entity.setId(1L);
 
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
 
 		var result = service.findById(1L);
 		assertNotNull(result);
-		assertNotNull(result.getCodigo());
+		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste 1", result.getNome());
-		assertEquals(true, result.getAtivo());
+		assertEquals("Endereço Teste 1", result.getAddress().getPublicPlace());
+		assertEquals("Name Teste 1", result.getName());
+		assertEquals(true, result.getEnabled());
 	}
 
 	@Test
 	void testCreate() {
-		Pessoa entity = input.mockEntity(1);
-		entity.setCodigo(1L);
+		Person entity = input.mockEntity(1);
+		entity.setId(1L);
 
-		Pessoa persisted = entity;
+		Person persisted = entity;
 
-		PessoaVO vo = input.mockVO(1);
-		vo.setCodigo(1L);
+		PersonVO vo = input.mockVO(1);
+		vo.setId(1L);
 
 		when(repository.save(entity)).thenReturn(persisted);
 
 		var result = service.create(vo);
 
 		assertNotNull(result);
-		assertNotNull(result.getCodigo());
+		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste 1", result.getNome());
-		assertEquals(true, result.getAtivo());
+		assertEquals("Endereço Teste 1", result.getAddress().getPublicPlace());
+		assertEquals("Name Teste 1", result.getName());
+		assertEquals(true, result.getEnabled());
 	}
 
 	@Test
-	void testCreateWithNullPessoa() {
+	void testCreateWithNullPerson() {
 		Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
 			service.create(null);
 		});
@@ -97,13 +97,13 @@ class PessoaServicesTest {
 
 	@Test
 	void testUpdate() {
-		Pessoa entity = input.mockEntity(1);
-		entity.setCodigo(1L);
+		Person entity = input.mockEntity(1);
+		entity.setId(1L);
 
-		Pessoa persisted = entity;
+		Person persisted = entity;
 
-		PessoaVO vo = input.mockVO(1);
-		vo.setCodigo(1L);
+		PersonVO vo = input.mockVO(1);
+		vo.setId(1L);
 
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
 		when(repository.save(entity)).thenReturn(persisted);
@@ -111,17 +111,17 @@ class PessoaServicesTest {
 		var result = service.update(vo);
 
 		assertNotNull(result);
-		assertNotNull(result.getCodigo());
+		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
 		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
-		assertEquals("Nome Teste 1", result.getNome());
-		assertEquals(true, result.getAtivo());
+		assertEquals("Endereço Teste 1", result.getAddress().getPublicPlace());
+		assertEquals("Name Teste 1", result.getName());
+		assertEquals(true, result.getEnabled());
 	}
 
 	@Test
-	void testUpdateWithNullPessoa() {
+	void testUpdateWithNullPerson() {
 		Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
 			service.update(null);
 		});
@@ -134,8 +134,8 @@ class PessoaServicesTest {
 
 	@Test
 	void testDelete() {
-		Pessoa entity = input.mockEntity(1);
-		entity.setCodigo(1L);
+		Person entity = input.mockEntity(1);
+		entity.setId(1L);
 
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
 
@@ -145,7 +145,7 @@ class PessoaServicesTest {
 	@Test
 	void testFindAll() {
 	    // Obter a lista de mock e verificar o tamanho
-	    List<Pessoa> list = input.mockEntityList();
+	    List<Person> list = input.mockEntityList();
 	    System.out.println("Tamanho da lista de mock: " + list.size());
 	    
 	    // Retornar essa lista no mock do repositório
@@ -160,40 +160,40 @@ class PessoaServicesTest {
 	    assertEquals(14, people.size()); //
 
 	    // Verificar a primeira pessoa (índice 1)
-	    var PessoaOne = people.get(1);
-	    assertNotNull(PessoaOne);
-	    assertNotNull(PessoaOne.getCodigo());
-	    assertNotNull(PessoaOne.getLinks());
-	    System.out.println("PessoaOne links: " + PessoaOne.getLinks());
+	    var PersonOne = people.get(1);
+	    assertNotNull(PersonOne);
+	    assertNotNull(PersonOne.getId());
+	    assertNotNull(PersonOne.getLinks());
+	    System.out.println("PersonOne links: " + PersonOne.getLinks());
 
-	    assertTrue(PessoaOne.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 1", PessoaOne.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 1", PessoaOne.getNome());
-	    assertEquals(true, PessoaOne.getAtivo());
+	    assertTrue(PersonOne.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 1", PersonOne.getAddress().getPublicPlace());
+	    assertEquals("Name Teste 1", PersonOne.getName());
+	    assertEquals(true, PersonOne.getEnabled());
 
 	    // Verificar a quarta pessoa (índice 4)
-	    var PessoaFour = people.get(4);
-	    assertNotNull(PessoaFour);
-	    assertNotNull(PessoaFour.getCodigo());
-	    assertNotNull(PessoaFour.getLinks());
-	    System.out.println("PessoaFour links: " + PessoaFour.getLinks());
+	    var PersonFour = people.get(4);
+	    assertNotNull(PersonFour);
+	    assertNotNull(PersonFour.getId());
+	    assertNotNull(PersonFour.getLinks());
+	    System.out.println("PersonFour links: " + PersonFour.getLinks());
 
-	    assertTrue(PessoaFour.toString().contains("links: [</api/pessoas/v1/4>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 4", PessoaFour.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 4", PessoaFour.getNome());
-	    assertEquals(true, PessoaFour.getAtivo());
+	    assertTrue(PersonFour.toString().contains("links: [</api/pessoas/v1/4>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 4", PersonFour.getAddress().getPublicPlace());
+	    assertEquals("Name Teste 4", PersonFour.getName());
+	    assertEquals(true, PersonFour.getEnabled());
 
 	    // Verificar a sétima pessoa (índice 7)
-	    var PessoaSeven = people.get(7);
-	    assertNotNull(PessoaSeven);
-	    assertNotNull(PessoaSeven.getCodigo());
-	    assertNotNull(PessoaSeven.getLinks());
-	    System.out.println("PessoaSeven links: " + PessoaSeven.getLinks());
+	    var PersonSeven = people.get(7);
+	    assertNotNull(PersonSeven);
+	    assertNotNull(PersonSeven.getId());
+	    assertNotNull(PersonSeven.getLinks());
+	    System.out.println("PersonSeven links: " + PersonSeven.getLinks());
 
-	    assertTrue(PessoaSeven.toString().contains("links: [</api/pessoas/v1/7>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 7", PessoaSeven.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 7", PessoaSeven.getNome());
-	    assertEquals(true, PessoaSeven.getAtivo());
+	    assertTrue(PersonSeven.toString().contains("links: [</api/pessoas/v1/7>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 7", PersonSeven.getAddress().getPublicPlace());
+	    assertEquals("Name Teste 7", PersonSeven.getName());
+	    assertEquals(true, PersonSeven.getEnabled());
 	}
 
 
