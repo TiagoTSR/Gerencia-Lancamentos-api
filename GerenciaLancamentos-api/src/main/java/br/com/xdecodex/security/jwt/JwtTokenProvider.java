@@ -1,4 +1,4 @@
-package br.com.xdecodex.securityJwt;
+package br.com.xdecodex.security.jwt;
 
 import java.util.Base64;
 import java.util.Date;
