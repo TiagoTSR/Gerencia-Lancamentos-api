@@ -39,7 +39,7 @@ public class MockPerson {
         person.setName("Name Teste " + number);
 
         Address address = new Address();
-        address.setPublicPlace("Endereço Teste " + number);
+        address.setLogradouro("Endereço Teste " + number);
         address.setNumber("Número Teste " + number);
         address.setComplement("Complement Teste " + number);
         address.setNeighborhood("Neighborhood Teste " + number);
@@ -58,7 +58,7 @@ public class MockPerson {
         personVO.setName("Name Teste " + number);
 
         Address address = new Address();
-        address.setPublicPlace("Endereço Teste " + number);
+        address.setLogradouro("Endereço Teste " + number);
         address.setNumber("Número Teste " + number);
         address.setComplement("Complement Teste " + number);
         address.setNeighborhood("Neighborhood Teste " + number);

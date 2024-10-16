@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Address {
     
-	private String publicPlace;
+	private String logradouro;
 	private String number;
 	private String complement;
 	private String neighborhood;
@@ -13,12 +13,12 @@ public class Address {
 	private String city;
 	private String state;
 	
-	public String getPublicPlace() {
-		return publicPlace;
+	public String getLogradouro() {
+		return logradouro;
 	}
 
-	public void setPublicPlace(String publicPlace) {
-		this.publicPlace = publicPlace;
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
 	}
 
 	public String getNumber() {

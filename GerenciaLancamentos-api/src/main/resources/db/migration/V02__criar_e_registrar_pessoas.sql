@@ -1,7 +1,7 @@
 CREATE TABLE person (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
-	publicPlace VARCHAR(30),
+	logradouro VARCHAR(30),
 	number VARCHAR(30),
 	complement VARCHAR(30),
 	neighborhood VARCHAR(30),
@@ -11,7 +11,7 @@ CREATE TABLE person (
 	enabled BOOLEAN NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO person (name, publicPlace, number, complement, neighborhood, cep, city, state, enabled) 
+INSERT INTO person (name, logradouro, number, complement, neighborhood, cep, city, state, enabled) 
 VALUES 
 ('João Silva', 'Rua do Abacaxi', '10', null, 'Brasil', '38400-12', 'Uberlândia', 'MG', true),
 ('Maria Rita', 'Rua do Sabiá', '110', 'Apto 101', 'Colina', '11400-12', 'Ribeirão Preto', 'SP', true),

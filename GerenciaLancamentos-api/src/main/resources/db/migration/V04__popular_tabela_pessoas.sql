@@ -1,4 +1,4 @@
-INSERT INTO person (name, publicPlace, number, complement, neighborhood, cep, city, state, enabled) VALUES 
+INSERT INTO person (name, logradouro, number, complement, neighborhood, cep, city, state, enabled) VALUES 
 ('Patten Readshall', 'Commercial', '1', 'Hill', 'Budapest', '12.138-90', 'Milano', 'HU', true),
 ('Anastasie Atheis', 'Mandrake', '9998', 'Crossing', 'Runsonglaozhai', '65.755-89', 'Salt Lake City', 'CN', false),
 ('Eziechiele Romney', 'Surrey', '2', 'Plaza', 'Conceição do Jacuípe', '44.245-00', 'Knoxville', 'BR', false),

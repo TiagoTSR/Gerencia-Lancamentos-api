@@ -90,7 +90,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 
         // Validações específicas dos campos de PersonVO
         assertEquals("Henrique Medeiros", persistedPerson.getName());
-        assertEquals("Rua do Sapo", persistedPerson.getAddress().getPublicPlace());
+        assertEquals("Rua do Sapo", persistedPerson.getAddress().getLogradouro());
         assertEquals("1120", persistedPerson.getAddress().getNumber());
         assertEquals("Apto 201", persistedPerson.getAddress().getComplement());
         assertEquals("Centro", persistedPerson.getAddress().getNeighborhood());
@@ -175,14 +175,14 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertNotNull(persistedPerson);
         assertNotNull(persistedPerson.getId());
         assertNotNull(persistedPerson.getName());
-        assertNotNull(persistedPerson.getAddress().getPublicPlace());
+        assertNotNull(persistedPerson.getAddress().getLogradouro());
         assertNotNull(persistedPerson.getEnabled());
 
         assertTrue(persistedPerson.getId() > 0);
 
         // Valida os campos específicos
         assertEquals("Henrique Medeiros", persistedPerson.getName());
-        assertEquals("Rua do Sapo", persistedPerson.getAddress().getPublicPlace());
+        assertEquals("Rua do Sapo", persistedPerson.getAddress().getLogradouro());
         assertEquals("1120", persistedPerson.getAddress().getNumber());
         assertEquals("Apto 201", persistedPerson.getAddress().getComplement());
         assertEquals("Centro", persistedPerson.getAddress().getNeighborhood());
@@ -233,7 +233,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	    pessoa.setEnabled(true);
 
 	    Address address = new Address();
-	    address.setPublicPlace("Rua do Sapo");
+	    address.setLogradouro("Rua do Sapo");
 	    address.setNumber("1120");
 	    address.setComplement("Apto 201");
 	    address.setNeighborhood("Centro");

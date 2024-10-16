@@ -26,7 +26,7 @@ public class DozerPersonConverterTest {
         PersonVO output = DozerMapper.parseObject(inputObject.mockEntity(), PersonVO.class);
         assertEquals(Long.valueOf(0L), output.getId());
         assertEquals("Name Teste 0", output.getName());
-        assertEquals("Endereço Teste 0", output.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 0", output.getAddress().getLogradouro());
         assertEquals("Número Teste 0", output.getAddress().getNumber());
         assertEquals("Complement Teste 0", output.getAddress().getComplement());
         assertEquals("Neighborhood Teste 0", output.getAddress().getNeighborhood());
@@ -43,7 +43,7 @@ public class DozerPersonConverterTest {
 
         assertEquals(Long.valueOf(0L), outputZero.getId());
         assertEquals("Name Teste 0", outputZero.getName());
-        assertEquals("Endereço Teste 0", outputZero.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 0", outputZero.getAddress().getLogradouro());
         assertEquals("Número Teste 0", outputZero.getAddress().getNumber());
         assertEquals("Complement Teste 0", outputZero.getAddress().getComplement());
         assertEquals("Neighborhood Teste 0", outputZero.getAddress().getNeighborhood());
@@ -55,7 +55,7 @@ public class DozerPersonConverterTest {
         PersonVO outputSeven = outputList.get(7);
         assertEquals(Long.valueOf(7L), outputSeven.getId());
         assertEquals("Name Teste 7", outputSeven.getName());
-        assertEquals("Endereço Teste 7", outputSeven.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 7", outputSeven.getAddress().getLogradouro());
         assertEquals("Número Teste 7", outputSeven.getAddress().getNumber());
         assertEquals("Complement Teste 7", outputSeven.getAddress().getComplement());
         assertEquals("Neighborhood Teste 7", outputSeven.getAddress().getNeighborhood());
@@ -67,7 +67,7 @@ public class DozerPersonConverterTest {
         PersonVO outputTwelve = outputList.get(12);
         assertEquals(Long.valueOf(12L), outputTwelve.getId());
         assertEquals("Name Teste 12", outputTwelve.getName());
-        assertEquals("Endereço Teste 12", outputTwelve.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 12", outputTwelve.getAddress().getLogradouro());
         assertEquals("Número Teste 12", outputTwelve.getAddress().getNumber());
         assertEquals("Complement Teste 12", outputTwelve.getAddress().getComplement());
         assertEquals("Neighborhood Teste 12", outputTwelve.getAddress().getNeighborhood());
@@ -82,7 +82,7 @@ public class DozerPersonConverterTest {
         Person output = DozerMapper.parseObject(inputObject.mockVO(), Person.class);
         assertEquals(Long.valueOf(0L), output.getId());
         assertEquals("Name Teste 0", output.getName());
-        assertEquals("Endereço Teste 0", output.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 0", output.getAddress().getLogradouro());
         assertEquals("Número Teste 0", output.getAddress().getNumber());
         assertEquals("Complement Teste 0", output.getAddress().getComplement());
         assertEquals("Neighborhood Teste 0", output.getAddress().getNeighborhood());
@@ -99,7 +99,7 @@ public class DozerPersonConverterTest {
 
         assertEquals(Long.valueOf(0L), outputZero.getId());
         assertEquals("Name Teste 0", outputZero.getName());
-        assertEquals("Endereço Teste 0", outputZero.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 0", outputZero.getAddress().getLogradouro());
         assertEquals("Número Teste 0", outputZero.getAddress().getNumber());
         assertEquals("Complement Teste 0", outputZero.getAddress().getComplement());
         assertEquals("Neighborhood Teste 0", outputZero.getAddress().getNeighborhood());
@@ -111,7 +111,7 @@ public class DozerPersonConverterTest {
         Person outputSeven = outputList.get(7);
         assertEquals(Long.valueOf(7L), outputSeven.getId());
         assertEquals("Name Teste 7", outputSeven.getName());
-        assertEquals("Endereço Teste 7", outputSeven.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 7", outputSeven.getAddress().getLogradouro());
         assertEquals("Número Teste 7", outputSeven.getAddress().getNumber());
         assertEquals("Complement Teste 7", outputSeven.getAddress().getComplement());
         assertEquals("Neighborhood Teste 7", outputSeven.getAddress().getNeighborhood());
@@ -123,7 +123,7 @@ public class DozerPersonConverterTest {
         Person outputTwelve = outputList.get(12);
         assertEquals(Long.valueOf(12L), outputTwelve.getId());
         assertEquals("Name Teste 12", outputTwelve.getName());
-        assertEquals("Endereço Teste 12", outputTwelve.getAddress().getPublicPlace());
+        assertEquals("Endereço Teste 12", outputTwelve.getAddress().getLogradouro());
         assertEquals("Número Teste 12", outputTwelve.getAddress().getNumber());
         assertEquals("Complement Teste 12", outputTwelve.getAddress().getComplement());
         assertEquals("Neighborhood Teste 12", outputTwelve.getAddress().getNeighborhood());
