@@ -23,7 +23,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import br.com.xdecodex.model.Category;
 import br.com.xdecodex.model.Person;
 import br.com.xdecodex.model.TypeLaunch;
@@ -39,6 +41,7 @@ import io.restassured.specification.RequestSpecification;
 public class LaunchControllerXmlTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
+    private static RequestSpecification authSpecification;
     private static XmlMapper objectMapper;
 
     private static LaunchVO launch;
@@ -53,6 +56,34 @@ public class LaunchControllerXmlTest extends AbstractIntegrationTest {
         
         launch = new LaunchVO();
     }
+    
+    @Test
+	@Order(0)
+	public void authorization() throws JsonMappingException, JsonProcessingException {
+		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+		
+		var accessToken = given()
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(user)
+					.when()
+				.post()
+					.then()
+						.statusCode(200)
+							.extract()
+							.body()
+								.as(TokenVO.class)
+							.getAccessToken();
+		
+		authSpecification = new RequestSpecBuilder()
+				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+				.setBasePath("/api/launchs/v1")
+				.setPort(TestConfigs.SERVER_PORT)
+					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
+	}
     
     @Test
     @Order(1)
@@ -71,7 +102,7 @@ public class LaunchControllerXmlTest extends AbstractIntegrationTest {
         var xmlContent = objectMapper.writeValueAsString(launch);
 
         var content = given()
-                .spec(specification)
+                .spec(authSpecification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML) // Altere para application/xml
                 .accept(TestConfigs.CONTENT_TYPE_XML)      // Altere para application/xml
                 .body(xmlContent)                          // Envia o corpo como XML
@@ -146,7 +177,7 @@ public class LaunchControllerXmlTest extends AbstractIntegrationTest {
             .build();
         
         var content = given()
-                .spec(specification)
+                .spec(authSpecification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .accept(TestConfigs.CONTENT_TYPE_XML)
                 .pathParam("codigo", launch.getId())

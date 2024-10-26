@@ -16,8 +16,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.PersonVO;
+import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.integrationtests.controller.withyml.mapper.YMLMapper;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import br.com.xdecodex.model.Address;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -34,15 +36,54 @@ import io.restassured.specification.RequestSpecification;
 public class PersonControllerYamlTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
+    private static RequestSpecification authSpecification;
     private static YMLMapper objectMapper;
 
-    private static PersonVO pessoa;
+    private static PersonVO person;
 
     @BeforeAll
     public static void setup() {
     	objectMapper = new YMLMapper();
-		pessoa = new PersonVO();
+		person = new PersonVO();
     }
+    
+    
+    @Test
+	@Order(0)
+    public void authorization() throws JsonMappingException, JsonProcessingException {
+		
+		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+		
+		var accessToken = given()
+				.config(
+						RestAssuredConfig
+							.config()
+							.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(
+									TestConfigs.CONTENT_TYPE_YML,
+									ContentType.TEXT)))
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_YML)
+					.accept(TestConfigs.CONTENT_TYPE_YML)
+				.body(user, objectMapper)
+					.when()
+				.post()
+					.then()
+						.statusCode(200)
+							.extract()
+							.body()
+								.as(TokenVO.class, objectMapper)
+							.getAccessToken();
+		
+		authSpecification = new RequestSpecBuilder()
+				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+				.setBasePath("/api/persons/v1")
+				.setPort(TestConfigs.SERVER_PORT)
+					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
+	}
 
     @Test
     @Order(1)
@@ -57,7 +98,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
         
-        var persistedPerson = given().spec(specification)
+        var persistedPerson = given().spec(authSpecification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -67,7 +108,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.body(pessoa, objectMapper)
+					.body(person, objectMapper)
 					.when()
 					.post()
 				.then()
@@ -75,9 +116,8 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 						.extract()
 						.body()
 							.as(PersonVO.class, objectMapper);
-
-      
-        pessoa = persistedPerson;
+		
+		person = persistedPerson;
 
         // Asserções para verificar o objeto persistido
         assertNotNull(persistedPerson);
@@ -120,7 +160,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         String content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML) // Define o tipo de conteúdo como YAML
                 .accept(TestConfigs.CONTENT_TYPE_YML) // Aceita respostas em YAML
-                .body(pessoa, objectMapper)
+                .body(person, objectMapper)
                 .when()
                 .post()
                 .then()
@@ -150,7 +190,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
                 .build();
 
         // Envia a requisição e extrai a resposta como string (YAML)
-        var persistedPerson = given().spec(specification)
+        var persistedPerson = given().spec(authSpecification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -160,7 +200,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.pathParam("id", pessoa.getId())
+					.pathParam("id", person.getId())
 					.when()
 					.get("{id}")
 				.then()
@@ -169,7 +209,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 						.body()
 						.as(PersonVO.class, objectMapper);
 
-        pessoa = persistedPerson;
+        person = persistedPerson;
 
         // Validações do objeto
         assertNotNull(persistedPerson);
@@ -210,7 +250,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         String content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML) // Define o tipo de conteúdo como YAML
                 .accept(TestConfigs.CONTENT_TYPE_YML)
-                .pathParam("id", pessoa.getId())
+                .pathParam("id", person.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -229,8 +269,8 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
     }
 
     private void mockPerson() {
-    	pessoa.setName("Henrique Medeiros");
-	    pessoa.setEnabled(true);
+    	person.setName("Henrique Medeiros");
+	    person.setEnabled(true);
 
 	    Address address = new Address();
 	    address.setLogradouro("Rua do Sapo");
@@ -241,6 +281,6 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	    address.setCity("Rio de Janeiro");
 	    address.setState("RJ");
 
-	    pessoa.setAddress(address);
+	    person.setAddress(address);
     }
 }

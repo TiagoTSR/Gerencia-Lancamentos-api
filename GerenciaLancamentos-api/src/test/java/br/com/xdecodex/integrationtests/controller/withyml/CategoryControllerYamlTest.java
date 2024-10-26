@@ -16,8 +16,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.CategoryVO;
+import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.integrationtests.controller.withyml.mapper.YMLMapper;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -33,14 +35,43 @@ import io.restassured.specification.RequestSpecification;
 public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 	
 	private static RequestSpecification specification;
+	private static RequestSpecification authSpecification;
 	private static YMLMapper objectMapper;
 
-	private static CategoryVO categoria;
+	private static CategoryVO category;
 	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new YMLMapper();
-		categoria = new CategoryVO();
+		category = new CategoryVO();
+	}
+	
+	@Test
+	@Order(0)
+	public void authorization() throws JsonMappingException, JsonProcessingException {
+		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+		
+		var accessToken = given()
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(user)
+					.when()
+				.post()
+					.then()
+						.statusCode(200)
+							.extract()
+							.body()
+								.as(TokenVO.class)
+							.getAccessToken();
+		
+		authSpecification = new RequestSpecBuilder()
+				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+				.setBasePath("/api/categories/v1")
+				.setPort(TestConfigs.SERVER_PORT)
+					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
 	}
 	
 	@Test
@@ -56,7 +87,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var persistedCategory = given().spec(specification)
+		var persistedCategory = given().spec(authSpecification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -66,7 +97,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.body(categoria, objectMapper)
+					.body(category, objectMapper)
 					.when()
 					.post()
 				.then()
@@ -75,7 +106,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 						.body()
 							.as(CategoryVO.class, objectMapper);
 		
-		categoria = persistedCategory;
+		category = persistedCategory;
 		
 		assertNotNull(persistedCategory, "Category persisted must not be null");
 		assertNotNull(persistedCategory.getId(), "Category code cannot be null");
@@ -102,7 +133,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 		String content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML) // Define o tipo de conteúdo como YAML
                 .accept(TestConfigs.CONTENT_TYPE_YML) // Aceita respostas em YAML
-                .body(categoria, objectMapper)
+                .body(category, objectMapper)
                 .when()
                 .post()
                 .then()
@@ -128,7 +159,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var persistedCategory = given().spec(specification)
+		var persistedCategory = given().spec(authSpecification)
 				.config(
 						RestAssuredConfig
 							.config()
@@ -138,7 +169,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 									ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-					.pathParam("id", categoria.getId())
+					.pathParam("id", category.getId())
 					.when()
 					.get("{id}")
 				.then()
@@ -147,13 +178,13 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 						.body()
 						.as(CategoryVO.class, objectMapper);
 		
-		categoria = persistedCategory;
+		category = persistedCategory;
 		
 		assertNotNull(persistedCategory, "Category retornada não deve ser nula");
-		assertNotNull(persistedCategory.getId(), "O código da categoria não pode ser nulo");
-		assertNotNull(persistedCategory.getName(), "O nome da categoria não pode ser nulo");
-		assertTrue(persistedCategory.getId() > 0, "O código da categoria deve ser maior que zero");
-		assertEquals("Alimentação", persistedCategory.getName(), "O nome da categoria não corresponde ao esperado");
+		assertNotNull(persistedCategory.getId(), "O código da category não pode ser nulo");
+		assertNotNull(persistedCategory.getName(), "O nome da category não pode ser nulo");
+		assertTrue(persistedCategory.getId() > 0, "O código da category deve ser maior que zero");
+		assertEquals("Alimentação", persistedCategory.getName(), "O nome da category não corresponde ao esperado");
 	}
 	
 	@Test
@@ -173,7 +204,7 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .accept(TestConfigs.CONTENT_TYPE_YML)
-                .pathParam("id", categoria.getId())
+                .pathParam("id", category.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -192,6 +223,6 @@ public class CategoryControllerYamlTest extends AbstractIntegrationTest {
 	}
 
 	private void mockCategory() {
-		categoria.setName("Alimentação");
+		category.setName("Alimentação");
 	}
 }

@@ -18,7 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.CategoryVO;
+import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -30,6 +32,7 @@ import io.restassured.specification.RequestSpecification;
 public class CategoryControllerJsonTest extends AbstractIntegrationTest {
 	
 	private static RequestSpecification specification;
+	private static RequestSpecification authSpecification;
 	private static ObjectMapper objectMapper;
 
 	private static CategoryVO category;
@@ -40,6 +43,34 @@ public class CategoryControllerJsonTest extends AbstractIntegrationTest {
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		
 		category = new CategoryVO();
+	}
+	
+	@Test
+	@Order(0)
+	public void authorization() throws JsonMappingException, JsonProcessingException {
+		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+		
+		var accessToken = given()
+				.basePath("/auth/signin")
+					.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(user)
+					.when()
+				.post()
+					.then()
+						.statusCode(200)
+							.extract()
+							.body()
+								.as(TokenVO.class)
+							.getAccessToken();
+		
+		authSpecification = new RequestSpecBuilder()
+				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+				.setBasePath("/api/categories/v1")
+				.setPort(TestConfigs.SERVER_PORT)
+					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
 	}
 	
 	@Test
@@ -55,7 +86,7 @@ public class CategoryControllerJsonTest extends AbstractIntegrationTest {
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var content = given().spec(specification)
+		var content = given().spec(authSpecification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.body(category)
 				.when()
@@ -117,7 +148,7 @@ public class CategoryControllerJsonTest extends AbstractIntegrationTest {
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 			.build();
 		
-		var content = given().spec(specification)
+		var content = given().spec(authSpecification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.pathParam("id", category.getId())
 				.when()

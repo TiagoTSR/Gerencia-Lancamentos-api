@@ -22,55 +22,55 @@ public class MockLaunch {
     }
 
     public List<Launch> mockEntityList() {
-        List<Launch> lancamentos = new ArrayList<>();
+        List<Launch> launchs = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
-            lancamentos.add(mockEntity(i));
+            launchs.add(mockEntity(i));
         }
-        return lancamentos;
+        return launchs;
     }
 
     public List<LaunchVO> mockVOList() {
-        List<LaunchVO> lancamentos = new ArrayList<>();
+        List<LaunchVO> launchs = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
-            lancamentos.add(mockVO(i));
+            launchs.add(mockVO(i));
         }
-        return lancamentos;
+        return launchs;
     }
     
     public Launch mockEntity(Integer number) {
-        Launch lancamento = new Launch();
-        lancamento.setId(number.longValue());
-        lancamento.setDescription("Description Teste " + number);
-        lancamento.setExpirationDate(LocalDate.now().plusDays(number));
-        lancamento.setExpirationDate(LocalDate.now().plusDays(number));
-        lancamento.setValue(BigDecimal.valueOf(number));
-        lancamento.setObservation("Observation Teste " + number);
-        lancamento.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
-        lancamento.setCategory(mockCategory(number));
-        lancamento.setPerson(mockPerson(number));
-        return lancamento;
+        Launch launch = new Launch();
+        launch.setId(number.longValue());
+        launch.setDescription("Description Teste " + number);
+        launch.setExpirationDate(LocalDate.now().plusDays(number));
+        launch.setPaymentDate(LocalDate.now().plusDays(number));// Definindo ExpirationDate corretamente
+        launch.setValue(BigDecimal.valueOf(number));
+        launch.setObservation("Observation Teste " + number);
+        launch.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
+        launch.setCategory(mockCategory(number));
+        launch.setPerson(mockPerson(number));
+        return launch;
     }
 
     public LaunchVO mockVO(Integer number) {
-        LaunchVO lancamentoVO = new LaunchVO();
-        lancamentoVO.setId(number.longValue());
-        lancamentoVO.setDescription("Description Teste " + number);
-        lancamentoVO.setExpirationDate(LocalDate.now().plusDays(number));
-        lancamentoVO.setExpirationDate(LocalDate.now().plusDays(number));
-        lancamentoVO.setValue(BigDecimal.valueOf(number));
-        lancamentoVO.setObservation("Observation Teste " + number);
-        lancamentoVO.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
-        lancamentoVO.setCategory(mockCategory(number));
-        lancamentoVO.setPerson(mockPerson(number));
-        return lancamentoVO;
+        LaunchVO launchVO = new LaunchVO();
+        launchVO.setId(number.longValue());
+        launchVO.setDescription("Description Teste " + number);
+        launchVO.setExpirationDate(LocalDate.now().plusDays(number));
+        launchVO.setPaymentDate(LocalDate.now().plusDays(number));// Definindo ExpirationDate corretamente
+        launchVO.setValue(BigDecimal.valueOf(number));
+        launchVO.setObservation("Observation Teste " + number);
+        launchVO.setType(TypeLaunch.values()[number % TypeLaunch.values().length]);
+        launchVO.setCategory(mockCategory(number));
+        launchVO.setPerson(mockPerson(number));
+        return launchVO;
     }
 
     public Person mockPerson(Integer number) {
-        Person pessoa = new Person();
-        pessoa.setId(number.longValue());
-        pessoa.setName("Name Teste " + number);
-        pessoa.setEnabled(true);
-        return pessoa;
+        Person person = new Person();
+        person.setId(number.longValue());
+        person.setName("Name Teste " + number);
+        person.setEnabled(true);
+        return person;
     }
 
     private Category mockCategory(Integer number) {

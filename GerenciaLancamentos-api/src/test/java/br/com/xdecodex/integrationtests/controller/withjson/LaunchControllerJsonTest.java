@@ -23,7 +23,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.LaunchVO;
+import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import br.com.xdecodex.model.Category;
 import br.com.xdecodex.model.Person;
 import br.com.xdecodex.model.TypeLaunch;
@@ -39,6 +41,7 @@ import io.restassured.specification.RequestSpecification;
 public class LaunchControllerJsonTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
+    private static RequestSpecification authSpecification;
     private static ObjectMapper objectMapper;
 
     private static LaunchVO launch;
@@ -55,6 +58,34 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
     }
     
     @Test
+   	@Order(0)
+   	public void authorization() throws JsonMappingException, JsonProcessingException {
+   		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+   		
+   		var accessToken = given()
+   				.basePath("/auth/signin")
+   					.port(TestConfigs.SERVER_PORT)
+   					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+   				.body(user)
+   					.when()
+   				.post()
+   					.then()
+   						.statusCode(200)
+   							.extract()
+   							.body()
+   								.as(TokenVO.class)
+   							.getAccessToken();
+   		
+   		authSpecification = new RequestSpecBuilder()
+   				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+   				.setBasePath("/api/launchs/v1")
+   				.setPort(TestConfigs.SERVER_PORT)
+   					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+   					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+   				.build();
+   	}
+    
+    @Test
     @Order(1)
     public void testCreate() throws JsonMappingException, JsonProcessingException {
         mockLaunch();
@@ -68,7 +99,7 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
             .build();
         
         var content = given()
-                .spec(specification)
+                .spec(authSpecification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .body(launch)
                 .when()
@@ -89,8 +120,8 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(persistedLaunch);
         
         // Verifique se o código é nulo
-        Long codigo = persistedLaunch.getId();
-        assertNotNull(codigo);
+        Long id = persistedLaunch.getId();
+        assertNotNull(id);
         
         assertNotNull(persistedLaunch.getDescription());
         assertNotNull(persistedLaunch.getExpirationDate());
@@ -101,7 +132,7 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(persistedLaunch.getCategory());
         assertNotNull(persistedLaunch.getPerson());
         
-        assertTrue(codigo > 0);
+        assertTrue(id > 0);
         assertEquals("Bahamas", persistedLaunch.getDescription());
         assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getExpirationDate());
         assertEquals(LocalDate.of(2017, 2, 10), persistedLaunch.getPaymentDate());
@@ -156,11 +187,11 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
             .build();
         
         var content = given()
-                .spec(specification)
+                .spec(authSpecification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("codigo", launch.getId())
+                .pathParam("id", launch.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -208,9 +239,9 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
         var content = given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("codigo", launch.getId())
+                .pathParam("id", launch.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(403)
                 .extract()
@@ -222,13 +253,13 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
     }
     
     private void mockLaunch() {
-        Category categoria = new Category();
-        categoria.setId(2L);
-        categoria.setName("Alimentação");
+        Category category = new Category();
+        category.setId(2L);
+        category.setName("Alimentação");
         
-        Person pessoa = new Person();
-        pessoa.setId(2L);
-        pessoa.setName("Maria Rita");
+        Person person = new Person();
+        person.setId(2L);
+        person.setName("Maria Rita");
         
         launch.setDescription("Bahamas");
         launch.setExpirationDate(LocalDate.of(2017, 2, 10));
@@ -236,7 +267,7 @@ public class LaunchControllerJsonTest extends AbstractIntegrationTest {
         launch.setValue(new BigDecimal("100.32"));
         launch.setObservation("");
         launch.setType(TypeLaunch.EXPENSE);
-        launch.setCategory(categoria);
-        launch.setPerson(pessoa);
+        launch.setCategory(category);
+        launch.setPerson(person);
     }
 }

@@ -72,7 +72,7 @@ class LaunchServiceTest {
             service.findById(1L);
         });
 
-        assertEquals("Launch not encontrado pelo ID: 1", exception.getMessage());
+        assertEquals("Launch not found by ID: 1", exception.getMessage());
     }
 
     @Test
@@ -132,7 +132,7 @@ class LaunchServiceTest {
             service.update(vo);
         });
 
-        assertEquals("Launch não encontrado para atualização", exception.getMessage());
+        assertEquals("Launch not found for update", exception.getMessage());
     }
 
     @Test
@@ -155,7 +155,7 @@ class LaunchServiceTest {
             service.delete(1L);
         });
 
-        assertEquals("Launch não encontrado para deletar", exception.getMessage());
+        assertEquals("Launch not found to delete", exception.getMessage());
     }
 
 }
