@@ -23,33 +23,27 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LaunchVO extends RepresentationModel<LaunchVO> implements Serializable {
-	
-	@JsonIgnore
-    private List<Link> links;
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
-	
-	private Long id;
-	private String description;
-	
-	@JsonSerialize(using = LocalDateSerializer.class)
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate expirationDate;
-	
-	@JsonSerialize(using = LocalDateSerializer.class)
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	private LocalDate paymentDate;
+    private Long id;
+    private String description;
 
-	private BigDecimal value;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDate expirationDate;
 
-	private String observation;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDate paymentDate;
 
-	@Enumerated(EnumType.STRING)
-	private TypeLaunch type;
+    private BigDecimal value;
+    private String observation;
 
-	private Category category;
+    @Enumerated(EnumType.STRING)
+    private TypeLaunch type;
 
-	private Person person;
+    private Category category;
+    private Person person;
 
 	public Long getId() {
 		return id;
@@ -147,5 +141,5 @@ public class LaunchVO extends RepresentationModel<LaunchVO> implements Serializa
 			return false;
 		return true;
 	}
-
+	
 }
