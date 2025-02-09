@@ -1,9 +1,9 @@
-CREATE TABLE category (
+CREATE TABLE categoria (
 	id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(50) NOT NULL
+	nome VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO category (name) values ('Lazer'),
+INSERT INTO categoria (nome) values ('Lazer'),
 ('Alimentação'),
  ('Supermercado'),
 ('Farmácia'),

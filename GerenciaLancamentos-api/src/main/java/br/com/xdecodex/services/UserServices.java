@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.xdecodex.repositories.UserRepository;
+import br.com.xdecodex.repositories.UsuarioRepository;
 
 @Service
 public class UserServices implements UserDetailsService {
@@ -16,9 +16,9 @@ public class UserServices implements UserDetailsService {
 	private Logger logger = Logger.getLogger(UserServices.class.getName());
 	
 	@Autowired
-	UserRepository repository;
+	UsuarioRepository repository;
 	
-	public UserServices(UserRepository repository) {
+	public UserServices(UsuarioRepository repository) {
 		this.repository = repository;
 	}
 

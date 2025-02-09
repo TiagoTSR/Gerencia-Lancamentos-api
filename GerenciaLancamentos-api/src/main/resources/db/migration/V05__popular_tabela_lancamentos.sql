@@ -1,4 +1,4 @@
-INSERT INTO launch (description, expiration_date, payment_date, value, observation, type, id_category, id_person) 
+INSERT INTO lancamento (descricao, data_vencimento, data_pagamento, valor, observacao, tipo, id_categoria, id_pessoa) 
 VALUES 
 ('Hotels/Resorts', '2024-08-18', '2024-01-10', 46150.48, 'Consumer Services', 'RECEITA', 1, 10),
 ('n/a', '2023-10-21', '2024-04-09', 39360.25, null, 'DESPESA', 2, 5),

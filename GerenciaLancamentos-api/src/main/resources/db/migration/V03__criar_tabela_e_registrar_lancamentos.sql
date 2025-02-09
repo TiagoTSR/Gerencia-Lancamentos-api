@@ -1,18 +1,18 @@
-CREATE TABLE launch (
+CREATE TABLE lancamento (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
-	description VARCHAR(50) NOT NULL,
-	expiration_date DATE NOT NULL,
-	payment_date DATE,
-	value DECIMAL(10,2) NOT NULL,
-	observation VARCHAR(100),
-	type VARCHAR(20) NOT NULL,
-	id_category BIGINT NOT NULL,
-	id_person BIGINT NOT NULL,
-	FOREIGN KEY (id_category) REFERENCES category(id),
-	FOREIGN KEY (id_person) REFERENCES person(id)
+	descricao VARCHAR(50) NOT NULL,
+	data_vencimento DATE NOT NULL,
+	data_pagamento DATE,
+	valor DECIMAL(10,2) NOT NULL,
+	observacao VARCHAR(100),
+	tipo VARCHAR(20) NOT NULL,
+	id_categoria BIGINT NOT NULL,
+	id_pessoa BIGINT NOT NULL,
+	FOREIGN KEY (id_categoria) REFERENCES categoria(id),
+	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO launch (description, expiration_date, payment_date, value, observation, type, id_category, id_person) 
+INSERT INTO lancamento (descricao, data_vencimento, data_pagamento, valor, observacao, tipo, id_categoria, id_pessoa) 
 VALUES 
 ('Salário mensal', '2017-06-10', null, 6500.00, 'Distribuição de lucros', 'RECEITA', 1, 1),
 ('Bahamas', '2017-02-10', '2017-02-10', 100.32, null, 'DESPESA', 2, 2),

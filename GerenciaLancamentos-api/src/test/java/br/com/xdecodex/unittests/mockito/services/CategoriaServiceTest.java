@@ -20,156 +20,156 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.xdecodex.data.vo.v1.CategoryVO;
+import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
-import br.com.xdecodex.model.Category;
-import br.com.xdecodex.repositories.CategoryRepository;
-import br.com.xdecodex.services.CategoryService;
-import br.com.xdecodex.unittests.mapper.mocks.MockCategory;
+import br.com.xdecodex.model.Categoria;
+import br.com.xdecodex.repositories.CategoriaRepository;
+import br.com.xdecodex.services.CategoriaService;
+import br.com.xdecodex.unittests.mapper.mocks.MockCategoria;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryServiceTest {
+class CategoriaServiceTest {
 
     @InjectMocks
-    private CategoryService service;
+    private CategoriaService service;
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoriaRepository categoriaRepository;
 
-    private MockCategory mockCategory;
+    private MockCategoria mockCategoria;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockCategory = new MockCategory();
+        mockCategoria = new MockCategoria();
     }
 
     @Test
     void testFindById() {
-        Category category = mockCategory.mockEntity(1);
-        category.setId(1L);
-        category.setName("Category Teste1"); // Ajuste o valor esperado aqui
+        Categoria categoria = mockCategoria.mockEntity(1);
+        categoria.setId(1L);
+        categoria.setNome("Categoria Teste1"); // Ajuste o valor esperado aqui
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
 
-        CategoryVO result = service.findById(1L);
+        CategoriaVO result = service.findById(1L);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertEquals("Category Teste1", result.getName()); // Ajuste o valor esperado
+        assertEquals("Categoria Teste1", result.getNome()); // Ajuste o valor esperado
     }
 
 
     @Test
     void testFindByIdNotFound() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+        when(categoriaRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.findById(1L);
         });
 
-        assertEquals("Category not found for ID: 1", exception.getMessage());
+        assertEquals("Categoria not found for ID: 1", exception.getMessage());
     }
 
     @Test
     void testCreate() {
-        CategoryVO vo = mockCategory.mockVO(1);
-        Category category = mockCategory.mockEntity(1);
+        CategoriaVO vo = mockCategoria.mockVO(1);
+        Categoria categoria = mockCategoria.mockEntity(1);
 
-        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoriaRepository.save(any(Categoria.class))).thenReturn(categoria);
 
-        CategoryVO result = service.create(vo);
+        CategoriaVO result = service.create(vo);
 
         assertNotNull(result);
         assertEquals(vo.getId(), result.getId());
-        assertEquals(vo.getName(), result.getName());
+        assertEquals(vo.getNome(), result.getNome());
     }
 
     @Test
     void testUpdate() {
-        Category category = mockCategory.mockEntity(1);
-        CategoryVO vo = mockCategory.mockVO(1);
+        Categoria categoria = mockCategoria.mockEntity(1);
+        CategoriaVO vo = mockCategoria.mockVO(1);
 
-        when(categoryRepository.findById(vo.getId())).thenReturn(Optional.of(category));
-        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoriaRepository.findById(vo.getId())).thenReturn(Optional.of(categoria));
+        when(categoriaRepository.save(any(Categoria.class))).thenReturn(categoria);
 
-        CategoryVO result = service.update(vo);
+        CategoriaVO result = service.update(vo);
 
         assertNotNull(result);
         assertEquals(vo.getId(), result.getId());
-        assertEquals(vo.getName(), result.getName());
+        assertEquals(vo.getNome(), result.getNome());
     }
 
     @Test
     void testUpdateNotFound() {
-        CategoryVO vo = mockCategory.mockVO(1);
+        CategoriaVO vo = mockCategoria.mockVO(1);
 
-        when(categoryRepository.findById(vo.getId())).thenReturn(Optional.empty());
+        when(categoriaRepository.findById(vo.getId())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.update(vo);
         });
 
-        assertEquals("Category not found for update", exception.getMessage());
+        assertEquals("Categoria not found for update", exception.getMessage());
     }
 
     @Test
     void testDelete() {
-        when(categoryRepository.existsById(1L)).thenReturn(true);
+        when(categoriaRepository.existsById(1L)).thenReturn(true);
 
         boolean result = service.delete(1L);
 
         assertTrue(result);
-        verify(categoryRepository, times(1)).deleteById(1L);
+        verify(categoriaRepository, times(1)).deleteById(1L);
     }
 
     @Test
     void testDeleteNotFound() {
-        when(categoryRepository.existsById(1L)).thenReturn(false);
+        when(categoriaRepository.existsById(1L)).thenReturn(false);
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             service.delete(1L);
         });
 
-        assertEquals("Category not found for delete", exception.getMessage());
+        assertEquals("Categoria not found for delete", exception.getMessage());
     }
     
     @Test
     void testFindAll() {
-        List<Category> list = mockCategory.mockEntityList();
+        List<Categoria> list = mockCategoria.mockEntityList();
         System.out.println("Mock list size: " + list.size());
        
-        when(categoryRepository.findAll()).thenReturn(list);
+        when(categoriaRepository.findAll()).thenReturn(list);
 
-        var categories = service.findAll();
-        System.out.println("Size of the list returned by the service: " + categories.size());
+        var categorias = service.findAll();
+        System.out.println("Size of the list returned by the service: " + categorias.size());
 
-        assertNotNull(categories);
-        assertEquals(14, categories.size()); 
+        assertNotNull(categorias);
+        assertEquals(14, categorias.size()); 
 
-        var categoryOne = categories.get(0);
-        assertNotNull(categoryOne);
-        assertNotNull(categoryOne.getId());
-        assertNotNull(categoryOne.getName());
-        System.out.println("CategoryOne: " + categoryOne);
+        var categoriaOne = categorias.get(0);
+        assertNotNull(categoriaOne);
+        assertNotNull(categoriaOne.getId());
+        assertNotNull(categoriaOne.getNome());
+        System.out.println("CategoriaOne: " + categoriaOne);
 
-        assertEquals("Category Teste0", categoryOne.getName()); 
+        assertEquals("Categoria Teste0", categoriaOne.getNome()); 
 
-        var categoryFour = categories.get(3);
-        assertNotNull(categoryFour);
-        assertNotNull(categoryFour.getId());
-        assertNotNull(categoryFour.getName());
-        System.out.println("CategoryFour: " + categoryFour);
+        var categoriaFour = categorias.get(3);
+        assertNotNull(categoriaFour);
+        assertNotNull(categoriaFour.getId());
+        assertNotNull(categoriaFour.getNome());
+        System.out.println("CategoriaFour: " + categoriaFour);
 
-        assertEquals("Category Teste3", categoryFour.getName()); 
+        assertEquals("Categoria Teste3", categoriaFour.getNome()); 
 
-        var categorySeven = categories.get(6);
-        assertNotNull(categorySeven);
-        assertNotNull(categorySeven.getId());
-        assertNotNull(categorySeven.getName());
-        System.out.println("CategorySeven: " + categorySeven);
+        var categoriaSeven = categorias.get(6);
+        assertNotNull(categoriaSeven);
+        assertNotNull(categoriaSeven.getId());
+        assertNotNull(categoriaSeven.getNome());
+        System.out.println("CategoriaSeven: " + categoriaSeven);
 
-        assertEquals("Category Teste6", categorySeven.getName()); 
+        assertEquals("Categoria Teste6", categoriaSeven.getNome()); 
     }
 
 }
