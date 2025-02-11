@@ -1,5 +1,6 @@
 package br.com.xdecodex.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
+import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
+import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.services.LancamentoService;
 import br.com.xdecodex.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,11 +43,20 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/lancamentos/v1")
 @Tag(name = "Lancamento", description = "Endpoints for lancamentos management")
 public class LancamentoController {
+	
+	@Autowired
+	private LancamentoRepositoryQuery lancamentoRepositoryQuery;
 
 	@Autowired
 	private LancamentoService lancamentoService;
 
 	PagedResourcesAssembler<LancamentoVO> assembler;
+	
+	
+	@GetMapping("/estatisticas/por-categoria")
+	public List<LancamentoEstatisticaCategoria> porCategoria() {
+		return this.lancamentoRepositoryQuery.porCategoria(LocalDate.now());
+	}	
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML,

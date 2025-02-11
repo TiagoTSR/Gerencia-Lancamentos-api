@@ -7,13 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.dto.LancamentoStatisticaCategoria;
+import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.projection.ResumoLancamento;
 
 public interface LancamentoRepositoryQuery {
 
-	public List<LancamentoStatisticaCategoria> porCategoria(LocalDate mesReferencia);
+	public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia);
 
 	List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter,Pageable pageable);
 

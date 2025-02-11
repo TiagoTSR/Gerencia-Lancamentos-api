@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 import br.com.xdecodex.model.Categoria;
 
-public class LancamentoStatisticaCategoria {
+public class LancamentoEstatisticaCategoria {
 
 	private Categoria categoria;
 
 	private BigDecimal total;
 
-	public LancamentoStatisticaCategoria(Categoria categoria, BigDecimal total) {
+	public LancamentoEstatisticaCategoria(Categoria categoria, BigDecimal total) {
 		this.categoria = categoria;
 		this.total = total;
 	}

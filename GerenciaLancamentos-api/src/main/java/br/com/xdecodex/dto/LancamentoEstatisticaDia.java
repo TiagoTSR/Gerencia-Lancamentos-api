@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 import br.com.xdecodex.model.TipoLancamento;
 
-public class LancamentoStatisticaDia {
+public class LancamentoEstatisticaDia {
 
     private TipoLancamento tipo;
 
@@ -13,7 +13,7 @@ public class LancamentoStatisticaDia {
 
     private BigDecimal total;
 
-    public LancamentoStatisticaDia(TipoLancamento tipo, LocalDate dia, BigDecimal total) {
+    public LancamentoEstatisticaDia(TipoLancamento tipo, LocalDate dia, BigDecimal total) {
         this.tipo = tipo;
         this.dia = dia;
         this.total = total;

@@ -20,7 +20,7 @@ import org.springframework.util.ObjectUtils;
 
 import br.com.xdecodex.controllers.LancamentoController;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
-import br.com.xdecodex.dto.LancamentoStatisticaCategoria;
+import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
 import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
@@ -127,13 +127,13 @@ public class LancamentoService implements LancamentoRepositoryQuery {
     }
 
     @Override
-    public List<LancamentoStatisticaCategoria> porCategoria(LocalDate mesReferencia) {
+    public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<LancamentoStatisticaCategoria> criteria = builder.createQuery(LancamentoStatisticaCategoria.class);
+        CriteriaQuery<LancamentoEstatisticaCategoria> criteria = builder.createQuery(LancamentoEstatisticaCategoria.class);
         Root<Lancamento> root = criteria.from(Lancamento.class);
 
         criteria.select(builder.construct(
-                LancamentoStatisticaCategoria.class,
+                LancamentoEstatisticaCategoria.class,
                 root.get(Lancamento_.categoria),
                 builder.sum(root.get(Lancamento_.valor))));
 
