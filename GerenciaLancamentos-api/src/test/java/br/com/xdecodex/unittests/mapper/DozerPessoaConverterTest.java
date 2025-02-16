@@ -25,7 +25,7 @@ public class DozerPessoaConverterTest {
     public void parseEntityToVOTest() {
         PessoaVO output = DozerMapper.parseObject(inputObject.mockEntity(), PessoaVO.class);
         assertEquals(Long.valueOf(0L), output.getId());
-        assertEquals(" Teste 0", output.getNome());
+        assertEquals("Nome Teste 0", output.getNome());
         assertEquals("Endereço Teste 0", output.getEndereco().getLogradouro());
         assertEquals("Número Teste 0", output.getEndereco().getNumero());
         assertEquals("Complemento Teste 0", output.getEndereco().getComplemento());

@@ -48,7 +48,7 @@ public class CategoriaService {
     
     public PagedModel<EntityModel<CategoriaVO>> findAll(Pageable pageable) {
 
-        logger.info("Encontrando todos as categorys!");
+        logger.info("Encontrando todos as categorias!");
 
         Page<Categoria> categoriaPage = categoriaRepository.findAll(pageable);
 
@@ -65,10 +65,10 @@ public class CategoriaService {
     
 
     public CategoriaVO findById(Long id) {
-        logger.info("Finding Category by ID");
+        logger.info("Finding Categoria by ID");
         
         Categoria categoria = categoriaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Category not found for ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for ID: " + id));
         CategoriaVO vo = DozerMapper.parseObject(categoria, CategoriaVO.class);
         return vo;
     }
@@ -83,7 +83,7 @@ public class CategoriaService {
     public CategoriaVO update(CategoriaVO categoriaVO) {
         logger.info("Updating Categoria");
         Categoria categoria = categoriaRepository.findById(categoriaVO.getId())
-            .orElseThrow(() -> new ResourceNotFoundException("Category not found for update"));
+            .orElseThrow(() -> new ResourceNotFoundException("Categoria not found for update"));
 
         categoria.setNome(categoriaVO.getNome());
         // Atualize outros campos conforme necessário

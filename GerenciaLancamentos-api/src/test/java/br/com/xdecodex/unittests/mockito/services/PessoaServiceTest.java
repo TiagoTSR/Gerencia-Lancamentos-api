@@ -53,7 +53,7 @@ class PessoaServicesTest {
 		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
-		assertTrue(result.toString().contains("links: [</api/Pessoas/v1/1>;rel=\"self\"]"));
+		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
 		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
 		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getEnabled());
@@ -77,7 +77,7 @@ class PessoaServicesTest {
 		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
-		assertTrue(result.toString().contains("links: [</api/Pessoas/v1/1>;rel=\"self\"]"));
+		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
 		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
 		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getEnabled());
@@ -114,7 +114,7 @@ class PessoaServicesTest {
 		assertNotNull(result.getId());
 		assertNotNull(result.getLinks());
 
-		assertTrue(result.toString().contains("links: [</api/Pessoas/v1/1>;rel=\"self\"]"));
+		assertTrue(result.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
 		assertEquals("Endereço Teste 1", result.getEndereco().getLogradouro());
 		assertEquals("Nome Teste 1", result.getNome());
 		assertEquals(true, result.getEnabled());
@@ -160,40 +160,40 @@ class PessoaServicesTest {
 	    assertEquals(14, people.size()); //
 
 	    // Verificar a primeira pessoa (índice 1)
-	    var PessoaOne = people.get(1);
-	    assertNotNull(PessoaOne);
-	    assertNotNull(PessoaOne.getId());
-	    assertNotNull(PessoaOne.getLinks());
-	    System.out.println("PessoaOne links: " + PessoaOne.getLinks());
+	    var pessoaOne = people.get(1);
+	    assertNotNull(pessoaOne);
+	    assertNotNull(pessoaOne.getId());
+	    assertNotNull(pessoaOne.getLinks());
+	    System.out.println("pessoaOne links: " + pessoaOne.getLinks());
 
-	    assertTrue(PessoaOne.toString().contains("links: [</api/Pessoas/v1/1>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 1", PessoaOne.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 1", PessoaOne.getNome());
-	    assertEquals(true, PessoaOne.getEnabled());
+	    assertTrue(pessoaOne.toString().contains("links: [</api/pessoas/v1/1>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 1", pessoaOne.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 1", pessoaOne.getNome());
+	    assertEquals(true, pessoaOne.getEnabled());
 
 	    // Verificar a quarta pessoa (índice 4)
-	    var PessoaFour = people.get(4);
-	    assertNotNull(PessoaFour);
-	    assertNotNull(PessoaFour.getId());
-	    assertNotNull(PessoaFour.getLinks());
-	    System.out.println("PessoaFour links: " + PessoaFour.getLinks());
+	    var pessoaFour = people.get(4);
+	    assertNotNull(pessoaFour);
+	    assertNotNull(pessoaFour.getId());
+	    assertNotNull(pessoaFour.getLinks());
+	    System.out.println("pessoaFour links: " + pessoaFour.getLinks());
 
-	    assertTrue(PessoaFour.toString().contains("links: [</api/Pessoas/v1/4>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 4", PessoaFour.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 4", PessoaFour.getNome());
-	    assertEquals(true, PessoaFour.getEnabled());
+	    assertTrue(pessoaFour.toString().contains("links: [</api/pessoas/v1/4>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 4", pessoaFour.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 4", pessoaFour.getNome());
+	    assertEquals(true, pessoaFour.getEnabled());
 
 	    // Verificar a sétima pessoa (índice 7)
-	    var PessoaSeven = people.get(7);
-	    assertNotNull(PessoaSeven);
-	    assertNotNull(PessoaSeven.getId());
-	    assertNotNull(PessoaSeven.getLinks());
-	    System.out.println("PessoaSeven links: " + PessoaSeven.getLinks());
+	    var pessoaSeven = people.get(7);
+	    assertNotNull(pessoaSeven);
+	    assertNotNull(pessoaSeven.getId());
+	    assertNotNull(pessoaSeven.getLinks());
+	    System.out.println("pessoaSeven links: " + pessoaSeven.getLinks());
 
-	    assertTrue(PessoaSeven.toString().contains("links: [</api/Pessoas/v1/7>;rel=\"self\"]"));
-	    assertEquals("Endereço Teste 7", PessoaSeven.getEndereco().getLogradouro());
-	    assertEquals("Nome Teste 7", PessoaSeven.getNome());
-	    assertEquals(true, PessoaSeven.getEnabled());
+	    assertTrue(pessoaSeven.toString().contains("links: [</api/pessoas/v1/7>;rel=\"self\"]"));
+	    assertEquals("Endereço Teste 7", pessoaSeven.getEndereco().getLogradouro());
+	    assertEquals("Nome Teste 7", pessoaSeven.getNome());
+	    assertEquals(true, pessoaSeven.getEnabled());
 	}
 
 

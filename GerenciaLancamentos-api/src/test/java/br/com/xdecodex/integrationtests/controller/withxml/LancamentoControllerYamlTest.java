@@ -16,44 +16,41 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import br.com.xdecodex.configs.TestConfigs;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.data.vo.v1.security.TokenVO;
+import br.com.xdecodex.integrationtests.controller.withyml.mapper.YMLMapper;
 import br.com.xdecodex.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.xdecodex.integrationtests.vo.AccountCredentialsVO;
 import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.model.TipoLancamento;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.config.EncoderConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification; 
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class LancamentoControllerXmlTest extends AbstractIntegrationTest {
+public class LancamentoControllerYamlTest extends AbstractIntegrationTest {
     
     private static RequestSpecification specification;
     private static RequestSpecification authSpecification;
-    private static XmlMapper objectMapper;
+    private static YMLMapper objectMapper;
 
     private static LancamentoVO lancamento;
     
     @BeforeAll
     public static void setup() {
-        objectMapper = new XmlMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        
-        // Registra o módulo para suporte às datas do Java 8
-        objectMapper.registerModule(new JavaTimeModule());
-        
+        objectMapper = new YMLMapper();
         lancamento = new LancamentoVO();
     }
     
@@ -98,24 +95,26 @@ public class LancamentoControllerXmlTest extends AbstractIntegrationTest {
             .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
             .build();
 
-        // Serializa o objeto para XML
-        var xmlContent = objectMapper.writeValueAsString(lancamento);
+        var persistedLancamento = given().spec(authSpecification)
+				.config(
+						RestAssuredConfig
+							.config()
+							.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(
+									TestConfigs.CONTENT_TYPE_YML,
+									ContentType.TEXT)))
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+					.body(lancamento, objectMapper)
+					.when()
+					.post()
+				.then()
+					.statusCode(201)
+						.extract()
+						.body()
+							.as(LancamentoVO.class, objectMapper);
 
-        var content = given()
-                .spec(authSpecification)
-                .contentType(TestConfigs.CONTENT_TYPE_XML) // Altere para application/xml
-                .accept(TestConfigs.CONTENT_TYPE_XML)      // Altere para application/xml
-                .body(xmlContent)                          // Envia o corpo como XML
-                .when()
-                .post()
-                .then()
-                .statusCode(201)
-                .extract()
-                .body()
-                .asString();
-
-        // Deserializa o XML recebido de volta para um objeto LancamentoVO
-        LancamentoVO persistedLancamento = objectMapper.readValue(content, LancamentoVO.class);
+       
         lancamento = persistedLancamento;
 
         // Verificações
@@ -139,18 +138,20 @@ public class LancamentoControllerXmlTest extends AbstractIntegrationTest {
         mockLancamento();
         
         specification = new RequestSpecBuilder()
-            .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-            .setBasePath("/api/lancamentos/v1")
-            .setPort(TestConfigs.SERVER_PORT)
-            .addFilter(new RequestLoggingFilter(LogDetail.ALL))
-            .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-            .build();
+        	    .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
+        	    .setBasePath("/api/lancamentos/v1")
+        	    .setPort(TestConfigs.SERVER_PORT)
+        	    .addFilter(new RequestLoggingFilter(LogDetail.ALL))
+        	    .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+        	    .setConfig(RestAssured.config().encoderConfig(EncoderConfig.encoderConfig()
+        	        .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT))) // Configura a serialização para YAML
+        	    .build();
+
         
-        var content = given()
-                .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_XML)
-                .accept(TestConfigs.CONTENT_TYPE_XML)
-                .body(lancamento)
+        String content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_YML) // Define o tipo de conteúdo como YAML
+                .accept(TestConfigs.CONTENT_TYPE_YML) // Aceita respostas em YAML
+                .body(lancamento, objectMapper)
                 .when()
                 .post()
                 .then()
@@ -176,20 +177,25 @@ public class LancamentoControllerXmlTest extends AbstractIntegrationTest {
             .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
             .build();
         
-        var content = given()
-                .spec(authSpecification)
-                .contentType(TestConfigs.CONTENT_TYPE_XML)
-                .accept(TestConfigs.CONTENT_TYPE_XML)
-                .pathParam("codigo", lancamento.getId())
-                .when()
-                .get("{codigo}")
-                .then()
-                .statusCode(200)
-                .extract()
-                .body()
-                .asString();
+        var persistedLancamento = given().spec(authSpecification)
+				.config(
+						RestAssuredConfig
+							.config()
+							.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(
+									TestConfigs.CONTENT_TYPE_YML,
+									ContentType.TEXT)))
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+					.pathParam("id", lancamento.getId())
+					.when()
+					.get("{id}")
+				.then()
+					.statusCode(200)
+						.extract()
+						.body()
+						.as(LancamentoVO.class, objectMapper);
         
-        LancamentoVO persistedLancamento = objectMapper.readValue(content, LancamentoVO.class);
         lancamento = persistedLancamento;
         
         assertNotNull(persistedLancamento);
@@ -229,11 +235,11 @@ public class LancamentoControllerXmlTest extends AbstractIntegrationTest {
         
         var content = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_XML)
-                .accept(TestConfigs.CONTENT_TYPE_XML)
-                .pathParam("codigo", lancamento.getId())
+                .contentType(TestConfigs.CONTENT_TYPE_YML)
+                .accept(TestConfigs.CONTENT_TYPE_YML)
+                .pathParam("id", lancamento.getId())
                 .when()
-                .get("{codigo}")
+                .get("{id}")
                 .then()
                 .statusCode(403)
                 .extract()

@@ -66,7 +66,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		
 		authSpecification = new RequestSpecBuilder()
 				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-				.setBasePath("/api/categories/v1")
+				.setBasePath("/api/categorias/v1")
 				.setPort(TestConfigs.SERVER_PORT)
 					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -80,7 +80,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categories/v1")
+			.setBasePath("/api/categorias/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -115,7 +115,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categories/v1")
+			.setBasePath("/api/categorias/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -144,7 +144,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_XDECODEX)
-			.setBasePath("/api/categories/v1")
+			.setBasePath("/api/categorias/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -179,7 +179,7 @@ public class CategoriaControllerXmlTest extends AbstractIntegrationTest {
 		
 		specification = new RequestSpecBuilder()
 			.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_EXAMPLE)
-			.setBasePath("/api/categories/v1")
+			.setBasePath("/api/categorias/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 			.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
