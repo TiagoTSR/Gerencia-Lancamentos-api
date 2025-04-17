@@ -4,14 +4,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,10 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
+import br.com.xdecodex.dto.LancamentoEstatisticaDia;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.services.LancamentoService;
-import br.com.xdecodex.util.MediaType;
+import br.com.xdecodex.util.MediaType1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,21 +51,41 @@ public class LancamentoController {
 	
 	@Autowired
 	private LancamentoRepositoryQuery lancamentoRepositoryQuery;
-
+	
+	@Lazy
 	@Autowired
 	private LancamentoService lancamentoService;
 
 	PagedResourcesAssembler<LancamentoVO> assembler;
 	
 	
+	@GetMapping("/relatorios/por-pessoa")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')")
+	public ResponseEntity<byte[]> relatorioPorPessoa(
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate inicio,
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fim) throws Exception {
+		byte[] relatorio = lancamentoService.relatorioPorPessoa(inicio, fim);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+				.body(relatorio);
+	}
+	
+	@GetMapping("/estatisticas/por-dia")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')")
+	public List<LancamentoEstatisticaDia> porDia() {
+		return this.lancamentoRepositoryQuery.porDia(LocalDate.now());
+	}
+	
 	@GetMapping("/estatisticas/por-categoria")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')")
 	public List<LancamentoEstatisticaCategoria> porCategoria() {
 		return this.lancamentoRepositoryQuery.porCategoria(LocalDate.now());
 	}	
 
-	@GetMapping(produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML
+	@GetMapping(produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML
 	})
 	@Operation(summary = "Find all launches", description = "Find all launches", tags = { "Lancamento" }, responses = {
 			@ApiResponse(description = "Success", responseCode = "200", content = {
@@ -91,9 +116,9 @@ public class LancamentoController {
     }
 	
 	@CrossOrigin(origins = "http://localhost:8080")
-	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML
+	@GetMapping(value = "/{id}", produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML
 	})
 	@Operation(summary = "Find a lancamento", description = "Find a lancamento", tags = { "Lancamento" }, responses = {
 			@ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),
@@ -112,9 +137,9 @@ public class LancamentoController {
 		}
 	}
 
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML }, produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-					MediaType.APPLICATION_YML })
+	@PostMapping(consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML }, produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+					MediaType1.APPLICATION_YML })
 	@Operation(summary = "Add a release", description = "Adds a new release by passing a JSON, XML or YML representation of the release!", tags = {
 			"Lancamento" }, responses = {
 					@ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),
@@ -131,9 +156,9 @@ public class LancamentoController {
 		}
 	}
 
-	@PutMapping(value = "/{id}", consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML }, produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-					MediaType.APPLICATION_YML })
+	@PutMapping(value = "/{id}", consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML }, produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+					MediaType1.APPLICATION_YML })
 	@Operation(summary = "Update a release", description = "Updates a release by passing a JSON, XML or YML representation of the release!", tags = {
 			"Lancamento" }, responses = {
 					@ApiResponse(description = "Updated", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.services.CategoriaService;
-import br.com.xdecodex.util.MediaType;
+import br.com.xdecodex.util.MediaType1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,9 +38,9 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
-    @GetMapping(produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML 
+    @GetMapping(produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML 
 			})
     @Operation(summary = "Find all categories", description = "Find all categories",
 		tags = {"Categoria"},
@@ -71,9 +71,9 @@ public class CategoriaController {
 		return ResponseEntity.ok(categoriaService.findAll(pageable));
 	}
 
-    @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML 
+    @GetMapping(value = "/{id}", produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML 
 			})
     @Operation(summary = "Find a category", description = "Find a category",
 	tags = {"Categoria"},
@@ -97,10 +97,10 @@ public class CategoriaController {
         }
     }
 
-    @PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  },
-	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  })
+    @PostMapping(consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  },
+	produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  })
     @Operation(summary = "Add a categoria",
 	description = "Add a category by passing a JSON, XML or YML representation of the category!",
 	tags = {"Categoria"},
@@ -118,10 +118,10 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoriaVO);
     }
 
-    @PutMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  },
-	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  })
+    @PutMapping(consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  },
+	produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  })
     @Operation(summary = "Update a categoria",
 	description = "Update a category by passing a JSON, XML or YML representation of the category!",
 	tags = {"Categoria"},

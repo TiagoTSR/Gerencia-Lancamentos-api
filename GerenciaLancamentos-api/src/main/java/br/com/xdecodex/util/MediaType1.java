@@ -1,6 +1,6 @@
 package br.com.xdecodex.util;
 
-public class MediaType {
+public class MediaType1 {
 	
 	public static final String APPLICATION_JSON ="application/json";
 	public static final String APPLICATION_XML ="application/xml";

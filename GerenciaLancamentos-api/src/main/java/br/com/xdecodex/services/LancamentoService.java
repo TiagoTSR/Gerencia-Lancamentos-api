@@ -3,12 +3,19 @@ package br.com.xdecodex.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +28,8 @@ import org.springframework.util.ObjectUtils;
 import br.com.xdecodex.controllers.LancamentoController;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
+import br.com.xdecodex.dto.LancamentoEstatisticaDia;
+import br.com.xdecodex.dto.LancamentoEstatisticaPessoa;
 import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
@@ -41,6 +50,10 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 
 @Service
 public class LancamentoService implements LancamentoRepositoryQuery {
@@ -49,6 +62,10 @@ public class LancamentoService implements LancamentoRepositoryQuery {
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
+    
+    @Lazy
+    @Autowired
+    private LancamentoRepositoryQuery lancamentoRepositoryQuery;
 
     @Autowired
     private PessoaRepository pessoaRepository;
@@ -58,8 +75,31 @@ public class LancamentoService implements LancamentoRepositoryQuery {
 
     @Autowired
     private PagedResourcesAssembler<LancamentoVO> assembler;
+    
+    @SuppressWarnings("deprecation")
+    public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws Exception {
+        List<LancamentoEstatisticaPessoa> dados = lancamentoRepositoryQuery.porPessoa(inicio, fim);
+        
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("DT_INICIO", Date.valueOf(inicio));
+        parametros.put("DT_FIM", Date.valueOf(fim));
+        parametros.put("REPORT_LOCALE", new Locale("pt", "BR"));
+        
+        // Load the report file
+        InputStream inputStream = this.getClass().getResourceAsStream("/relatorios/lancamentos-por-pessoa.jasper");
 
-  
+        
+        if (inputStream == null) {
+            throw new FileNotFoundException("Jasper report not found at /relatorios/lancamentos-por-pessoa.jasper");
+        }
+
+        JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parametros,
+                new JRBeanCollectionDataSource(dados));
+        
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
+
+
     public PagedModel<EntityModel<LancamentoVO>> findAll(Pageable pageable) {
         logger.info("Finding all lancamentos!");
 
@@ -125,26 +165,97 @@ public class LancamentoService implements LancamentoRepositoryQuery {
         lancamentoRepository.delete(entity);
         return true;
     }
+    
+    @Override
+	public List<LancamentoEstatisticaPessoa> porPessoa(LocalDate inicio, LocalDate fim) {
+		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+		
+		CriteriaQuery<LancamentoEstatisticaPessoa> criteriaQuery = criteriaBuilder.
+				createQuery(LancamentoEstatisticaPessoa.class);
+		
+		Root<Lancamento> root = criteriaQuery.from(Lancamento.class);
+		
+		criteriaQuery.select(criteriaBuilder.construct(LancamentoEstatisticaPessoa.class, 
+				root.get(Lancamento_.tipo),
+				root.get(Lancamento_.pessoa),
+				criteriaBuilder.sum(root.get(Lancamento_.valor))));
+		
+		criteriaQuery.where(
+				criteriaBuilder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						inicio),
+				criteriaBuilder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						fim));
+		
+		criteriaQuery.groupBy(root.get(Lancamento_.tipo), 
+				root.get(Lancamento_.pessoa));
+		
+		TypedQuery<LancamentoEstatisticaPessoa> typedQuery = manager
+				.createQuery(criteriaQuery);
+		
+		return typedQuery.getResultList();
+	}
+	
+	@Override
+	public List<LancamentoEstatisticaDia> porDia(LocalDate mesReferencia) {
+		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+		
+		CriteriaQuery<LancamentoEstatisticaDia> criteriaQuery = criteriaBuilder.
+				createQuery(LancamentoEstatisticaDia.class);
+		
+		Root<Lancamento> root = criteriaQuery.from(Lancamento.class);
+		
+		criteriaQuery.select(criteriaBuilder.construct(LancamentoEstatisticaDia.class, 
+				root.get(Lancamento_.tipo),
+				root.get(Lancamento_.dataVencimento),
+				criteriaBuilder.sum(root.get(Lancamento_.valor))));
+		
+		LocalDate primeiroDia = mesReferencia.withDayOfMonth(1);
+		LocalDate ultimoDia = mesReferencia.withDayOfMonth(mesReferencia.lengthOfMonth());
+		
+		criteriaQuery.where(
+				criteriaBuilder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						primeiroDia),
+				criteriaBuilder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						ultimoDia));
+		
+		criteriaQuery.groupBy(root.get(Lancamento_.tipo), 
+				root.get(Lancamento_.dataVencimento));
+		
+		TypedQuery<LancamentoEstatisticaDia> typedQuery = manager
+				.createQuery(criteriaQuery);
+		
+		return typedQuery.getResultList();
+	}
 
     @Override
-    public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia) {
-        CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<LancamentoEstatisticaCategoria> criteria = builder.createQuery(LancamentoEstatisticaCategoria.class);
-        Root<Lancamento> root = criteria.from(Lancamento.class);
-
-        criteria.select(builder.construct(
-                LancamentoEstatisticaCategoria.class,
-                root.get(Lancamento_.categoria),
-                builder.sum(root.get(Lancamento_.valor))));
-
-        LocalDate primeiroDia = mesReferencia.withDayOfMonth(1);
-        LocalDate ultimoDia = mesReferencia.withDayOfMonth(mesReferencia.lengthOfMonth());
-
-        criteria.where(builder.between(root.get(Lancamento_.dataVencimento), primeiroDia, ultimoDia));
-        criteria.groupBy(root.get(Lancamento_.categoria));
-
-        return manager.createQuery(criteria).getResultList();
-    }
+	public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia) {
+		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+		
+		CriteriaQuery<LancamentoEstatisticaCategoria> criteriaQuery = criteriaBuilder.
+				createQuery(LancamentoEstatisticaCategoria.class);
+		
+		Root<Lancamento> root = criteriaQuery.from(Lancamento.class);
+		
+		criteriaQuery.select(criteriaBuilder.construct(LancamentoEstatisticaCategoria.class, 
+				root.get(Lancamento_.categoria),
+				criteriaBuilder.sum(root.get(Lancamento_.valor))));
+		
+		LocalDate primeiroDia = mesReferencia.withDayOfMonth(1);
+		LocalDate ultimoDia = mesReferencia.withDayOfMonth(mesReferencia.lengthOfMonth());
+		
+		criteriaQuery.where(
+				criteriaBuilder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						primeiroDia),
+				criteriaBuilder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), 
+						ultimoDia));
+		
+		criteriaQuery.groupBy(root.get(Lancamento_.categoria));
+		
+		TypedQuery<LancamentoEstatisticaCategoria> typedQuery = manager
+				.createQuery(criteriaQuery);
+		
+		return typedQuery.getResultList();
+	}
 
     @Override
     public List<LancamentoVO> filtrar(LancamentoFilter lancamentoFilter, Pageable pageable) {

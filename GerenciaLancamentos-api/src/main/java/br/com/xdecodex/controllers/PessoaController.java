@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.data.vo.v2.PessoaVOV2;
 import br.com.xdecodex.services.PessoaService;
-import br.com.xdecodex.util.MediaType;
+import br.com.xdecodex.util.MediaType1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,9 +39,9 @@ public class PessoaController {
     @Autowired
     private PessoaService pessoaService; 
 
-    @GetMapping(produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML 
+    @GetMapping(produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML 
 			})
     @Operation(summary = "Find all persons", description = "Find all persons",
     		tags = {"Person"},
@@ -74,9 +74,9 @@ public class PessoaController {
 	}
     
     @CrossOrigin(origins = "http://localhost:8080")
-    @GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON,
-			MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML 
+    @GetMapping(value = "/{id}", produces = { MediaType1.APPLICATION_JSON,
+			MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML 
 			})
     @Operation(summary = "Find a person", description = "Find a person",
 	tags = {"Pessoa"},
@@ -100,10 +100,10 @@ public class PessoaController {
         }
     }
 
-    @PostMapping(consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  },
-	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  })
+    @PostMapping(consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  },
+	produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  })
     @Operation(summary = "Add a new person",
 	description = "Add a new Person by passing a JSON, XML or YML representation of the person!",
 	tags = {"Pessoa"},
@@ -125,10 +125,10 @@ public class PessoaController {
         }
     }
     
-    @PostMapping( value = "/v2",consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  },
-	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  })
+    @PostMapping( value = "/v2",consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  },
+	produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  })
     @Operation(summary = "Adiciona uma new person",
 	description = "Adiciona uma new Person passando uma representação JSON, XML ou YML da person!",
 	tags = {"Pessoa"},
@@ -150,10 +150,10 @@ public class PessoaController {
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  },
-	produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_YML  })
+    @PutMapping(value = "/{id}", consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  },
+	produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
+			MediaType1.APPLICATION_YML  })
     @Operation(summary = "Update a person",
 	description = "Update a Person by passing a JSON, XML or YML representation of the person!",
 	tags = {"Pessoa"},
