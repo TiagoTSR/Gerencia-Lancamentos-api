@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -38,8 +40,10 @@ import br.com.xdecodex.model.Lancamento;
 import br.com.xdecodex.model.Lancamento_;
 import br.com.xdecodex.model.Pessoa;
 import br.com.xdecodex.model.Pessoa_;
+import br.com.xdecodex.model.Usuario;
 import br.com.xdecodex.repositories.LancamentoRepository;
 import br.com.xdecodex.repositories.PessoaRepository;
+import br.com.xdecodex.repositories.UsuarioRepository;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.repositories.projection.ResumoLancamento;
@@ -50,15 +54,18 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import br.com.xdecodex.mail.Mailer;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class LancamentoService implements LancamentoRepositoryQuery {
 
     private static final Logger logger = Logger.getLogger(LancamentoService.class.getName());
+    
+    private static final String DESTINATARIOS = "ROLE_PESQUISAR_LANCAMENTO";
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
@@ -66,15 +73,50 @@ public class LancamentoService implements LancamentoRepositoryQuery {
     @Lazy
     @Autowired
     private LancamentoRepositoryQuery lancamentoRepositoryQuery;
+    
+    @Autowired
+	private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PessoaRepository pessoaRepository;
 
     @PersistenceContext
     private EntityManager manager;
+    
+    @Autowired  
+	private Mailer mailer;
 
     @Autowired
     private PagedResourcesAssembler<LancamentoVO> assembler;
+    
+    @Scheduled(cron = "0 0 6 * * *")
+    public void avisarSobreLancamentosVencidos() {
+        if (logger.isLoggable(Level.FINE)) {  // Nível equivalente ao debug
+            logger.fine("Preparando envio de e-mails de aviso de lançamentos vencidos.");
+        }
+
+        List<Lancamento> vencidos = lancamentoRepository
+                .findByDataVencimentoLessThanEqualAndDataPagamentoIsNull(LocalDate.now());
+
+        if (vencidos.isEmpty()) {
+            logger.info("Sem lançamentos vencidos para aviso.");
+            return;
+        }
+
+        logger.info("Existem " + vencidos.size() + " lançamentos vencidos.");
+
+        List<Usuario> destinatarios = usuarioRepository
+                .findByPermissoesDescricao(DESTINATARIOS);
+
+        if (destinatarios.isEmpty()) {
+            logger.warning("Existem lançamentos vencidos, mas o sistema não encontrou destinatários.");
+            return;
+        }
+
+        mailer.avisarSobreLancamentosVencidos(vencidos, destinatarios);
+
+        logger.info("Envio de e-mail de aviso concluído.");
+    }
     
     @SuppressWarnings("deprecation")
     public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws Exception {

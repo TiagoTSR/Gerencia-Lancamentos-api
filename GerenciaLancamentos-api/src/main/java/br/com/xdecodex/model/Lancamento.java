@@ -3,6 +3,7 @@ package br.com.xdecodex.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -50,7 +51,8 @@ public class Lancamento {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private TipoLancamento tipo;
-
+	
+	@JsonIgnoreProperties("contatos")
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "id_categoria")

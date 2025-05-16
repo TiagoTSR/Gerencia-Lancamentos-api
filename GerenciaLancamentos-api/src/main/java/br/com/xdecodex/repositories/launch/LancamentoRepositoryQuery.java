@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
 import br.com.xdecodex.dto.LancamentoEstatisticaDia;
 import br.com.xdecodex.dto.LancamentoEstatisticaPessoa;
-import br.com.xdecodex.model.Lancamento;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.projection.ResumoLancamento;
 
