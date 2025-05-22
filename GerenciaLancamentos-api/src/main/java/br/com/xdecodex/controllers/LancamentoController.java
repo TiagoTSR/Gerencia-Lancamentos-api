@@ -1,5 +1,8 @@
 package br.com.xdecodex.controllers;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
 import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
@@ -52,12 +56,22 @@ public class LancamentoController {
 	@Autowired
 	private LancamentoRepositoryQuery lancamentoRepositoryQuery;
 	
+	
+
 	@Lazy
 	@Autowired
 	private LancamentoService lancamentoService;
 
 	PagedResourcesAssembler<LancamentoVO> assembler;
 	
+	@PostMapping("/anexo")
+	public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
+		OutputStream out = new FileOutputStream("C:\\Tiago\\anexos--" + anexo.getOriginalFilename());
+		out.write(anexo.getBytes());
+		out.close();
+		return "ok";
+	}
+
 	
 	@GetMapping("/relatorios/por-pessoa")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')")

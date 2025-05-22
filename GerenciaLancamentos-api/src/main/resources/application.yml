@@ -4,13 +4,16 @@ gerencia:
     port: 587
     username: testes.gerencia
     password: gerencia.testes
+
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,https://xdecodex.com.br,http://localhost:8080/oauth/token
+
 security:
   jwt:
     token:
       secret-key: 53cr38
       expire-length: 3600000
+
 spring:
   application:
     name: GerenciaLancamentos-api
@@ -26,12 +29,20 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 springdoc:
   pathsToMatch:
     - /auth/**
     - /api/**/v1/**
   swagger-ui:
     use-root-path: true
+
 logging:
- level:
-   br.com.xdecodex: DEBUG
+  level:
+    br.com.xdecodex: DEBUG
