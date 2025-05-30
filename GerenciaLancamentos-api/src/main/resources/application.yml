@@ -29,7 +29,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
-
   servlet:
     multipart:
       enabled: true
@@ -46,3 +45,8 @@ springdoc:
 logging:
   level:
     br.com.xdecodex: DEBUG
+
+s3:
+    access-key-id: x
+    secret-access-key: x
+    region: us-east-1
