@@ -1,18 +1,28 @@
 gerencia:
+  s3:
+    accessKeyId: ${AWS_ACCESS_KEY_ID}
+    secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+    region: ${AWS_REGION}
+    bucket: "aw-gerencia-arquivos"
+
   mail:
     host: smtp.office365.com
     port: 587
     username: testes.gerencia
     password: gerencia.testes
 
-cors:
-  originPatterns: http://localhost:3000,http://localhost:8080,https://xdecodex.com.br,http://localhost:8080/oauth/token
+  cors:
+    originPatterns:
+      - http://localhost:3000
+      - http://localhost:8080
+      - https://xdecodex.com.br
+      - http://localhost:8080/oauth/token
 
-security:
-  jwt:
-    token:
-      secret-key: 53cr38
-      expire-length: 3600000
+  security:
+    jwt:
+      token:
+        secret-key: 53cr38
+        expire-length: 3600000
 
 spring:
   application:
@@ -45,8 +55,3 @@ springdoc:
 logging:
   level:
     br.com.xdecodex: DEBUG
-
-s3:
-    access-key-id: x
-    secret-access-key: x
-    region: us-east-1

@@ -15,6 +15,7 @@ public class GerenciaApiProperty {
 	
 	private final S3 s3 = new S3();
 	
+	
 	public S3 getS3() {
 		return s3;
 	}

@@ -1,8 +1,6 @@
 package br.com.xdecodex.controllers;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,11 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
+import br.com.xdecodex.dto.Anexo;
 import br.com.xdecodex.dto.LancamentoEstatisticaCategoria;
 import br.com.xdecodex.dto.LancamentoEstatisticaDia;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.services.LancamentoService;
+import br.com.xdecodex.storage.S3;
 import br.com.xdecodex.util.MediaType1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -56,23 +56,28 @@ public class LancamentoController {
 	@Autowired
 	private LancamentoRepositoryQuery lancamentoRepositoryQuery;
 	
-	
-
 	@Lazy
 	@Autowired
 	private LancamentoService lancamentoService;
 
 	PagedResourcesAssembler<LancamentoVO> assembler;
 	
-	@PostMapping("/anexo")
+	@Autowired
+	private S3 s3;
+	
+	@PostMapping(value = "/anexo", consumes = "multipart/form-data")
+	public Anexo uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
+		String nome = s3.salvarTemporariamente(anexo);
+		return new Anexo(nome, s3.configurarUrl(nome));
+	}
+	/*
 	public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
 		OutputStream out = new FileOutputStream("C:\\Tiago\\anexos--" + anexo.getOriginalFilename());
 		out.write(anexo.getBytes());
 		out.close();
 		return "ok";
 	}
-
-	
+	*/
 	@GetMapping("/relatorios/por-pessoa")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')")
 	public ResponseEntity<byte[]> relatorioPorPessoa(
