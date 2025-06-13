@@ -16,6 +16,7 @@ import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -41,6 +42,27 @@ public class LancamentoVO extends RepresentationModel<LancamentoVO> implements S
 
     private Categoria categoria;
     private Pessoa pessoa;
+    
+    private String anexo;
+	
+	@Transient
+	private String urlAnexo;
+	
+	public String getUrlAnexo() {
+		return urlAnexo;
+	}
+
+	public void setUrlAnexo(String urlAnexo) {
+		this.urlAnexo = urlAnexo;
+	}
+
+	public String getAnexo() {
+		return anexo;
+	}
+
+	public void setAnexo(String anexo) {
+		this.anexo = anexo;
+	}
 
 	public Long getId() {
 		return id;

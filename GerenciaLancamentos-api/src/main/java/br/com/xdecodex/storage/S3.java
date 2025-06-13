@@ -1,6 +1,7 @@
 package br.com.xdecodex.storage;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -9,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.xdecodex.config.property.GerenciaApiProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import br.com.xdecodex.config.property.GerenciaApiProperty;
+import software.amazon.awssdk.services.s3.model.PutObjectTaggingRequest;
+import software.amazon.awssdk.services.s3.model.Tagging;
 
 @Component
 public class S3 {
@@ -51,8 +54,19 @@ public class S3 {
     public String configurarUrl(String objeto) {
         return "https://" + property.getS3().getBucket() + ".s3.amazonaws.com/" + objeto;
     }
+    
+    public void create(String objeto) {
+    	PutObjectTaggingRequest putObjectTaggingRequest = PutObjectTaggingRequest.builder()
+                .bucket(property.getS3().getBucket())
+                .key(objeto)
+                .tagging(Tagging.builder().tagSet(Collections.emptyList()).build())
+                .build();
+
+        s3Client.putObjectTagging(putObjectTaggingRequest);
+	}
 
     private String gerarNomeUnico(String originalFilename) {
         return UUID.randomUUID().toString() + "_" + originalFilename;
     }
+
 }

@@ -26,6 +26,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import br.com.xdecodex.controllers.LancamentoController;
 import br.com.xdecodex.data.vo.v1.LancamentoVO;
@@ -34,6 +35,7 @@ import br.com.xdecodex.dto.LancamentoEstatisticaDia;
 import br.com.xdecodex.dto.LancamentoEstatisticaPessoa;
 import br.com.xdecodex.exceptions.PessoaInexistenteOuInativaException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
+import br.com.xdecodex.mail.Mailer;
 import br.com.xdecodex.mapper.DozerMapper;
 import br.com.xdecodex.model.Categoria_;
 import br.com.xdecodex.model.Lancamento;
@@ -47,6 +49,7 @@ import br.com.xdecodex.repositories.UsuarioRepository;
 import br.com.xdecodex.repositories.filter.LancamentoFilter;
 import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.repositories.projection.ResumoLancamento;
+import br.com.xdecodex.storage.S3;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -54,7 +57,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import br.com.xdecodex.mail.Mailer;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -82,6 +84,9 @@ public class LancamentoService implements LancamentoRepositoryQuery {
 
     @PersistenceContext
     private EntityManager manager;
+    
+    @Autowired
+    private S3 s3;
     
     @Autowired  
 	private Mailer mailer;
@@ -171,6 +176,10 @@ public class LancamentoService implements LancamentoRepositoryQuery {
         if (pessoa.isInactive()) {
             throw new PessoaInexistenteOuInativaException();
         }
+        
+        if (StringUtils.hasText(lancamentoVO.getAnexo())) {
+			s3.create(lancamentoVO.getAnexo());
+		}
 
         Lancamento entity = DozerMapper.parseObject(lancamentoVO, Lancamento.class);
         Lancamento savedEntity = lancamentoRepository.save(entity);
