@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -193,19 +194,39 @@ public class LancamentoService implements LancamentoRepositoryQuery {
     public LancamentoVO update(LancamentoVO lancamentoVO) {
         logger.info("Updating Lancamento");
 
-        Lancamento lancamento = lancamentoRepository.findById(lancamentoVO.getId())
+        Lancamento lancamentoSalvo = lancamentoRepository.findById(lancamentoVO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Lancamento not found for update"));
 
-        // Atualiza os campos necessários
-        lancamento.setDescricao(lancamentoVO.getDescricao());
-        // Outros campos...
+        lancamentoVO.setDescricao(lancamentoVO.getDescricao());
+        if (!lancamentoVO.getPessoa().equals(lancamentoSalvo.getPessoa())) {
+			validPerson(lancamentoVO);
+		}
+		
+		if (!StringUtils.hasLength(lancamentoVO.getAnexo())
+				&& StringUtils.hasText(lancamentoVO.getAnexo())) {
+			s3.remove(lancamentoSalvo.getAnexo());
+		} else if (StringUtils.hasLength(lancamentoVO.getAnexo())
+				&& !lancamentoVO.getAnexo().equals(lancamentoSalvo.getAnexo())) {
+			s3.toReplace(lancamentoSalvo.getAnexo(), lancamentoVO.getAnexo());
+		}
 
-        Lancamento updatedLancamento = lancamentoRepository.save(lancamento);
+        Lancamento updatedLancamento = lancamentoRepository.save(lancamentoSalvo);
 
         LancamentoVO vo = DozerMapper.parseObject(updatedLancamento, LancamentoVO.class);
         vo.add(linkTo(methodOn(LancamentoController.class).findById(vo.getId())).withSelfRel());
         return vo;
     }
+    
+    private void validPerson(LancamentoVO lancamentoVO) {
+		Optional<Pessoa> pessoa = null;
+		if (lancamentoVO.getPessoa().getId() != null) {
+			pessoa = pessoaRepository.findById(lancamentoVO.getPessoa().getId());
+		}
+
+		if (pessoa.isEmpty() || pessoa.get().isInactive()) {
+			throw new PessoaInexistenteOuInativaException();
+		}
+	}
 
     
     public boolean delete(Long id) {

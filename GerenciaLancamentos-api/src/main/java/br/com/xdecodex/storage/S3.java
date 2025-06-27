@@ -8,11 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.xdecodex.config.property.GerenciaApiProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectTaggingRequest;
 import software.amazon.awssdk.services.s3.model.Tagging;
@@ -27,6 +29,7 @@ public class S3 {
 
     @Autowired
     private S3Client s3Client;
+    
 
     public String salvarTemporariamente(MultipartFile arquivo) {
         String nomeUnico = gerarNomeUnico(arquivo.getOriginalFilename());
@@ -50,6 +53,23 @@ public class S3 {
             throw new RuntimeException("Problemas ao tentar enviar o arquivo para o S3.", e);
         }
     }
+    
+    public void remove(String objeto) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+            .bucket(property.getS3().getBucket())
+            .key(objeto)
+            .build();
+
+        s3Client.deleteObject(deleteRequest);
+    }
+
+	public void toReplace(String objetoAntigo, String objetoNovo) {
+		if (StringUtils.hasText(objetoAntigo)) {
+			this.remove(objetoAntigo);
+		}
+
+		create(objetoNovo);
+	}	
 
     public String configurarUrl(String objeto) {
         return "https://" + property.getS3().getBucket() + ".s3.amazonaws.com/" + objeto;
