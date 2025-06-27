@@ -7,10 +7,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import br.com.xdecodex.repositories.listener.LancamentoAnexoListener;
 import br.com.xdecodex.serialization.converter.LocalDateDeserializer;
 import br.com.xdecodex.serialization.converter.LocalDateSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
+@EntityListeners(LancamentoAnexoListener.class)
 @Entity
 @Table(name = "lancamento")
 public class Lancamento {
