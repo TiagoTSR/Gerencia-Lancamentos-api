@@ -24,6 +24,12 @@ gerencia:
         secret-key: 53cr38
         expire-length: 3600000
 
+seguranca:
+  redirects-permitidos:
+    - http://localhost:8000/authorized
+    - https://oidcdebugger.com/debug
+  auth-server-url: http://localhost:8080
+
 spring:
   application:
     name: GerenciaLancamentos-api

@@ -1,4 +1,4 @@
-package br.com.xdecodex.security.jwt;
+package br.com.xdecodex.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

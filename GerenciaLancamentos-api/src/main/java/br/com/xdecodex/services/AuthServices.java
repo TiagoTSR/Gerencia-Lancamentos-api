@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import br.com.xdecodex.data.vo.v1.security.AccountCredentialsVO;
 import br.com.xdecodex.data.vo.v1.security.TokenVO;
 import br.com.xdecodex.repositories.UsuarioRepository;
-import br.com.xdecodex.security.jwt.JwtTokenProvider;
+import br.com.xdecodex.security.JwtTokenProvider;
 
 @Service
 public class AuthServices {

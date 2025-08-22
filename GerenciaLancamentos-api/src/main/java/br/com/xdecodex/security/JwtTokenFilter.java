@@ -1,4 +1,4 @@
-package br.com.xdecodex.security.jwt;
+package br.com.xdecodex.security;
 
 import java.io.IOException;
 
