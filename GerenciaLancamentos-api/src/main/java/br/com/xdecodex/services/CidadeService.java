@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.stereotype.Service;
 
 import br.com.xdecodex.controllers.CidadeController;
 import br.com.xdecodex.data.vo.v1.CidadeVO;
@@ -19,6 +20,7 @@ import br.com.xdecodex.mapper.DozerMapper;
 import br.com.xdecodex.model.Cidade;
 import br.com.xdecodex.repositories.CidadeRepository;
 
+@Service
 public class CidadeService {
 	
 	private Logger logger = Logger.getLogger(CidadeService.class.getName());

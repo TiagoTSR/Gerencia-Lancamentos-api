@@ -8,6 +8,6 @@ import br.com.xdecodex.model.Cidade;
 
 public interface CidadeRepository extends JpaRepository<Cidade, Long> {
 
-	List<Cidade> findByEstadoCodigo(Long estadoCodigo);
+	List<Cidade> findByEstadoId(Long estadoId);
 
 }

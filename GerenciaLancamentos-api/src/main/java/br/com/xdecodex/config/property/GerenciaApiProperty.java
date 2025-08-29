@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix ="gerencia")
 @Component
 public class GerenciaApiProperty {
-
+	
 	private String originPermitida = "http://localhost:8000";
 
 	private final Seguranca seguranca = new Seguranca();

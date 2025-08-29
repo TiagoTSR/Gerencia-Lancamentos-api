@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 
 import br.com.xdecodex.data.vo.v1.EstadoVO;
 import br.com.xdecodex.services.EstadoService;
@@ -45,6 +47,7 @@ public class EstadoController {
 	private PagedResourcesAssembler<EstadoVO> pagedResourcesAssembler;
 
 	@Autowired
+	@Qualifier("pagedResourcesAssembler")
 	private RepresentationModelAssembler<EstadoVO, EntityModel<EstadoVO>> estadoModelAssembler;
 	
 	 @GetMapping(produces = { MediaType1.APPLICATION_JSON,
