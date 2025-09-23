@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,30 +20,34 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-@Configuration
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Profile("oauth-security")
+@Configuration
+@EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+            .authorizeHttpRequests(authorizeRequests ->
+                authorizeRequests
+                    .requestMatchers(AntPathRequestMatcher.antMatcher("/categorias")).permitAll()
+                    .anyRequest().authenticated()
+            )
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/categorias").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> 
-                oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-            )
-            .formLogin(form -> form.permitAll());
-        
-        return http.build();
+            .oauth2ResourceServer(oauth2ResourceServer ->
+                oauth2ResourceServer.jwt(jwt ->
+                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
+            );
+        return http.formLogin(withDefaults()).build();
     }
 
     @Bean
@@ -56,23 +62,21 @@ public class ResourceServerConfig {
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            
             List<String> authorities = jwt.getClaimAsStringList("authorities");
+
             if (authorities == null) {
                 authorities = Collections.emptyList();
             }
 
             JwtGrantedAuthoritiesConverter scopesAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+            Collection<GrantedAuthority> grantedAuthorities = scopesAuthoritiesConverter.convert(jwt);
 
-            Collection<?> grantedAuthorities = scopesAuthoritiesConverter.convert(jwt);
-
-            // Combine scopes and custom authorities into a single collection
-            return grantedAuthorities.stream()
-                .map(Object::toString)
+            grantedAuthorities.addAll(authorities.stream()
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+            return grantedAuthorities;
         });
 
         return jwtAuthenticationConverter;
