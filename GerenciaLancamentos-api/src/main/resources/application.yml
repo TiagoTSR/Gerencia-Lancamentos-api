@@ -9,7 +9,7 @@ gerencia:
     host: smtp.office365.com
     port: 587
     username: testes.gerencia
-    password: gerencia.testes
+    password: ${MAIL_PASSWORD} # variável de ambiente para senha do mail
 
   cors:
     originPatterns:
@@ -20,24 +20,29 @@ gerencia:
 
   seguranca:
     redirects-permitidos:
+      # Padrões do Spring Security para clients angular e mobile
+      - http://localhost:8080/login/oauth2/code/angular
+      - http://localhost:8080/login/oauth2/code/mobile
+      - http://localhost:8080/swagger-ui/oauth2-redirect.html # Linha corrigida para 2 espaços
+      # Custom redirects adicionais
       - http://localhost-gerencia.com:8000/authorized
       - https://oidcdebugger.com/debug
     auth-server-url: http://localhost:8080
 
 spring:
+  application:
+    name: GerenciaLancamentos-api
+
   profiles:
     active: oauth-security
     group:
       prod: oauth-security
 
-  application:
-    name: GerenciaLancamentos-api
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/gerencia-lancamentos?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
     username: root
-    password: 12345690
+    password: ${DB_PASSWORD} # variável de ambiente para senha do banco
 
   jpa:
     hibernate:
@@ -63,3 +68,14 @@ springdoc:
 logging:
   level:
     br.com.xdecodex: DEBUG
+
+security:
+  clients:
+    angular:
+      client-secret: ${CLIENT_SECRET_ANGULAR}
+    mobile:
+      client-secret: ${CLIENT_SECRET_MOBILE}
+
+  keystore:
+    password: ${KEYSTORE_PASSWORD}
+    key-password: ${KEY_PASSWORD}

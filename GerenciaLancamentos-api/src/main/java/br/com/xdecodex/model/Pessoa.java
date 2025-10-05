@@ -8,9 +8,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -38,6 +41,11 @@ public class Pessoa {
 	@Valid
 	@OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Contato> contatos;	
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_cidade", insertable = false, updatable = false)
+    @JsonIgnore
+    private Cidade cidade;
 
 	public Long getId() {
 		return id;
@@ -73,6 +81,15 @@ public class Pessoa {
 
 	public Boolean getEnabled() {
 		return enabled;
+	}
+	
+
+	public Cidade getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
 	}
 
 	public void setEnabled(Boolean ativo) {

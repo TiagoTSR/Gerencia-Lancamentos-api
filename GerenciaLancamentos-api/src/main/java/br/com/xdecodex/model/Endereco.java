@@ -1,5 +1,6 @@
 package br.com.xdecodex.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -10,8 +11,9 @@ public class Endereco {
 	private String complemento;
 	private String bairro;
 	private String cep;
-	private String cidade;
-	private String estado;
+	
+	@Column(name = "id_cidade")
+	private Long cidade;
 	
 	public String getLogradouro() {
 		return logradouro;
@@ -53,19 +55,12 @@ public class Endereco {
 		this.cep = cep;
 	}
 
-	public String getCidade() {
+	public Long getCidade() {
 		return cidade;
 	}
 
-	public void setCidade(String cidade) {
+	public void setCidade(Long cidade) {
 		this.cidade = cidade;
 	}
 
-	public String getEstado() {
-		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
 }

@@ -1,12 +1,10 @@
 package br.com.xdecodex.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -44,9 +42,6 @@ public class EstadoController {
 	private EstadoService estadoService;
 
 	@Autowired
-	private PagedResourcesAssembler<EstadoVO> pagedResourcesAssembler;
-
-	@Autowired
 	@Qualifier("pagedResourcesAssembler")
 	private RepresentationModelAssembler<EstadoVO, EntityModel<EstadoVO>> estadoModelAssembler;
 	
@@ -80,12 +75,7 @@ public class EstadoController {
 		            : Direction.ASC;
 
 		    Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
-
-		    Page<EstadoVO> estadosPage = estadoService.findAll(pageable);
-
-		    PagedModel<EntityModel<EstadoVO>> pagedModel = pagedResourcesAssembler.toModel(estadosPage, estadoModelAssembler);
-
-		    return ResponseEntity.ok(pagedModel);
+			return ResponseEntity.ok(estadoService.findAll(pageable));
 		}
 
 	 @CrossOrigin(origins = "http://localhost:8080")

@@ -67,7 +67,7 @@ public class CategoriaController {
 		 Direction sortDirection = "desc".equalsIgnoreCase(direction)
 				? Direction.DESC : Direction.ASC;
 			
-		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "codigo"));
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
 		return ResponseEntity.ok(categoriaService.findAll(pageable));
 	}
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.xdecodex.controllers.LancamentoController;
 import br.com.xdecodex.controllers.PessoaController;
+import br.com.xdecodex.data.vo.v1.CidadeVO;
 import br.com.xdecodex.data.vo.v1.PessoaVO;
 import br.com.xdecodex.data.vo.v2.PessoaVOV2;
 import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
@@ -76,6 +77,11 @@ public class PessoaService {
 		Pessoa pessoa = pessoaRepository.findById(id)
 			.orElseThrow(() -> new ResourceNotFoundException("Sem registro para esse ID!"));
 		PessoaVO vo = DozerMapper.parseObject(pessoa, PessoaVO.class);
+		
+		 if (pessoa.getCidade() != null) {
+		        CidadeVO cidadeVO = DozerMapper.parseObject(pessoa.getCidade(), CidadeVO.class);
+		        vo.setCidade(cidadeVO);
+		    }
 		vo.add(linkTo(methodOn(PessoaController.class).findById(id)).withSelfRel());
 		return vo;
 }

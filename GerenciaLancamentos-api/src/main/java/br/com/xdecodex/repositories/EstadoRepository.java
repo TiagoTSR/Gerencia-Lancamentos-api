@@ -10,7 +10,7 @@ import br.com.xdecodex.model.Estado;
 
 public interface EstadoRepository extends JpaRepository<Estado, Long> {
 	
-	@Query("SELECT c FROM Categoria c WHERE c.nome LIKE LOWER(CONCAT ('%',:nome,'%'))")
-	Page<Estado> findCategoriasByNome(@Param("nome") String nome, Pageable pageable);
+	@Query("SELECT c FROM Estado c WHERE c.nome LIKE LOWER(CONCAT ('%',:nome,'%'))")
+	Page<Estado> findEstadosByNome(@Param("nome") String nome, Pageable pageable);
 
 }

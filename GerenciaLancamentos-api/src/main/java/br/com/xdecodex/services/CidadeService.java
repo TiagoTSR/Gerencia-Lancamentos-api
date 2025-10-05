@@ -10,13 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import br.com.xdecodex.controllers.CidadeController;
+import br.com.xdecodex.controllers.LancamentoController;
+import br.com.xdecodex.controllers.PessoaController;
+import br.com.xdecodex.data.vo.v1.CategoriaVO;
 import br.com.xdecodex.data.vo.v1.CidadeVO;
 import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
+import br.com.xdecodex.model.Categoria;
 import br.com.xdecodex.model.Cidade;
 import br.com.xdecodex.repositories.CidadeRepository;
 
@@ -43,14 +50,22 @@ public class CidadeService {
 		return cidades;
 	}
     
-      
-    public Page<CidadeVO> findAll(Pageable pageable) {
-        Page<Cidade> cidades = cidadeRepository.findAll(pageable);
-        return cidades.map(e -> {
-            CidadeVO vo = DozerMapper.parseObject(e, CidadeVO.class);
-            // adicionar links ou outras conversões se necessário
-            return vo;
-        });
+    
+    public PagedModel<EntityModel<CidadeVO>> findAll(Pageable pageable) {
+
+        logger.info("Encontrando todos as categorias!");
+
+        Page<Cidade> cidadePage = cidadeRepository.findAll(pageable);
+
+        Page<CidadeVO> cidadeVosPage = cidadePage.map(cidade -> DozerMapper.parseObject(cidade, CidadeVO.class));
+
+        cidadeVosPage.forEach(cidadeVO -> cidadeVO.add(
+                linkTo(methodOn(LancamentoController.class).findById(cidadeVO.getId())).withSelfRel()));
+
+        Link link = linkTo(methodOn(PessoaController.class)
+                .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+        return assembler.toModel(cidadeVosPage, link);
     }
 
 

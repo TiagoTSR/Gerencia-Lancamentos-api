@@ -27,6 +27,8 @@ public class PessoaVO extends RepresentationModel<PessoaVO> implements Serializa
 	@Embedded
 	private Endereco endereco;
 	private Boolean enabled;
+	
+	private CidadeVO cidade;
 
 	public Long getId() {
 		return id;
@@ -59,6 +61,14 @@ public class PessoaVO extends RepresentationModel<PessoaVO> implements Serializa
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	 public CidadeVO getCidade() {
+	        return cidade;
+	    }
+	    
+	    public void setCidade(CidadeVO cidade) {
+	        this.cidade = cidade;
+	    }
 	
 	@JsonIgnore
 	@Transient

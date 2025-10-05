@@ -1,12 +1,11 @@
 package br.com.xdecodex.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -19,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.com.xdecodex.data.vo.v1.CidadeVO;
 import br.com.xdecodex.model.Cidade;
@@ -31,15 +32,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+
+@RestController
+@RequestMapping("/api/cidades/v1")
 public class CidadeController {
 	
 	@Autowired
 	 private CidadeService cidadeService;
 
 	 @Autowired
-	 private PagedResourcesAssembler<CidadeVO> pagedResourcesAssembler;
-
-	 @Autowired
+	 @Qualifier("pagedResourcesAssembler")
 	 private RepresentationModelAssembler<CidadeVO, EntityModel<CidadeVO>> cidadeModelAssembler;
 	
 	 @GetMapping(produces = { MediaType1.APPLICATION_JSON,
@@ -72,12 +74,7 @@ public class CidadeController {
 	             : Direction.ASC;
 
 	     Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
-
-	     Page<CidadeVO> cidadesPage = cidadeService.findAll(pageable);
-
-	     PagedModel<EntityModel<CidadeVO>> pagedModel = pagedResourcesAssembler.toModel(cidadesPage, cidadeModelAssembler);
-
-	     return ResponseEntity.ok(pagedModel);
+		 return ResponseEntity.ok(cidadeService.findAll(pageable));
 	 }
 
 	 

@@ -10,13 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import br.com.xdecodex.controllers.EstadoController;
+import br.com.xdecodex.controllers.LancamentoController;
+import br.com.xdecodex.controllers.PessoaController;
+import br.com.xdecodex.data.vo.v1.CidadeVO;
 import br.com.xdecodex.data.vo.v1.EstadoVO;
 import br.com.xdecodex.exceptions.RequiredObjectIsNullException;
 import br.com.xdecodex.exceptions.ResourceNotFoundException;
 import br.com.xdecodex.mapper.DozerMapper;
+import br.com.xdecodex.model.Cidade;
 import br.com.xdecodex.model.Estado;
 import br.com.xdecodex.repositories.EstadoRepository;
 
@@ -44,13 +51,22 @@ public class EstadoService {
 	}
     
       
-    public Page<EstadoVO> findAll(Pageable pageable) {
-        Page<Estado> estados = estadoRepository.findAll(pageable);
-        return estados.map(e -> {
-            EstadoVO vo = DozerMapper.parseObject(e, EstadoVO.class);
-            // adicionar links ou outras conversões se necessário
-            return vo;
-        });
+    
+    public PagedModel<EntityModel<EstadoVO>> findAll(Pageable pageable) {
+
+        logger.info("Encontrando todos as categorias!");
+
+        Page<Estado> estadoPage = estadoRepository.findAll(pageable);
+
+        Page<EstadoVO> estadoVosPage = estadoPage.map(estado -> DozerMapper.parseObject(estado, EstadoVO.class));
+
+        estadoVosPage.forEach(estadoVO -> estadoVO.add(
+                linkTo(methodOn(LancamentoController.class).findById(estadoVO.getId())).withSelfRel()));
+
+        Link link = linkTo(methodOn(PessoaController.class)
+                .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+        return assembler.toModel(estadoVosPage, link);
     }
 
 

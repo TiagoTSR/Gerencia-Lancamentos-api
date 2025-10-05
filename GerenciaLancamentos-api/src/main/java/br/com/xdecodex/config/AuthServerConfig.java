@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.Customizer;
@@ -53,12 +54,15 @@ public class AuthServerConfig {
     @Autowired
     private GerenciaApiProperty gerenciaApiProperty;
 
+    @Autowired
+    private Environment env;
+
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient angularClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId("angular")
-                .clientSecret(passwordEncoder.encode("@ngul@r0"))
+                .clientSecret(passwordEncoder.encode(env.getProperty("security.clients.angular.client-secret")))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -77,7 +81,7 @@ public class AuthServerConfig {
         RegisteredClient mobileClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId("mobile")
-                .clientSecret(passwordEncoder.encode("m0b1le"))
+                .clientSecret(passwordEncoder.encode(env.getProperty("security.clients.mobile.client-secret")))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -130,12 +134,12 @@ public class AuthServerConfig {
         final InputStream inputStream = new ClassPathResource("keystore/gerencia.jks").getInputStream();
 
         final KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(inputStream, "123456".toCharArray());
+        keyStore.load(inputStream, env.getProperty("security.keystore.password").toCharArray());
 
         RSAKey rsaKey = RSAKey.load(
                 keyStore,
                 "gerencia",
-                "123456".toCharArray()
+                env.getProperty("security.keystore.key-password").toCharArray()
         );
 
         return new JWKSet(rsaKey);
