@@ -117,8 +117,14 @@ public class PessoaControllerXmlTest extends AbstractIntegrationTest {
 	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
 	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
 	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
+        assertEquals(6L, persistedPessoa.getEndereco().getCidade());
+        
+        // Verificação do objeto CidadeVO completo
+        assertNotNull(persistedPessoa.getCidade());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getNome());
+        assertNotNull(persistedPessoa.getCidade().getEstado());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getEstado().getNome());
+        
 	    assertNotNull(persistedPessoa.getEnabled());
     }
 
@@ -194,8 +200,14 @@ public class PessoaControllerXmlTest extends AbstractIntegrationTest {
 	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
 	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
 	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
+        assertEquals(6L, persistedPessoa.getEndereco().getCidade());
+        
+        // Verificação do objeto CidadeVO completo
+        assertNotNull(persistedPessoa.getCidade());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getNome());
+        assertNotNull(persistedPessoa.getCidade().getEstado());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getEstado().getNome());
+        
 	    assertNotNull(persistedPessoa.getEnabled());
     }
 
@@ -242,8 +254,7 @@ public class PessoaControllerXmlTest extends AbstractIntegrationTest {
 	    address.setComplemento("Apto 201");
 	    address.setBairro("Centro");
 	    address.setCep("12.400-12");
-	    address.setCidade("Rio de Janeiro");
-	    address.setEstado("RJ");
+	    address.setCidade(6L);
 
 	    pessoa.setEndereco(address);
     }

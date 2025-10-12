@@ -31,8 +31,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 0", output.getEndereco().getComplemento());
         assertEquals("Bairro Teste 0", output.getEndereco().getBairro());
         assertEquals("CEP Teste 0", output.getEndereco().getCep());
-        assertEquals("Cidade Teste 0", output.getEndereco().getCidade());
-        assertEquals("Estado Teste 0", output.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), output.getEndereco().getCidade());
         assertEquals(true, output.getEnabled());
     }
 
@@ -48,8 +47,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 0", outputZero.getEndereco().getComplemento());
         assertEquals("Bairro Teste 0", outputZero.getEndereco().getBairro());
         assertEquals("CEP Teste 0", outputZero.getEndereco().getCep());
-        assertEquals("Cidade Teste 0", outputZero.getEndereco().getCidade());
-        assertEquals("Estado Teste 0", outputZero.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputZero.getEndereco().getCidade());
         assertEquals(true, outputZero.getEnabled());
 
         PessoaVO outputSeven = outputList.get(7);
@@ -60,8 +58,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 7", outputSeven.getEndereco().getComplemento());
         assertEquals("Bairro Teste 7", outputSeven.getEndereco().getBairro());
         assertEquals("CEP Teste 7", outputSeven.getEndereco().getCep());
-        assertEquals("Cidade Teste 7", outputSeven.getEndereco().getCidade());
-        assertEquals("Estado Teste 7", outputSeven.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputSeven.getEndereco().getCidade());
         assertEquals(true, outputSeven.getEnabled());
 
         PessoaVO outputTwelve = outputList.get(12);
@@ -72,8 +69,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 12", outputTwelve.getEndereco().getComplemento());
         assertEquals("Bairro Teste 12", outputTwelve.getEndereco().getBairro());
         assertEquals("CEP Teste 12", outputTwelve.getEndereco().getCep());
-        assertEquals("Cidade Teste 12", outputTwelve.getEndereco().getCidade());
-        assertEquals("Estado Teste 12", outputTwelve.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputTwelve.getEndereco().getCidade());
         assertEquals(true, outputTwelve.getEnabled());
     }
 
@@ -87,8 +83,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 0", output.getEndereco().getComplemento());
         assertEquals("Bairro Teste 0", output.getEndereco().getBairro());
         assertEquals("CEP Teste 0", output.getEndereco().getCep());
-        assertEquals("Cidade Teste 0", output.getEndereco().getCidade());
-        assertEquals("Estado Teste 0", output.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), output.getEndereco().getCidade());
         assertEquals(true, output.getEnabled());
     }
 
@@ -104,8 +99,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 0", outputZero.getEndereco().getComplemento());
         assertEquals("Bairro Teste 0", outputZero.getEndereco().getBairro());
         assertEquals("CEP Teste 0", outputZero.getEndereco().getCep());
-        assertEquals("Cidade Teste 0", outputZero.getEndereco().getCidade());
-        assertEquals("Estado Teste 0", outputZero.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputZero.getEndereco().getCidade());
         assertEquals(true, outputZero.getEnabled());
 
         Pessoa outputSeven = outputList.get(7);
@@ -116,8 +110,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 7", outputSeven.getEndereco().getComplemento());
         assertEquals("Bairro Teste 7", outputSeven.getEndereco().getBairro());
         assertEquals("CEP Teste 7", outputSeven.getEndereco().getCep());
-        assertEquals("Cidade Teste 7", outputSeven.getEndereco().getCidade());
-        assertEquals("Estado Teste 7", outputSeven.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputSeven.getEndereco().getCidade());
         assertEquals(true, outputSeven.getEnabled());
 
         Pessoa outputTwelve = outputList.get(12);
@@ -128,8 +121,7 @@ public class DozerPessoaConverterTest {
         assertEquals("Complemento Teste 12", outputTwelve.getEndereco().getComplemento());
         assertEquals("Bairro Teste 12", outputTwelve.getEndereco().getBairro());
         assertEquals("CEP Teste 12", outputTwelve.getEndereco().getCep());
-        assertEquals("Cidade Teste 12", outputTwelve.getEndereco().getCidade());
-        assertEquals("Estado Teste 12", outputTwelve.getEndereco().getEstado());
+        assertEquals(Long.valueOf(0L), outputTwelve.getEndereco().getCidade());
         assertEquals(true, outputTwelve.getEnabled());
     }
 }

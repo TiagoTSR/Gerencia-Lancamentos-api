@@ -47,32 +47,32 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
     }
     
     @Test
-	@Order(0)
-	public void authorization() throws JsonMappingException, JsonProcessingException {
-		AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
-		
-		var accessToken = given()
-				.basePath("/auth/signin")
-					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.body(user)
-					.when()
-				.post()
-					.then()
-						.statusCode(200)
-							.extract()
-							.body()
-								.as(TokenVO.class)
-							.getAccessToken();
-		
-		authSpecification = new RequestSpecBuilder()
-				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-				.setBasePath("/api/pessoas/v1")
-				.setPort(TestConfigs.SERVER_PORT)
-					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-	}
+    @Order(0)
+    public void authorization() throws JsonMappingException, JsonProcessingException {
+        AccountCredentialsVO user = new AccountCredentialsVO("Tiago", "none345");
+        
+        var accessToken = given()
+                .basePath("/auth/signin")
+                    .port(TestConfigs.SERVER_PORT)
+                    .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .body(user)
+                    .when()
+                .post()
+                    .then()
+                        .statusCode(200)
+                            .extract()
+                            .body()
+                                .as(TokenVO.class)
+                            .getAccessToken();
+        
+        authSpecification = new RequestSpecBuilder()
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                .setBasePath("/api/pessoas/v1")
+                .setPort(TestConfigs.SERVER_PORT)
+                    .addFilter(new RequestLoggingFilter(LogDetail.ALL))
+                    .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+                .build();
+    }
 
     @Test
     @Order(1)
@@ -102,7 +102,6 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
         pessoa = persistedPessoa;
 
         assertNotNull(persistedPessoa);
-
         assertNotNull(persistedPessoa.getId());
         assertNotNull(persistedPessoa.getNome());
         assertNotNull(persistedPessoa.getEndereco());
@@ -111,14 +110,20 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(persistedPessoa.getId() > 0);
 
         assertEquals("Henrique Medeiros", persistedPessoa.getNome());
-		assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
-	    assertEquals("1120", persistedPessoa.getEndereco().getNumero());
-	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
-	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
-	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
-	    assertNotNull(persistedPessoa.getEnabled());
+        assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
+        assertEquals("1120", persistedPessoa.getEndereco().getNumero());
+        assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
+        assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
+        assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
+        assertEquals(6L, persistedPessoa.getEndereco().getCidade());
+        
+        // Verificação do objeto CidadeVO completo
+        assertNotNull(persistedPessoa.getCidade());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getNome());
+        assertNotNull(persistedPessoa.getCidade().getEstado());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getEstado().getNome());
+        
+        assertNotNull(persistedPessoa.getEnabled());
     }
 
     @Test
@@ -177,7 +182,6 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
         pessoa = persistedPessoa;
 
         assertNotNull(persistedPessoa);
-
         assertNotNull(persistedPessoa.getId());
         assertNotNull(persistedPessoa.getNome());
         assertNotNull(persistedPessoa.getEndereco().getLogradouro());
@@ -186,14 +190,20 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(persistedPessoa.getId() > 0);
 
         assertEquals("Henrique Medeiros", persistedPessoa.getNome());
-		assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
-	    assertEquals("1120", persistedPessoa.getEndereco().getNumero());
-	    assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
-	    assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
-	    assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
-	    assertEquals("Rio de Janeiro", persistedPessoa.getEndereco().getCidade());
-	    assertEquals("RJ", persistedPessoa.getEndereco().getEstado());
-	    assertNotNull(persistedPessoa.getEnabled());
+        assertEquals("Rua do Sapo", persistedPessoa.getEndereco().getLogradouro());
+        assertEquals("1120", persistedPessoa.getEndereco().getNumero());
+        assertEquals("Apto 201", persistedPessoa.getEndereco().getComplemento());
+        assertEquals("Centro", persistedPessoa.getEndereco().getBairro());
+        assertEquals("12.400-12", persistedPessoa.getEndereco().getCep());
+        assertEquals(6L, persistedPessoa.getEndereco().getCidade());
+        
+        // Verificação do objeto CidadeVO completo
+        assertNotNull(persistedPessoa.getCidade());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getNome());
+        assertNotNull(persistedPessoa.getCidade().getEstado());
+        assertEquals("Rio de Janeiro", persistedPessoa.getCidade().getEstado().getNome());
+        
+        assertNotNull(persistedPessoa.getEnabled());
     }
 
     @Test
@@ -229,18 +239,16 @@ public class PessoaControllerJsonTest extends AbstractIntegrationTest {
     }
 
     private void mockPessoa() {
-    	pessoa.setNome("Henrique Medeiros");
-	    pessoa.setEnabled(true);
+        pessoa.setNome("Henrique Medeiros");
+        pessoa.setEnabled(true);
 
-	    Endereco endereco = new Endereco();
-	    endereco.setLogradouro("Rua do Sapo");
-	    endereco.setNumero("1120");
-	    endereco.setComplemento("Apto 201");
-	    endereco.setBairro("Centro");
-	    endereco.setCep("12.400-12");
-	    endereco.setCidade("Rio de Janeiro");
-	    endereco.setEstado("RJ");
-
-	    pessoa.setEndereco(endereco);
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Rua do Sapo");
+        endereco.setNumero("1120");
+        endereco.setComplemento("Apto 201");
+        endereco.setBairro("Centro");
+        endereco.setCep("12.400-12");
+        endereco.setCidade(6L);
+        pessoa.setEndereco(endereco);
     }
 }

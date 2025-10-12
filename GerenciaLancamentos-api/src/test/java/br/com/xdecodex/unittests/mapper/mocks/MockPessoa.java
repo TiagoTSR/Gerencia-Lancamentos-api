@@ -44,8 +44,7 @@ public class MockPessoa {
         endereco.setComplemento("Complemento Teste " + number);
         endereco.setBairro("Bairro Teste " + number);
         endereco.setCep("CEP Teste " + number);
-        endereco.setCidade("Cidade Teste " + number);
-        endereco.setEstado("Estado Teste " + number);
+        endereco.setCidade(number.longValue());
 
         pessoa.setEndereco(endereco);
         pessoa.setEnabled(true);
@@ -63,8 +62,7 @@ public class MockPessoa {
         endereco.setComplemento("Complemento Teste " + number);
         endereco.setBairro("Bairro Teste " + number);
         endereco.setCep("CEP Teste " + number);
-        endereco.setCidade("Cidade Teste " + number);
-        endereco.setEstado("Estado Teste " + number);
+        endereco.setCidade(number.longValue());
 
         pessoaVO.setEndereco(endereco);
         pessoaVO.setEnabled(true);

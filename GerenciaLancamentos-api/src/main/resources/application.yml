@@ -14,7 +14,7 @@ gerencia:
   cors:
     originPatterns:
       - http://localhost:3000
-      - http://localhost-gerencia.com:8080
+      - http://localhost-gerencia.com:8000
       - https://xdecodex.com.br
       - http://localhost:8000/oauth/token
 
