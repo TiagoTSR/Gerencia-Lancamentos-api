@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "security.clients.angular.client-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'security.clients.angular.client-secret'"
+  },
+  {
+    "name": "security.keystore.password",
+    "type": "java.lang.String",
+    "description": "A description for 'security.keystore.password'"
+  },
+  {
+    "name": "security.clients.mobile.client-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'security.clients.mobile.client-secret'"
+  },
+  {
+    "name": "security.keystore.key-password",
+    "type": "java.lang.String",
+    "description": "A description for 'security.keystore.key-password'"
+  }
+]}

@@ -22,6 +22,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -32,14 +35,11 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import br.com.xdecodex.config.property.GerenciaApiProperty;
 import br.com.xdecodex.security.UsuarioSistema;
@@ -53,7 +53,7 @@ public class AuthServerConfig {
 
     @Autowired
     private GerenciaApiProperty gerenciaApiProperty;
-
+    
     @Autowired
     private Environment env;
 
@@ -104,19 +104,18 @@ public class AuthServerConfig {
                 )
         );
     }
-
+    
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authServerFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.formLogin(Customizer.withDefaults());
-        return http.build();
+        return http.formLogin(Customizer.withDefaults()).build();
     }
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtBuildCustomizer() {
         return (context) -> {
-            UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) context.getPrincipal();
+            UsernamePasswordAuthenticationToken authenticationToken = context.getPrincipal();
             UsuarioSistema usuarioSistema = (UsuarioSistema) authenticationToken.getPrincipal();
 
             Set<String> authorities = new HashSet<>();
@@ -124,7 +123,7 @@ public class AuthServerConfig {
                 authorities.add(grantedAuthority.getAuthority());
             }
 
-            context.getClaims().claim("nome", usuarioSistema.getUsuario().getUserName());
+            context.getClaims().claim("name", usuarioSistema.getUsuario().getNome());
             context.getClaims().claim("authorities", authorities);
         };
     }
@@ -156,9 +155,10 @@ public class AuthServerConfig {
     }
 
     @Bean
-    public AuthorizationServerSettings authorizationServerSettings() {
+    public AuthorizationServerSettings AuthorizationServerSettings() {
         return AuthorizationServerSettings.builder()
                 .issuer(gerenciaApiProperty.getSeguranca().getAuthServerUrl())
                 .build();
     }
+
 }

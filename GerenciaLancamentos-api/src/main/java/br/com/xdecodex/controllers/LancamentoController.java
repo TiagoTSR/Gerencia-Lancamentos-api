@@ -18,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,17 +39,10 @@ import br.com.xdecodex.repositories.launch.LancamentoRepositoryQuery;
 import br.com.xdecodex.services.LancamentoService;
 import br.com.xdecodex.storage.S3;
 import br.com.xdecodex.util.MediaType1;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/lancamentos/v1")
-@Tag(name = "Lancamento", description = "Endpoints for lancamentos management")
+@RequestMapping("/lancamentos")
 public class LancamentoController {
 	
 	@Autowired
@@ -103,15 +95,7 @@ public class LancamentoController {
 			MediaType1.APPLICATION_XML,
 			MediaType1.APPLICATION_YML
 	})
-	@Operation(summary = "Find all launches", description = "Find all launches", tags = { "Lancamento" }, responses = {
-			@ApiResponse(description = "Success", responseCode = "200", content = {
-					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = LancamentoVO.class)))
-			}),
-			@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-			@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-	})
+
 
 	public ResponseEntity<PagedModel<EntityModel<LancamentoVO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -136,14 +120,7 @@ public class LancamentoController {
 			MediaType1.APPLICATION_XML,
 			MediaType1.APPLICATION_YML
 	})
-	@Operation(summary = "Find a lancamento", description = "Find a lancamento", tags = { "Lancamento" }, responses = {
-			@ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),
-			@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-			@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-			@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-	})
+	
 	public ResponseEntity<LancamentoVO> findById(@PathVariable("id") Long id) {
 		try {
 			LancamentoVO lancamento = lancamentoService.findById(id);
@@ -156,13 +133,7 @@ public class LancamentoController {
 	@PostMapping(consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
 			MediaType1.APPLICATION_YML }, produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
 					MediaType1.APPLICATION_YML })
-	@Operation(summary = "Add a release", description = "Adds a new release by passing a JSON, XML or YML representation of the release!", tags = {
-			"Lancamento" }, responses = {
-					@ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),
-					@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-					@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-					@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-			})
+	
 	public ResponseEntity<LancamentoVO> create(@Valid @RequestBody LancamentoVO lancamento) {
 		try {
 			LancamentoVO novoLancamento = lancamentoService.create(lancamento);
@@ -175,14 +146,7 @@ public class LancamentoController {
 	@PutMapping(value = "/{id}", consumes = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
 			MediaType1.APPLICATION_YML }, produces = { MediaType1.APPLICATION_JSON, MediaType1.APPLICATION_XML,
 					MediaType1.APPLICATION_YML })
-	@Operation(summary = "Update a release", description = "Updates a release by passing a JSON, XML or YML representation of the release!", tags = {
-			"Lancamento" }, responses = {
-					@ApiResponse(description = "Updated", responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoVO.class))),
-					@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-					@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-					@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-					@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-			})
+	
 	public ResponseEntity<LancamentoVO> update(@PathVariable("id") Long id, @Valid @RequestBody LancamentoVO lancamento) {
 		try {
 			lancamento.setId(id);
@@ -194,14 +158,7 @@ public class LancamentoController {
 	}
 
 	@DeleteMapping(value = "/{id}")
-	@Operation(summary = "Deletes a release", description = "Deletes a release by passing a JSON, XML or YML representation of the release!", tags = {
-			"Lancamento" }, responses = {
-					@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-					@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-					@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-					@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-					@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-			})
+	
 	public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
 		boolean deleted = lancamentoService.delete(id);
 		return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
