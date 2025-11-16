@@ -1,5 +1,7 @@
 package br.com.xdecodex.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,12 +23,9 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Profile("oauth-security")
 @Configuration
@@ -35,18 +35,28 @@ public class ResourceServerConfig {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+
         http
-            .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/categorias")).permitAll()
-                    .anyRequest().authenticated()
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/categorias").permitAll()
+                .requestMatchers("/tokens/revoke", "/oauth2/token", "/oauth2/authorize", "/login").permitAll()
+                .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable())
-            .oauth2ResourceServer(oauth2ResourceServer ->
-                oauth2ResourceServer.jwt(jwt ->
+            .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwt ->
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
+            )
+            .formLogin(withDefaults())
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
             );
+
         return http.formLogin(withDefaults()).build();
     }
 
@@ -61,24 +71,23 @@ public class ResourceServerConfig {
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+
             List<String> authorities = jwt.getClaimAsStringList("authorities");
+            if (authorities == null) authorities = Collections.emptyList();
 
-            if (authorities == null) {
-                authorities = Collections.emptyList();
-            }
+            JwtGrantedAuthoritiesConverter scopes = new JwtGrantedAuthoritiesConverter();
+            Collection<GrantedAuthority> granted = scopes.convert(jwt);
 
-            JwtGrantedAuthoritiesConverter scopesAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-            Collection<GrantedAuthority> grantedAuthorities = scopesAuthoritiesConverter.convert(jwt);
+            granted.addAll(
+                authorities.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList())
+            );
 
-            grantedAuthorities.addAll(authorities.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList()));
-
-            return grantedAuthorities;
+            return granted;
         });
-
-        return jwtAuthenticationConverter;
+        return converter;
     }
 }

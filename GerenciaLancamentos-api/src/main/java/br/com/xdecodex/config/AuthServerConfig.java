@@ -74,7 +74,7 @@ public class AuthServerConfig {
                         .refreshTokenTimeToLive(Duration.ofDays(24))
                         .build())
                 .clientSettings(ClientSettings.builder()
-                                .requireAuthorizationConsent(true)
+                                .requireAuthorizationConsent(false)
                                 .build())
                 .build();
 
