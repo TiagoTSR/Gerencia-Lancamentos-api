@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -48,7 +47,9 @@ public class ResourceServerConfig {
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
             )
-            .formLogin(withDefaults())
+            .formLogin(form -> form
+                .defaultSuccessUrl("http://local-gerencia.com:8000/dashboard", true)
+            )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
@@ -57,7 +58,7 @@ public class ResourceServerConfig {
                 .deleteCookies("JSESSIONID")
             );
 
-        return http.formLogin(withDefaults()).build();
+        return http.build();
     }
 
     @Bean
